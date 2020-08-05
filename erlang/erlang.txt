@@ -1,0 +1,429 @@
+URL: https://erlang.org/doc/getting_started/seq_prog.html
+
+1 Introduction
+
+未涉及内容
+
+    References.
+    Local error handling (catch/throw).
+    Single direction links (monitor).
+    Handling of binary data (binaries / bit syntax).
+    List comprehensions.
+    How to communicate with the outside world and software written in other languages (ports); this is described in Interoperability Tutorial.
+    Erlang libraries (for example, file handling).
+    OTP and (in consequence) the Mnesia database.
+    Hash tables for Erlang terms (ETS).
+    Changing code in running systems.
+
+Everything in this section is true, but only part of the truth
+
+See more in Erlang book or Erlang Reference Manual
+
+2 Sequential Programming
+
+2.1 Erlang Shell
+
+erl
+
+tty - Erlang Run-Time System Application (ERTS)
+
+erlang.org/doc/apps/erts/tty.html
+
+两种模式
+
+normal mode : 输入字符，发送命令
+
+shell back mode : 允许用户 kill 当前 shell，启动多个 shell 等
+
+Normal mode 支持 Emacs 风格的编辑命令
+
+erl -man erl
+
+The Erlang emulator
+
+文档:
+
+https://erlang.org/doc/man/erl.html
+
+https://erlang.org/doc/man/shell.html
+
+输入表达式 (42+77)*66/3. 表达式用 . 结尾，回车执行表达式
+
+退出
+
+Ctrl-C 选择 a
+
+Type "a" to leave the Erlang system
+
+halt().
+
+或者: Ctrl-\
+
+2.2 Modules and Functions
+
+-module(tut1). 声明一个模块
+-export([fac/1]). 导出可用函数
+
+fac(1) ->
+  %% 函数分支内部用逗号 ,
+  1;  %% 单个分支结束用分号 ;
+fac(N) ->
+  N * fac(N-1). %% 函数结束用句号 .
+
+函数名 fac 参数 1 / N ->
+  函数分支
+
+编译文件
+
+> c(tut1).
+
+> tut1:fac(10).
+
+tut1:fac 10. 需要有括号，否则报错
+
+N X Y 是 variables
+
+变量以大写字母开头
+  Number ShoeSize Age
+
+2.3 Atoms
+
+原子 小写字母开头 centimeter inch
+
+不像变量有值，原子只有名字
+
+多用于函数签名
+
+函数多个部分被称为 clauses 子句
+
+shell command : v/1 可以查看错误信息（保存再 tuple 中）
+
+查看第 7 行错误信息 v(7).
+
+2.4 Tuples 元组
+
+为了 make things more understandable
+
+{inch, 3} 含义比 (3, inch) 更清晰
+
+tuple 可以有不止两项，可以嵌套
+
+{moscow, {c, -10}} 两个元素
+
+2.5 Lists
+
+表示一列数据 [{london, {f, 36}}, {cape_town, {f, 70}}]
+
+[First | Rest ] = [3,4,5,6,7]
+
+[First, Second | Rest ] = [3,4,5,6,7]
+
+按照位置匹配
+
+tut4 不满足尾递归 tail recursive 有更好的方法实现。
+
+tuple 可以用作 records structs (有 record)
+
+lists 可以用作 linked lists
+
+Erlang 没有 string 数据类型
+
+strings 用 lists of Unicode characters 表示
+
+因此 [97,98,99] 等价与 "abc"
+
+[97,98,99]=="abc".
+true
+[97,98,99]. => true
+
+2.6 Maps
+
+一组 key value 关联数据
+
+#{  }
+
+#{"key" => 42}.
+
+查看 color.erl
+
+define 定义 macro
+
+大于等于 >=
+
+小于等于 =<
+
+函数中的 when 用于 gurad 分支
+
+update 存在的 key: SomeMap#{ existingKey := newValue }.
+
+update 不存在的 key 报错。
+
+Module name 'color' does not match file name 'tut_map'
+error
+
+文件名和模块名必须一样
+
+2.7 标准模块和帮助文档 Manual Pages
+
+io 模块 formatted input/output
+
+erl -man io 可以查询帮助文档
+
+erl -man io
+No manual entry for io (ORZ)
+
+2.8 输出到 terminal
+
+io:format("hello world~n", []).
+
+io:format("this outputs one Erlang term: ~w~n", [hello]).
+
+io:format("two Erlang terms: ~w~w~n", [hello, world]).
+
+io:format("also two Erlang terms: ~w ~w~n", [hello, world]).
+
+~w term 占位
+
+~n newline 占位
+
+输出正常会返回 ok
+
+2.9 Example
+
+convert Celsius to Fahrenheit
+
+print data neatly
+
+测试 tut5
+
+tut5:format_temps([ {moscow, {c,-10}}, {cape_town, {f, 70}}, {stockholm, {c, -4}}]).
+
+2.10 Matching, Guards, Scope of Variables
+
+模式匹配 Guards 变量作用域
+
+find maximum 和 minimum (tut6)
+
+38> tut6:list_max([1,2,3,4,5,7,4,3,2,1]).
+
+不同参数数量的同名函数，在 Erlang 中是完全不同的函数
+
+使用 Name/Arity 区分函数
+
+when 后边的 gurad 条件如果失败，则跳过当前部分函数，执行下一个函数部分 next part
+
+用 match 操作符 = 赋值
+
+M = 5.
+
+如果在同一个 scope 内再次赋值 M = 6. 会报错
+
+模式匹配可以方便取得数据
+
+{X, Y} = {paris, {f, 28}}.
+
+2.11 More About Lists (Lists Again)
+
+ | 可以取得 List 的 Head 也可以添加 Head
+
+L1 = [madrid | T1].
+
+
+自己实现一些功能前最好先查看标准库是否提供了相关功能
+
+https://erlang.org/doc/man/lists.html
+
+2.12 if 和 case
+
+if
+  Condition 1 ->
+    Action 1;
+  Condition 2 ->
+    Action 2;
+  Condition 3 ->
+    Action 3 (end 前的 Action 没有 分号)
+end
+
+Condition 类似 guard
+
+Condition 中可以包含多个子条件
+
+A=2,B=3 表示 and
+A=2;B=3 表示 or
+
+如果没有找到匹配的条件，则会报错（因此一般会提供 true 分支在最后）
+
+case 是另一个条件结构
+
+case Length of
+  {centimeter, X} ->
+    {inch, X / 2.54};
+  {inch, Y} ->
+    {centimeter, Y * 2.54}
+end.
+
+分支结尾也用 分号
+
+if 和 case 都有返回值
+
+  case 使用模式匹配匹配分支，可以使用 gurad (when other_condition)
+
+2.13 内置函数 Built-In Functions BIFs
+
+BIFs 通常实现一些在 Erlang 中实现起来 inefficient 的功能。
+
+例如 trunc (属于 erlang 模块的可以省略 erlang 部分)
+
+erlang:trunc -> trunc
+
+Erlang rem 操作符可以获取余数
+
+2004 rem 400. -> 4
+
+只有部分 BIFs 可以用于 guards (https://erlang.org/doc/reference_manual/expressions.html)
+
+其他 BIFs
+
+length([]).
+float(5).
+is_atom(hello).
+is_tuple({paris, {c, 30}}).
+
+以上可以用于 guards
+
+atom_to_list(hello).
+list_to_atom("goodbye").
+integer_to_list(22).
+
+这些很难或完全不可能在 Erlang 中实现。
+
+2.14 高级函数 Higher-Order Functions (Funs)
+
+Xf = fun(X) -> X * 2 end.
+
+Xf(5).
+
+Add_3 = fun(X) -> X + 3 end.
+
+anonymous 变量 "_" 可忽略变量
+
+3. Conccurrent Programming
+
+3.1 Processes
+
+Erlang 处理 concurrency 和 distributed programming 的能力是一大优势。
+
+concurrency 意味着同时处理多个线程 thread。
+
+例如现代操作系统中，每个 CPU 一次处理一个 thread，但它能在 thread 间快速切换。造成同时处理的样子。
+
+Erlang 可以让你很容易创建并行 parallel 线程，并允许它们之间通讯。在 Erlang 中 each thread of execution 被叫做 process.
+
+(由于 Erlang 中的 thread share no data，因此也被叫做 process)
+
+Erlang 内置函数 spawn 用来创建一个新 process
+
+spawn(Module, Exported_Function, List of Arguments)
+
+spawn 中的函数必须被导出
+
+tut14 结果不是先打印三次 hello，再打印三次 world。而是每个一次。
+
+<x.x.x> 是 process identifier: pid 为 start() 函数的返回值，即 spawn 的结果。
+
+io.format 中 ~p 类似 ~w 但会 显示缩进 等
+
+3.2 Message Passing
+
+创建两个 processes 并互相发送信息
+
+发送消息
+
+Target_PID ! message
+
+接收消息
+
+receive
+   pattern1 ->
+       actions1;
+   pattern2 ->
+       actions2;
+   ....
+   patternN
+       actionsN
+end.
+
+receive
+  case1 ->
+    expression1,
+    expression2;
+  case2 ->
+    expression1,
+    expression2,
+    receive_again (loop to receive)
+end.
+
+Erlang Process 之间的消息可以是任何 simply Erlang terms. 即 lists tuples integers pids (and so on)
+
+每个 process 有自己的 input queue 存放接收到的 messages. 新 message 放到 queue 末尾。当 process 执行 receive 时，queue 中的第一个开始被用来匹配 receive 的模式，自上而下。如果有匹配，则从 queue 中删除 message 并执行对应的动作,
+
+如果一个 message 无法匹配任意模式，那么会跳过这个 message 去处理下一个 message
+
+到达 queue 末尾时，process 会 block 等待接收新消息。有新消息时，重复以上流程（还会从头消费 message 吗，还是从新的开始消费）
+
+self() 返回运行 self() 进程的 PID
+
+3.3 Registered Process Names
+
+tut15 中 pong 被首先创建，从而可以在启动 ping 时传递给 ping pong 的 PID。也就是说，ping 进程必须通过某种方法得到 pong 的 PID 从而向 pong 发送消息。但有时互相独立的进程也需要知道各自的 ID。Erlang 提供一种机制对 process 命名，从而用名字代替 PIDs。这种命名通过内置函数 register 实现。
+
+register(some_atom(Name), Pid).
+
+tut16 重写了 tut15
+
+
+
+
+Reference Manual
+
+https://erlang.org/doc/reference_manual/expressions.html
+
+http://erlang.org/doc/reference_manual/records.html
+
+A record is a data structure for storing a fixed number of elements. It has named fields and is similar to a struct in C. Record expressions are translated to tuple expressions during compilation. Therefore, record expressions are not understood by the shell unless special actions are taken. For details, see the shell(3) manual page in STDLIB.
+
+命名规则
+函数 find_max_and_min
+变量 Max_Name, Max_name
+
+注释
+comment %%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+References:
+
+https://learnyousomeerlang.com/the-hitchhikers-guide-to-concurrency
+https://github.com/clojurians-org/haskell-example/blob/master/README.org
+
+Packages:
+
+fluentd 日志
+ranch
+  a socket acceptor pool for TCP protocols developed by NineNines
+cowboy
+
+use Emacs: citadel/noteinaction/emacs.md
