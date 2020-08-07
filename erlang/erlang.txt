@@ -379,8 +379,47 @@ tut15 中 pong 被首先创建，从而可以在启动 ping 时传递给 ping po
 
 register(some_atom(Name), Pid).
 
-tut16 重写了 tut15
+tut16 重写 tut15
 
+3.4 Distributed Programming
+
+分布式版本
+
+首先 distributed Erlang 有一个简单的认证机制 magic cookie
+
+$HOME/ 下的 .erlang.cookie
+
+chmod 400 .erlang.cookie (修改权限为只允许 owner 访问)
+
+如果只有一台机器，可以运行两个不同名字的 Erlang systems。每个 system 被称为一个 Erlang Node。
+
+erl -sname node_name
+
+-sname 参数假定节点都运行在同一个 domain 上
+
+-name 设置不同 domain 下 要提供完整 IP 地址
+
+Erlang pids 包含了 process 执行位置的信息。如果知道 process 的 pid，! 操作符就能发送给这个 process 消息，无论是否在同一台机器上。
+
+但是发送到不同 node 的 registered process 需要不一样的语法
+
+{Process_Name, Process_Node} ! {ping, self()},
+
+使用 {registered_name,node_name} 而不只是 registered_name
+
+spawn 可以启动其他节点上的进程
+
+(pong@localhost)>tut18:start(ping@localhost).
+
+输出结果返回到启动进程的节点上
+
+3.5 A Larger Example
+
+messager. messager 允许用户从不同节点登录并互相发送简单消息。
+
+- 只有消息传递逻辑，无 nice graphical user interface
+
+- 这种问题可以通过 OTP 更简单地解决
 
 
 
