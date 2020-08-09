@@ -306,10 +306,10 @@ do_something unless condition
 8.3 case
 
 case expression
-when expression1, expression2 [then]
-  code
-else
-  code
+  when expression1, expression2 [then]
+    code
+  else
+    code
 end
 
 case 后的 expression 与 when 里的 express 用 === 做比较
@@ -970,6 +970,40 @@ time.strftime("%Y-%m-%d %H:%M:%S")
 
 now - 10 : 10 seconds ago
 
+Ch 17 range
+
+17.1 ranges as sequences
+
+用 range 表示 sequence
+
+(1..5) -> 1,2,3,4,5
+(1...5) -> 1,2,3,4
+('a'..'d') -> 'a','b','c','d'
+
+(1..10).to_a
+('bar'..'bat').to_a
+
+17.2 作为 conditions
+
+while gets
+  print if /start/../end/
+end
+
+case score
+  when 0..40 then code
+  else code
+end
+
+17.3 作为 interval test
+
+(1..10) === 5 (1..10).includes 5
+
+Ch 18 Iterators
+
+array hash 都属于 iterators / collections
+
+
+
 
 
 
@@ -986,7 +1020,13 @@ Test
 
 Note:
 
+Pre-defined variables
+  https://ruby-doc.org/docs/ruby-doc-bundle/Manual/man-1.4/variable.html
+
 没有 i++ 只有 i+=1
+
+标记 deprecated
+  https://rubyquicktips.com/post/20002932888/mark-deprecated-code-in-ruby
 
 Refs:
 
