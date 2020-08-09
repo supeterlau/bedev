@@ -1002,6 +1002,11 @@ Ch 18 Iterators
 
 array hash 都属于 iterators / collections
 
+collect 不适合用于 copy array，应该用 clone
+
+each 返回原值
+
+collect 返回处理后的值 map
 
 
 
