@@ -689,6 +689,140 @@ str.upcase
 
 str.unpack(format)
 
+Ch 14 Arrays 数组
+
+索引可以为正数或负数或 0
+
+Ruby 的数组在添加元素时，自动扩容
+
+14.1 创建
+
+Array.new 20 (size 20)
+
+array.size
+
+array.length
+
+Array.new 4, "MAC"
+
+4 times "MAC"
+
+Array.new(size) { block }
+
+Array.[](1,2,3,4)
+
+Array[1,2,3,4]
+
+Array(0..9)
+
+14.2 Build-in Methods
+
+array & other_array
+
+  返回交集，无重复
+
+array * int | array * str
+
+  int 重复次数
+
+  str join 参数
+
+array + other_array
+
+array - other_array
+
+  返回 array 独有元素
+
+array | other_array
+
+  并集 去重
+
+array[index]
+array[start, length]
+array[range]
+array.slice(start, length)
+array.slice(index)
+array.slice(range)
+
+  返回位置处或范围内 subarray
+
+array[index] = obj
+array[start, length] = obj | array | nil
+array[range] = obj | array | nil
+
+  替换位置上或区间内容 nil 表示删除
+
+array.at(index)
+
+array.clear 清空数组
+
+array.collect array.map {|item| block}
+
+array.map! {|item| block}
+
+array.compact
+
+  移除全部 nil 返回拷贝
+
+array.compact!
+
+  无变化返回 nil
+
+array.concat
+
+array.delete(obj) {block}
+
+  未找到 obj 执行 block
+
+array.delete_at
+
+  超出范围返回 nil
+
+array.delete_if {|item| block}
+
+  删除 block 为 true 的 item
+
+array.each
+
+array.each_index
+
+  返回 index 为 block 参数
+
+array.first
+array.first(n)
+
+  返回前 n 个元素
+
+array.pop
+
+array.push
+
+array.reject
+
+  filter 反面
+
+array.reverse_each
+
+  倒序遍历
+
+array.shift
+
+  删除第一个元素
+
+array.unshift
+
+  添加元素到 数组前部
+
+array.values_at
+
+array.zip
+
+array.zip(arg, ...) {|arr| block}
+
+14.3 数组 pack 指令
+
+
+
 
 
 
