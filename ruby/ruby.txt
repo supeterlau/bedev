@@ -555,6 +555,141 @@ end
 
 Ch 13 Strings
 
+sequence of one or more bytes
+
+'simplest string literals'
+
+'escape single quote \''
+
+'escape backslash \\'
+
+13.1 表达式内插 substitution
+
+双引号内有效
+
+13.2 通用分隔字符
+
+%(words) %{words} %<words> %!words! 等同于 "words"
+
+13.3 字符编码
+
+Ruby 默认编码是 ASCII
+
+$KCODE = 'u' 设置文件编码为 UTF-8
+
+a ASCII
+e EUC
+n None(ASCII)
+u UTF-8
+
+13.4 字符串方法
+
+创建字符串对象
+
+String.new("String Content")
+
+常用方法
+
+str % arg
+
+  arg 为 value 或 array
+
+str * integer
+
+  integer times str
+
+str + other_str
+
+  连接字符串
+
+str << obj
+
+  连接对象到字符串 调用对象 to_s
+
+str.capitalize
+str.capitalize!
+
+str.casecmp case-insensitive 比较 返回 0 或 1
+
+str.chomp 删除 record separator \n
+
+str.chop 删除最后一个字符
+
+str.concat 连接
+
+str.count(str, ...)
+
+str.crypt(other_str)  salt 两字符 a-zA-Z0-9 . /
+
+  one-way cryptographic
+
+str.delete(other_str)
+
+str.downcase
+
+str.dump all special characters escaped
+
+str.each
+
+str.each_byte
+
+str.each_line {|substr| block}
+
+str.empty? (str.length == 0)
+
+str[fixnum] = fixnum | new_str
+str[range] = fixnum | new_str 类似 slice
+
+str.gsub() 全局替换
+str.gsub!()
+
+str.hash
+
+str.hex
+
+str.include? str | fixnum
+
+str.insert(index, other_str)
+
+str.intern
+str.to_sym
+
+str.reverse
+str.reverse! in place reverse
+
+str.index(substring/fixnum/regexp) fixnum 即 character
+str.rindex(substring/fixnum/regexp) fixnum 即 character
+
+str.ljust(integer, padstr="")
+str.rjust(integer, padstr="")
+
+str.slice(fixnum, fixnum)
+str.slice(range)
+str.slice!
+
+str.sub(pattern, replacement) 普通字符串
+str.sub(pattern) {|match| block} 正则模式
+
+str.lstrip
+str.lstrip!
+
+str.rstrip
+str.rstrip!
+
+str.strip
+str.strip!
+
+str.next
+
+str.succ
+
+str.swapcase
+
+str.upcase
+
+str.unpack(format)
+
+
 
 
 
