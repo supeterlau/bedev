@@ -11,3 +11,5 @@ puts names["bird"]
 puts names.key "Apple"
 
 puts names.shift
+
+puts 100.size

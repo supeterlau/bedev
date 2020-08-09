@@ -907,8 +907,68 @@ hahs.values
 
 hash.values_at(key1, key2, key3...)
 
+Ch 16 Date & Time
 
+16.1 current Date Time
 
+Time.new.inspect
+
+Time.now inspect
+
+16.2 Components
+
+time.year
+    .month
+    .day
+    .wday Day of week
+    .yday Day of year
+    .hour
+    .min
+    .sec
+    .usec
+    .zone timezone name
+
+16.3 format date in a standard format
+
+Time.local(2020, 8, 10)
+
+Time.utc(2020, 8, 10) 等效与 Time.gm()
+
+Time.new.to_a (to array)
+
+values = [sec,min,hour,day,month,year,wday,yday,isdst,zone]
+
+Time.utc(*values)
+
+get timestamp: Time.now.to_i
+
+timestamp to Time Object: Time.at(time)
+
+包含 microseconds: Time.now.to_f
+
+16.4 Timezones & Daylight Savings Time
+
+time = Time.new
+
+time.zone
+    .utc_offset
+    .isdst
+    .utc?
+    .localtime
+    .gmtime
+    .getlocal
+    .getutc
+
+16.5 format
+
+time.to_s
+time.ctime
+time.localtime
+time.strftime("%Y-%m-%d %H:%M:%S")
+
+16.6
+
+now - 10 : 10 seconds ago
 
 
 
