@@ -819,7 +819,95 @@ array.zip
 
 array.zip(arg, ...) {|arr| block}
 
+array.rotate
+
+array.zip(other_array).count {|a, b| a == b}
+
+
 14.3 数组 pack 指令
+
+Ch 15 Hash
+
+15.1 create hash
+
+Hash.new
+
+默认值
+
+some_hash = Hash.new("Default")
+
+some_hash[0] == "Default"
+
+Hash["a"=>:a, "b"=>:b]
+
+任意 Ruby object 可以做 key 或 value
+
+15.2 内置方法
+
+hash == other_hash
+
+hash[key]
+
+hash[key] = value
+
+hash.clear
+
+hash.default
+
+hash.default_proc
+
+  如果 block 创建的 hash 返回一个 block
+
+hash.delete
+
+  根据 key 删除 key-value pair
+
+hash.delete_if
+
+  key value block 求值为 true 则删除对应 pair
+
+hash.fetch(key, default)
+hahs.fetch(key) {|key| block}
+
+hash.has_key? include? key? member?
+
+hash.has_value?
+
+hash.index => hash.key
+
+  not found -> nil
+
+hash.indexes(keys)
+
+hash.inspect
+
+hash.invert
+
+hash.keys
+
+hash.length
+
+hash.merge(other_hash) {|key, old, new| block}
+
+hash.shift
+
+  移除 pair 返回两元素数组
+
+hash.sort
+
+  转为二维数组，sort
+
+hash.store(key, value)
+
+hash.update {|key, old, new| block}
+
+hash.value?
+
+hahs.values
+
+hash.values_at(key1, key2, key3...)
+
+
 
 
 
@@ -839,6 +927,12 @@ Test
 Note:
 
 没有 i++ 只有 i+=1
+
+Refs:
+
+https://www.rubyguides.com/2017/10/array-zip-method/
+
+Resource:
 
 Programming.Ruby.1.9.and.2.0(4th,2013.6
   pdf
