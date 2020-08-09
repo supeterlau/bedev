@@ -1,0 +1,579 @@
+WIP:
+
+https://www.tutorialspoint.com/ruby/ruby_overview.htm
+
+Ch1 Overview
+
+Ruby is a pure object-oriented programming language
+
+1993 by Yukihiro Matsumoto
+
+Ruby is "A Programmer's Best Friend".
+
+Features
+
+  open-source
+  general-purpose, interpreted  PL
+  true object-oriented PL
+  server-side scripting language
+  can write Common Gateway Interface (CGI)
+  can embedded into Hypetext Markup Language (HTML)
+  clean and easy syntax
+  similar syntax to C++ Perl
+  scalable
+  developing Internet and intrannet applicatioins
+  can be installed in Windows and POSIX environments
+  support GUI tools (Tcl/Tk GTK OpenGL)
+  easily connect to DB2 MySQL Oracle etc.
+  rich set of built-in functions
+
+Ch2 本地环境搭建
+
+asdf
+
+Ch3 Syntax
+
+#!/usr/bin/ruby -w
+
+puts "Hello, Awesome Ruby";
+
+-w : 开启 warnings
+
+每行末尾自动 interprets semicolons (;) 和 换行符作为语句 statement 结尾
+
+但是遇到 操作符 + - 或 backslash 时，表示语句将继续
+
+Ruby 标识符。 case sensitive
+
+Ram RAM 是不同的标识符
+
+保留字 Reserved Words
+
+BEGIN 程序启动执行的语句
+next
+then
+elsif
+undef
+ensure
+redo
+until
+rescue
+retry
+__FILE__
+__LINE__
+
+Here Document 可以输入多行文本
+
+print <<EOF
+...
+EOF
+
+print <<"EOF";
+...
+EOF
+
+print << `EOC`
+echo Hello
+EOC
+
+print <<"foo", <<"bar"
+I said foo.
+foo
+I said bar.
+bar
+
+BEGIN 语句
+
+BEGIN {
+  run code
+}
+
+在运行程序前执行的代码
+
+END 语句
+
+END {
+
+}
+
+在程序结束执行的语句
+
+注释 #
+
+多行注释
+
+=begin
+comments
+=end
+
+Ch4 Classes 和 Objects
+
+Local Variables 本地变量
+  定义在函数内的
+  小写字母或 _ 开头
+
+Instance Variables
+  实例或对象内部可用
+  @ 开头
+
+Class Variables
+  类变量
+  @@ 开头
+
+Global Variables
+  全局变量
+  $ 开头
+
+创建对象 new 方法
+
+cust1 = Customer.new
+
+自定义构造函数
+
+new 方法可以有参数用来初始化对象
+
+需要声明 initialize 方法
+
+def initialize(id, name, addr)
+end
+
+实例方法
+
+def some_function
+  statement1
+  statement2
+end
+
+Ch5 Variables Constants Literals
+
+变量 常量 字面量
+
+全局变量 $global_variabl = 10
+
+实例变量 @customer_id
+
+类变量 @@number_of_customers
+
+局部变量 lowercase letter 或 _ 开头
+
+常量 uppercase letter 开头
+
+  类或模块内部定义的可以在这个类或模块内访问
+
+  外部的可以在全局访问
+
+  不在方法内定义。使用未初始化常量会报错，对常量赋值会产生 warning
+
+Pseudo-Variables
+
+  类似 局部变量，但行为像常量
+
+  self true false nil __FILE__ __LINE__
+
+字面量
+
+  整数
+    -2^30 2^30-1
+    -2^62 2^62-1
+    范围内属于 Fixnum
+    范围外属于 Bignum
+
+    进制 0 octal 0x hex 0b binary
+      0377
+      0xff
+      0b1011
+    下划线被 ignored 1_000_000
+    ?a 获取 a 的 character code
+    ?\n
+
+  浮点数 Float
+    123.5
+    1.0e6
+    4E20
+
+  字符串 String
+    双引号允许 内插 和转义
+    单引号只允许 \\ 和 \'
+
+  数组
+    ["fred", 10, 3e20, "last element",] 末尾逗号可以省略
+
+  哈希
+    colors = {"red" => 0xf00, "green" => 0x0f0, "blue" => 0x00f}
+
+  Range 区间
+    (1..5) 包含 1 5
+    (1...5) 包含 1
+
+Ch6 Operators
+
+数值运算
+
++ - * / % ** (2**3=8)
+
+比较
+
+== != > < >= <=
+
+<=> 组合比较符 0 表示相等; 1 表示 operand 大于 second；-1 表示 operand 小于 second
+
+===  (1...10) === 5 返回 true
+
+.eql? 同样类型，同样值 1 == 1.0 1.eql(1.0) false
+
+equal? 同样 object id
+
+  aObj == bObj -> true
+  aObj.equal? bObj -> false
+  aObj.equal? aObj -> true
+
+赋值操作符
+
++= ... **=
+
+并行赋值
+
+a, b, c = 10, 20, 30
+
+位运算
+
+& AND
+| OR
+^ XOR
+~ binary 取反
+<<
+>>
+
+逻辑运算
+
+and
+or
+&&
+||
+!
+not
+
+三元
+
+? :
+
+区间
+
+..
+
+...
+
+defined? 运算符
+
+测试表达式是否定义。如果定义则返回描述字符串
+
+Dot 和 Double Colon
+
+:: 访问 类或模块内的 常量 实例 方法
+
+Ch7 comments
+
+Ch8 if...else case unless
+
+8.1 if
+
+if condition [then]
+  code
+elsif condition [then]
+  code
+else
+  code
+end
+
+then 可以省略
+
+简短形式
+
+do_something if condition
+
+8.2 unless (if not)
+
+unless condition
+  code
+else
+  code
+end
+
+简短形式
+
+do_something unless condition
+
+8.3 case
+
+case expression
+when expression1, expression2 [then]
+  code
+else
+  code
+end
+
+case 后的 expression 与 when 里的 express 用 === 做比较
+如果与任意一个 expression === 比较结果为 true 则执行 code
+
+(1..5) ===  1
+=> true
+
+Ch9 Loops
+
+9.1 while
+
+while condition [do]
+  code
+end
+
+do 可以省略
+
+分隔符 do 或 newline 或 backslash \ 或 semicolon ;
+
+modifier 形式
+
+code while condition
+
+begin
+  code
+end while condition
+
+9.2 until
+
+until condition [do]
+  code
+end
+
+codition 为 false 时执行 code
+
+其他类似 while
+
+9.3 for
+
+对 expression 中元素，执行一次代码
+
+for v1, v2, ... in expression [do]
+  code
+end
+
+for i in 0..5
+  puts "Value of local variable is #i"
+end
+
+几乎等价于
+
+(expression).each do |v1,v2,v3...|
+  code
+end
+
+9.4 break
+
+终止最内层循环
+
+9.5 next
+
+跳到下一次循环
+
+9.6 redo
+
+重启最内层循环，不检查 loop codition
+
+如果在 block 内部，重启 yield 或 call
+
+? 9.7 retry
+
+如果在 rescue 语句中
+
+  从 begin 处重启
+
+如果在 iterator block 或 for 表达式中，重启 iterator，重新计算 iterater 参数
+
+for i in 1..5
+  retry if i == 3  # 从 i == 1 重启
+end
+
+Ch10 Methods
+
+方法名 小写字母开头
+
+def method_name(arg = default, *arg, &expr)
+  expr
+end
+
+调用
+
+method_name
+
+method_name var1, var2
+
+10.2 返回值
+
+每个方法都有返回值。即最后一个语句
+
+def test
+  i = 100
+  j = 10
+  k = 0
+end
+
+最后返回 k 即 0
+
+10.3 return
+
+用于在方法中返回一个或多个值
+
+多个值以数组形式返回，无 expression 返回 nil
+
+10.4 可变参数
+
+def method_name(*args)
+  ...
+end
+
+10.5 类方法
+
+类外部的方法被标记为 private
+
+类内部方法默认为 public
+
+使用类实例方法要先初始化实例，使用类方法不需要初始化
+
+class SomeClass
+  def test
+  end
+
+  def SomeClass.test
+  end
+end
+
+10.6 alias
+
+给 methods 或 全局变量别名。不能在方法体内使用
+
+别名保存方法当前定义，即使方法被重写也不改变
+
+禁止给数字全局变量设置别名，重写内置全局变量会导致严重问题
+
+10.7 undef
+
+取消方法定义，不能在方法内部使用
+
+undef bar
+
+Ch 11 Block
+
+可以给 block 命名
+
+在 {} 内
+
+用 block 同名方法 调用
+
+yield 调用
+
+11.1 Syntax
+
+block_name {
+  statement1
+  statement2
+}
+
+def run
+  yield
+  yield 3
+end
+
+run { |arg| puts "#{arg}" }
+
+yield a, b
+
+{|a, b| puts "#{a} #{b}"}
+
+如果方法最后一个参数是 &block，就可以传一个 block 给方法，赋值给最后一个参数。同时有 * 和 &，& 在后
+
+def test(&block)
+  block.call
+end
+
+11.2 BEGIN END block
+
+BEGIN {}
+
+END {
+
+}
+
+Ch 12 Modules and Mixins 模块和混合
+
+模块用于封装 方法 类 常量
+
+提供命名空间，
+
+提供mixin 功能
+
+12.1 语法
+
+module Identifier
+end
+
+模块名 首字母大写 和 class 一样
+
+调用方法，获取模块常量
+
+ModuleName::method
+
+ModuleName::PI
+
+12.2 require 语句
+
+导入模块文件
+
+require "some_module.rb"
+
+require_relative "some_module"
+
+push 元素到数组
+
+[1,23] << 4
+[1,23].push 4
+
+12.3 include 语句
+
+将模块嵌入 class，被嵌入的模块需要先 require 导入
+
+class Decade
+  include Week
+end
+
+12.4 Mixins
+
+module Week
+  def some_mixin
+  end
+end
+
+只有 def Week.some_mixin 可以通过 Week::some_mixin 访问
+
+Ch 13 Strings
+
+
+
+
+
+
+
+
+
+fiber, lambda
+
+Test
+
+Note:
+
+没有 i++ 只有 i+=1
+
+Programming.Ruby.1.9.and.2.0(4th,2013.6
+  pdf
+  http://ruby-doc.com/docs/ProgrammingRuby/
+Metaprogramming.Ruby.2.2014.8
+https://www.rubymonk.com/
+http://rubylearning.com/satishtalim/tutorial.html
