@@ -1008,13 +1008,176 @@ each 返回原值
 
 collect 返回处理后的值 map
 
+Ch 19 File I/O
 
+19.1 puts
 
+add a new line at end
 
+19.2 putc
 
+每次输出一个 character
 
+putc "Hello"
 
+19.3 print
 
+19.4 Files
+
+some_file = File.new("filename", "mode")
+
+some_file.close()
+
+mode:
+
+r Read-only, 文件指针在文件开头
+
+r+ Read-write, 文件指针同上
+
+w Write-only 覆盖原有内容，文件不存在会新建
+
+w+ Read-write 覆盖原有内容
+
+a Write-only 文件指针在文件末尾 append mode，会新建文件
+
+a+ Read-write
+
+some_file.sysread(20)
+
+some_file.syswrite("12345")
+
+some_file.each_byte {|ch| putc ch; putc ?.}
+
+IO.readlines(some_file) 返回 array
+
+IO.foreach(some_file) {|line| puts line}
+
+File.rename(old_name, new_name)
+
+File.delete(some_name)
+
+some_file.chmod(0755)
+
+File.open("file_name", "mode") do |some_file|
+  # process
+end
+
+File::exists? some_file
+
+File.file? some_file
+
+File::directory? some_dir
+
+File.readable?
+File.writable?
+File.executable?
+
+File.zero?
+File.size? some_file
+
+File::ftype some_file
+
+File::ctime mtime atime
+
+文件夹操作
+
+Dir.chdir(some_dir)
+
+Dir.pwd
+
+Dir.entries(some_dir).join ' '
+
+Dir.foreach(some_dir) do |entry|
+  puts entry
+end
+
+更简洁方法 Dir[some_dir/*]
+
+Dir.mkdir(some_dir)
+
+Dir.delete(some_dir)
+
+临时文件 文件夹
+
+require 'tmpdir'
+
+File.join
+
+Dir.tmpdir 平台无关临时文件夹
+
+f = Tempfile.new(tmp_file_name)
+f.path
+
+Ch 20 Exeptions
+
+20.1
+
+begin
+  ...
+rescue TypeOfException
+  ...
+  retry
+    从头执行 begin
+rescue TypeOfException
+  ...
+else
+  ...
+ensure 无论任何情况都执行
+  ...
+end
+
+20.2 raise 语句
+
+使用 raise 抛出错误
+
+raise
+
+raise TypeOfException, "Error Message" condition
+  condition 例如 if / unless
+
+rescue Exception => e
+
+e.message
+e.backtrace.inspect
+
+20.3 else
+
+当代码中没有 exception 时执行
+
+20.4 catch throw
+
+catch 定义命令代码块。正常执行直到抛出错误
+
+throw :lablename condition
+
+catch :labelname do
+end
+
+205 Exception
+
+Top Level: Exception
+
+Next Level:
+
+Interrupt
+
+NoMeoryError
+
+SignalException
+
+ScriptError
+
+StandardError
+
+SystemExit
+
+Fatal (只在 Ruby 解释器内部使用)
+
+自定义错误
+
+class FileSaveError < StandardError
+
+end
 
 
 
