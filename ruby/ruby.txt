@@ -1270,15 +1270,53 @@ box.frozen? 检查是否为 Freezing Object
 
 直接在 类定义内写可执行代码
 
+Ch 22 Regular Expression
+
+/pattern/im
+
+%r 分隔符支持 || <> 等
+
+i ignores case
+m multiple lines
+o 执行变量内插
+x 忽略 空白，允许注释
+u e s n 字符 Unicode, EUC, SJIS, ASCII
+
+sub 查找替换一次
+gsub 查找替换全部
+
+\b {} 外匹配单词边界，{} 内匹配 backspace
+
 
 attr
+  https://www.rubyguides.com/ruby-tutorial/object-oriented-programming/
+  https://www.rubyguides.com/2020/04/self-in-ruby/
 
 fiber
+  https://www.rubyguides.com/2019/11/what-are-fibers-in-ruby/
 
-proc lambda
+proc lambda block
   https://www.rubyguides.com/2016/02/ruby-procs-and-lambdas/
+  https://mixandgo.com/learn/ruby-blocks
 
 Test
+  https://rollout.io/blog/unit-testing-in-ruby/
+  https://semaphoreci.com/community/tutorials/getting-started-with-rspec
+  https://www.rubyguides.com/2018/07/rspec-tutorial/
+  https://www.rubyguides.com/2018/10/rspec-mocks/
+Gem
+  https://guides.rubygems.org/make-your-own-gem/
+Rake
+  https://www.rubyguides.com/2019/02/ruby-rake/
+
+MetaProgramming
+  https://www.toptal.com/ruby/ruby-metaprogramming-cooler-than-it-sounds
+  https://www.rubyguides.com/2016/04/metaprogramming-in-the-wild/
+
+New Ruby Version
+  https://www.rubyguides.com/2019/12/ruby-2-7-new-features/#Enumerablefilter_map
+
+https://rubular.com/ ruby regular expression tester
 
 Note:
 
