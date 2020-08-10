@@ -1179,10 +1179,104 @@ class FileSaveError < StandardError
 
 end
 
+Ch 21 OOP
+
+21.1 类定义
+
+class Box
+  body
+end
+
+box1 = Box.new
+box2 = Box.new
+
+初始化方法
+
+class Box
+  def initialize(w, h)
+    @width, @height = w, h
+  end
+end
+
+实例变量 @width @height
+
+accessor 方法 和 setter getter
+
+def setWidth=(value)
+  @width=value
+end
+
+实例方法
+
+def getArea
+  @width * @height
+end
+
+类方法，必须由类调用
+
+def self.printCount
+  @@count
+end
+
+to_s 方法 返回表示对象的信息
+
+def to_s
+  "(w:#@width;h:#@height)"
+end
+
+21.2 访问控制 Access Control
+
+除了 initialize 外 默认是 public
+
+Private 只有类方法可以访问
+
+Protected 类和子类可以方法
+
+22.3 类继承
+
+class BigBox < Box
+
+end
+
+重载方法
+
+  覆盖父类同名方法
+
+重载操作符
+
+  def +(otherBox)
+    Box.new(@width+oter.width, @height+other.height)
+  end
+
+  def -@
+    # 定义 unary - 操作符 一元操作符
+  end
+
+Object Freeze: turn an object into a constant
+
+box.freeze 无法修改实例变量
+
+box.frozen? 检查是否为 Freezing Object
+
+类常量 类内部的常量 习惯上大写
+
+    内部直接访问
+
+    外部 classname::constant
+
+用 allocate 创建 Object
+
+  创建一个未初始化的实例
+
+直接在 类定义内写可执行代码
 
 
+attr
 
-fiber, lambda
+fiber
+
+proc lambda
+  https://www.rubyguides.com/2016/02/ruby-procs-and-lambdas/
 
 Test
 
