@@ -1287,6 +1287,86 @@ gsub 查找替换全部
 
 \b {} 外匹配单词边界，{} 内匹配 backspace
 
+Ch 23 Multithreading
+
+Thread class. lightweight efficient way to achieve concurrency.
+
+1. 创建 Threads
+
+Thread.new{
+  # running block
+}
+
+2. Thread Lifecycle
+
+也可以用 Thread.start 或 Thread.fork (synonyms Thread.new)
+
+不需要 start thread，当 CPU 有可用资源时就会执行
+
+last expression 是 thread 的值，可以通过 t.value 来获取
+
+t.value 会 block 到 thread 运行完成
+
+Thread.current 返回当前 thread
+
+Thread.main 返回主 thread
+
+通过调用 t.join 可以等待特定 thread 完成。调用 t.join 的 thread 会等待 t 完成
+
+3. Thread 和 Exception
+
+如果主线程报错，Ruby interpreter 打印信息退出。其他线程报错而未处理，导致线程停止运行
+
+如果 t 因为错误退出，那么调用 t.join 或 t.value 的线程中会抛出错误
+
+Thread.abort_on_exception false 默认设置，未处理异常会杀死当前线程，其他的继续运行
+
+如果为 true，就会导致 interpreter 退出
+
+4. Thread 变量
+
+thread 内 block 的变量是 thread 独有
+
+Thread class 允许 thread-local 变量像 hash 一样读取
+
+Thread.current['count'] = count
+
+5. Thread 属性 Priorities
+
+设置优先级 t.priority = 3
+
+新创建线程的优先级和创建它的线程一致。主线程默认是 0
+
+6. Thread Exclusion
+
+两个线程访问同一处数据，线程冲突
+
+Mutex 是实现简单信号量锁的类。即保证统一时间只有一个线程可以访问资源。其他线程等待锁释放, 或直接报错提示锁不可用。
+
+7. 处理死锁
+
+cv = ConditionVariable.new
+mutex = Mutex.new
+
+cv.wait(mutex) 等待资源
+
+cv.signal 释放资源
+
+8. 状态
+
+state of thread
+
+Runnable                  - run
+Sleeping                  - Sleeping
+Aborting                  - aborting
+Terminated normally       - false
+Terminated with exception - nil
+
+9. Class Methods / Instance Methods
+
+
+
+
 
 attr
   https://www.rubyguides.com/ruby-tutorial/object-oriented-programming/
@@ -1312,6 +1392,14 @@ Rake
 MetaProgramming
   https://www.toptal.com/ruby/ruby-metaprogramming-cooler-than-it-sounds
   https://www.rubyguides.com/2016/04/metaprogramming-in-the-wild/
+
+Thread
+  https://www.rubyguides.com/2015/07/ruby-threads/
+
+Queue
+  https://www.rubyguides.com/2019/10/ruby-queues/
+
+Pattern Design
 
 New Ruby Version
   https://www.rubyguides.com/2019/12/ruby-2-7-new-features/#Enumerablefilter_map
