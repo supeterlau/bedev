@@ -1,0 +1,541 @@
+WIP: 376 (4/27)
+
+tour: https://elixir-lang.org/getting-started/introduction.html
+
+# Introduction
+
+elixir -v
+
+iex: aliased to iex --erl "-kernel shell_history enabled"
+
+"hello" <> " world" 连结字符串
+
+脚本运行
+
+elixir simple.exs
+
+elixir --version
+
+mix run
+
+Vim Support:
+
+git clone https://github.com/elixir-editors/vim-elixir.git ~/.vim_runtime/my_plugins/vim-elixir
+
+Quote:
+
+Instead of asking “how to do X in Elixir”, ask “how to solve Y in Elixir”.
+In case things are not working as expected, please include as much information as you can in your report.
+
+# 2 Basic type
+
+integer, 1 0X1f
+float, 1.0
+boolean, true false
+atom, :atom / symbol
+string, "elixir"
+[1,2,3] 'elixir', list
+{1,2,3}, tuple
+
+1.1 数值计算
+
+默认是浮点计算
+
+div rem 提供整数计算
+
+div 2,3
+
+rem(45,13)
+
+支持 binary octal hexadecimal 数字
+  0b1010
+  0o777
+  0x1F 0x1f
+
+支持 浮点数科学表示
+
+1.0e-10 , 64-bit double precision
+
+round 得到最近的整数
+trunc 得到整数部分
+
+1.2 functions
+
+Functions 包含函数名和函数参数个数 (参数类型 ?)
+
+round/1 round/2
+
+iex 显示帮助 h round/1; h +/2
+
+1.3 Booleans
+
+true false
+
+is_boolean(true)
+is_boolean(nil) false
+is_nil(nil)
+
+is_integer/1
+is_float/1
+is_number/1
+
+1.4 Atoms
+
+全小写，常量，值就是自己变量名。常用于表示操作状态 :ok, :error
+
+true false 也是 atoms
+
+is_atom(false) -> true
+false == :false -> true
+
+is_boolean(:false)
+
+alias (别名)结构，首字母大写，是 atoms
+
+例如 Hello 可用做模块名
+
+is_atom(Erlang) -> true
+
+1.5 Strings
+
+double quotes 是 UTF-8 编码
+
+支持字符串内插 变量写入字符串 "Hello #{:world}"
+
+(Atom.to_string :world) == "world"
+
+字符串内部可以使用 转义字符
+
+IO.puts "Good\nLuck" -> :ok
+
+Elixir 中的 Strings 在内部使用连续 binaries 表示的
+
+is_binary("Hello") -> true
+
+byte_size("Hello") -> 5
+
+byte_size("hellö") -> 6
+
+有 5 个字符，但占用 6 个字节大小。因为最后一个字符在 UTF-8 中用 2 bytes 表示
+
+字符数 String.length("hellö")
+
+方法来自 String 模块 操作 Unicode 字符
+
+bit -> bitstring -> binary (8的倍数的 bitstring)
+
+charlist 多用于和 Erlang 交互中
+
+1.6 Anonymous Function
+
+add = fn a, b -> a + b end
+
+匿名函数
+
+-> 左边是参数 右边是函数体 以 end 结尾
+
+匿名函数保存在 add 中
+
+调用函数 add.(4, 6) 需要用 .
+
+区分 named function add/2 和匿名函数
+
+named function 只能在 Modules 中定义
+
+匿名函数内部的 变量赋值不影响外部环境
+
+1.7 Lists (Linked)
+
+a list of values, value 可以是任意类型
+
+[1, 2, :ok, true]
+
+列表长度 length
+
+length [1, 2, :ok]
+
+注意 list 是链表，计算长度需要遍历整个列表
+
+合并列表 ++/2
+
+从第一个列表中删除第二个列表中出现的元素 --/2
+
+对 list 的操作不修改原始 list。添加或删除元素都会返回 新 list。
+
+Elixir data structures are immutable.
+
+no one will mutate data in memory - only transform it.
+
+获取 list 的 head 和 tail
+
+hd some_list
+
+tl some_list
+
+如果操作对象为 [] 则会报错
+
+ArgumentError
+
+有时候 list 会返回单引号值
+
+原因在于当 Elixir 发现 list 中元素为可打印 ASCII 数字时，会将 list 当作 charlist 打印出来
+
+iex 中 ?\v 可以查看对应的数字
+
+charlist 在同 Erlang 代码交互时常见。
+
+i 'hello' 可以查看 value 信息
+
+单引号的是 charlists
+
+双引号的是 字符串。二者不同。
+
+1.8 Tuples
+
+Elixr 用大括号表示 元组
+
+元素可以是任意类型
+
+{"Good", :ok}
+
+tuple_size 元组大小
+
+元组存放在连续内存中，通过索引或计算元组长度是快速操作。（随机访问
+
+0-based 索引
+
+获取元素
+
+elem(tuple, 1)
+
+修改元素
+
+put_elem(tuple, 1, "New Element")
+
+如果越界会报错，ArgumentError
+
+1.9 Lists or tupels
+
+List 是链表 linked list
+
+合并列表取决于 left-hand 列表的长度
+
+慢速操作 获取长度，按索引获取单个元素
+
+Tuple 是连续内存。
+
+获取长度和根据索引获取元素很快。更新和添加元素很慢，因为需要创建新的 Tuple
+
+当你更新 tuple 时，除了被修改元素外，新旧元素是共享的。从而减少内存分配操作。
+
+tuple 常用于从函数中返回额外信息，如操作成功与否。
+
+大部分时候，Elixir 会指导你如何选择数据类型。
+
+比如有访问 tuple 元素函数 elem 而没有对应的访问 list 元素的函数
+
+计算数据结构元素个数的函数命名有一个简单的规则。
+
+如果时间复杂度为常数时间。则命名为 size。如果是线性时间，则命名为 length (linear 和 length 都是 l 开头)
+
+byte_size/1
+tuple_size/1
+
+length/1
+String.length/1
+
+Elixir 还提供 Port Reference PID
+
+# 3 Basic operators
+
+数值运算
+
++ - * / div/2 rem/2
+
+列表操作符 ++/2 --/2
+
+字符串连接 <>
+
+布尔运算符
+
+左右操作数必须是布尔值 true false
+
+true and true (or and not)
+
+false and raise("Error will never be raised")
+
+and 对应 Erlang andalse
+
+or 对应 Erlang orelse
+
+|| && ! 操作数可以是任意类型
+
+* 除 false nil 外的值都被求值为 true
+
+nil && 13
+
+比较 == != === <= >= < >
+
+=== 在比较整数和浮点数时更严格
+
+1 == 1.0 true
+
+1 === 1.0 false
+
+不同类型之间可以做比较
+
+number < atom < reference < function < port < pid < tuple < map < list < bitstring
+
+# 4 Pattern matching
+
+操作符 = 在 Elixir 中实际是 匹配操作符
+
+pin 操作符 ^ 可以用来获取变量绑定的值
+
+1. match 操作符
+
+x = 1
+
+x
+=> 1
+
+2 = x 会导致 MatchError
+
+1 = x 是有效表达式，因为左右的值相等
+
+变量只能在 = 左侧才能被赋值
+
+1 = unknown 中会被解释为试图调用 unknown/0 而这个函数不存在
+
+CompilerError undefined function
+
+2. 模式匹配
+
+match 操作符不仅仅用于匹配简单数据，还能用于匹配更复杂的数据类型。
+
+如 tuple
+
+{a, b, c} = {:hello, "WORLD", 42}
+
+如果无法匹配，则出现 MatchError
+
+无法匹配的原因: 长度不同或类型不同，已有数据不匹配
+
+{:ok, result} = {:ok, 13} 可以匹配
+
+{:ok, result} = {:error, 13} 无法匹配 报错
+
+可以匹配 List
+
+[a,b,c] = [11,12,13]
+
+匹配头部尾部
+
+[head | tail] = [11,12,13]
+
+(当然无法匹配 [] 空列表) 类似 hd/1 tl/1
+
+添加列表头部
+
+[0 | some_list]
+
+Pattern matching allows developers to easily destructure data types such as tuples and lists.
+
+destructure data types.
+
+3. pin 操作符
+
+Elixir 的变量可以 rebound Erlang 不允许 rebound
+
+如果不希望变量被 rebound
+
+可以使用 pin 操作符 ^
+
+x = 1
+
+^x = 2 (MatchError)
+
+可以用于模式匹配中
+
+{y, ^x} = {2, 1}
+
+y => 2
+
+当 x 很复杂时可以用 ^x 替代
+
+{x, x} = {1, 2}
+
+多次使用一个变量，这个变量必须指向一个值。
+
+[head | _] = [1,2,3]
+
+_ 允许忽略某个值
+
+_ 特殊之处，无法读取其中的值
+
+pattern matching 的 left side 不能是函数调用 function call
+
+# 5 case, cond, and if
+
+control flow structures
+
+1. case
+
+case {1, 2, 3} do
+  {1, x, 3} ->
+    "match, bind x to 2"
+  _ ->
+    "match forever"
+end
+
+匹配已有变量可以用 pin 操作符 ^x
+
+case 分支(leg, case clause) 可以用过 guard 添加条件
+
+  when x > 0
+
+  guard 中的错误不会 leak 出来，只会导致 guard fail 即不满足条件
+
+没有匹配的分支会报错
+
+匿名函数允许有 多个分支和使用 guard
+
+  但多个分支要求参数个数必须一致
+
+2. cond
+
+需要匹配不同值时使用
+
+cond do
+  2 + 2 == 5 ->
+    "not true"
+  2 * 2 == 3 ->
+    "not true again"
+  1 + 1 == 2 ->
+    "true"
+end
+
+类似 imperative languages 中的 else if 语句
+
+如果所有条件都返回 nil 或 false 会抛出错误 CondClauseError
+
+最好总是提供 true -> "always true"
+
+nil false 外的值都是 true
+
+3. if 和 unless
+
+if/2 unless/2 是 宏 macro
+
+都支持 else block
+
+if unless else 属于 Kernel 模块，这个模块定义的宏和函数都被自动导入
+
+4. do/end 语法块 blocks
+
+if true do
+  1+2
+end
+
+可以写成
+
+if true, do: 1+2
+
+if false
+  :this
+else
+  :that
+end
+
+写成
+
+if false, do: :this, else: :that
+  常规的语法 每个参数之间用 逗号 隔开
+
+if %false% %do: :this% %else: :that%
+
+if true do
+  a = 1+2
+  a + 10
+end
+
+是
+
+if true, do: (
+  a = 1+2
+  b + 10
+)
+
+的简化
+
+do/end 总是 bound to the outermost function call
+
+  当 if condition 前有函数等时要注意
+
+
+# 6 Binaries, strings, and charlists
+
+# 7 Keyword lists and maps
+
+# 8 Modules and Functions
+
+# 9 Recursion
+
+# 10 Enumerables and stream
+
+# 11 Process
+
+
+
+
+
+
+
+
+=========
+
+iex
+
+command
+  i Prints information about the data type of any given term
+  h Helper
+  v Returns the value of the nth expression in the history
+
+http://elixirstatus.com/
+https://elixirweekly.net/
+
+https://elixirforum.com
+https://elixirforum.com/t/phoenix-1-5-0-rc-0-released/30693
+elixirmix
+
+sidecar pattern
+
+Code Gist
+  liveview
+
+orm or sql builder in Elixir/Erlang
+
+algorithm
+  c
+  java
+  python
+  elixir / erlang
+  Haskell
+
+Graph Theory algorithms
+https://www.youtube.com/watch?v=09_LlHjoEiY
+
+https://www.tutorialspoint.com/data_structures_algorithms/index.htm
+
+MIT 6.006 算法导论
+https://www.youtube.com/watch?v=OQ5jsbhAv_M
+
+Advanced Algorithms (COMPSCI 224), Lecture 1
+https://www.youtube.com/watch?v=0JUN9aDxVmI
+
+https://www.tutorialspoint.com/design_and_analysis_of_algorithms/index.htm
+
+https://www.tutorialspoint.com/data_structures_algorithms/index.htm
+
+剑指offer
+编程之美
