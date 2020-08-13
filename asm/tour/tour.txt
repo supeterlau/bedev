@@ -55,6 +55,28 @@ https://www.tutorialspoint.com/assembly_programming/assembly_memory_segments.htm
 
 section 关键字可以替换为 segment 
 
+不影响结果
+
+  segmented memeory 模型，将系统内存分组为在 segement registers 中保存的指针指向的多个 groups
+  每个段都用于存储特殊类型数据
+  例如
+    有用于保存 指令代码
+    有用于保存 数据项
+    有用于保存 程序栈
+
+  Data segment
+    以 .data .bss 为代表
+    .data 保存程序使用的数据，声明后无法扩展 remain static throughout the program
+    .bss  also a static memory: buffer for data to be declared later
+      buffer memory is zero-filled 预置为 0
+
+  Code segment 
+    .text 保存代码 fixed area 
+
+  Stack
+    保存传递给函数的数据值和程序内 procedures (函数)
+
+# 3. 
 
 
 
