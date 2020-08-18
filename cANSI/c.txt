@@ -1,0 +1,309 @@
+https://fresh2refresh.com/c-programming
+
+1. Intro
+
+https://fresh2refresh.com/c-programming/c-language-history/
+
+structure oriented programming language, developed by Dennis Ritchie
+
+derived from 'B' (Basic Combined Programming Lanugage - BCPL)
+
+invented for implementing UNIX operating system
+
+标准
+
+C89/C90
+
+C99: 引入新特性 advanced data types
+
+C11:
+
+2. basic
+
+https://fresh2refresh.com/c-programming/c-basic-program/
+
+/*
+    Documentation section
+    Author: Peter Lau
+    Date: 08/17/2020
+*/
+
+#include <stdio.h> // Link section
+
+int total = 0;     // Global declaration, definition section
+
+int sum(int, int); // Function declaration section
+
+int main()         // Main function section
+{
+
+}
+
+int sum(int a, int b) // User defined functions section
+{
+
+}
+
+3. printf 和 scanf
+
+printf 可以 print character string float integer octal hexadecimal
+
+%d integer
+%c charactor
+%f float
+%s string
+%lf double float
+%x hexadecimal variable
+
+%04x (0 补全宽度 4)
+
+%5.5f 小数部分宽度 5
+
+println
+
+scanf 不能接收空格会识别为输入结束
+
+getchar()是stdio.h中的库函数，它的作用是从stdin流中读入一个字符
+
+getchar有一个int型的返回值.当程序调用getchar时.程序就等着用户按键.用户输入的字符被存放在键盘缓冲区中.直到用户按回车为止(回车字符也放在缓冲区中).当用户键入回车之后,getchar才开始从stdio流中每次读入一个字符.
+
+getchar函数的返回值是用户输入的第一个字符的ASCII码,如出错返回-1,且将用户输入的字符回显到屏幕.如用户在按回车之前输入了不止一个字符,其他字符会保留在键盘缓存区中,等待后续getchar调用读取.也就是说,后续的getchar调用不会等待用户按键,而直接读取缓冲区中的字符,直到缓冲区中的字符读完为后,才等待用户按键.
+
+ getchar()是在输入缓冲区顺序读入一个字符(包括空格、回车和Tab)getchar()使用不方便,解决方法： （1）使用下面的语句清除回车：while(getchar()!='\n'); （2）用getche()或getch()代替getchar()，其作用是从键盘读入一个字符（不用按回车），注意要包含头文件<conio.h>
+
+putchar()
+
+https://blog.csdn.net/Cuixinyang19_/article/details/83619958
+
+4. Data Types
+
+Basic: int char float double (unsigned signed long short)
+
+Enumeration: enum
+
+Derived: pointer aray structure union
+
+Void: void
+
+sizeof 函数 <limits.h>
+
+类型修饰符
+  short
+  long
+  signed
+  unsigned
+  long long
+
+Enumeration data type 包含 named integer constants as a list
+
+  默认从 0 开始，默认每个值加 1
+
+  可以通过 #define preprocessor 实现
+
+    #define Jan 20;
+    #define Feb 21;
+
+5. Tokens 和 keywords
+
+six types
+
+Keywords
+Identifiers
+Constants
+Strings
+Special symbols () {}
+Operators
+
+Keywords
+
+32 个
+
+auto
+register
+typedef
+default
+goto
+volatile
+extern
+static
+
+6. 常量
+
+const char XYZ = 'x';
+
+7. variable
+
+首字母 letter or underscore [a-zA-Z_]
+
+case sensitive
+
+首字母外 [a-zA-Z_0-9]
+
+使用前要 declared
+
+内存在 definition 时分配
+
+Local Variable
+Global Variable
+Enviroment Variable
+
+#include <stdlib.h> setenv() getenv() putenv()
+
+8. operators expressions
+
+arithmetic + - * /
+
+assignment +=
+
+relational > < >= <= == !=
+
+logical
+
+  &&
+  ||
+  !
+
+bit wise
+
+conditional xxx ? xxx :
+
+increment/decrement ++ --
+
+special
+
+  &
+  *
+  sizeof()
+
+9. decision control statement
+
+if (condition)
+{
+
+}
+
+if (condition)
+{
+
+} else
+{
+
+}
+
+if ()
+  ...
+else if ()
+  ...
+else
+  ...
+
+10. case control statement
+
+switch (expression)
+{
+  case label1: statements;
+  break;
+  case label2: statements;
+  break;
+  default: statements;
+  break;
+}
+
+11. loop control statement
+
+for(...; ...; ...)
+{
+
+}
+
+while(condition)
+{
+
+}
+
+12. type qualifiers
+
+两种 const volatile
+
+const: 初始化后无法修改
+
+const data_type variable_name;
+
+const data_type *variable_name;
+
+volatile
+
+  不需要明确赋值，可能改变或不变的 variable
+
+  例如 store system time
+
+13. storage class specifiers
+
+告诉编译器哪里存储变量，变量初始值是多少，变量的 life time 生命周期
+
+4 种 storage class specifiers
+
+auto
+  储存位置: CPU 缓存
+  初始值: Garbage value
+  Scope: local
+  LifeTime: 仅在函数中
+
+extern
+  储存位置: CPU 缓存
+  初始值:  zero
+  Scope: global
+  LifeTime: 直到 main 函数结尾可以在任何位置 definition
+
+static
+  储存位置: CPU 缓存
+  初始值:  zero
+  Scope: local
+  LifeTime: 在函数调用之间保持变量
+
+register
+  储存位置: 寄存器缓存
+  初始值:  Garbage value
+  Scope: local
+  LifeTime: 在函数内
+
+storage_specifier data_type variable_name;
+
+任意 local variables 默认是 auto variables
+
+extern 作用域是整个程序，等同于全局变量
+
+register 变量是本地变量，但是存储在 register memory，auto 变量存储在 CPU memory
+
+14. array in c
+
+15. string
+
+16. pointer
+
+17. function
+
+18. arithmetic functions
+
+19. int char validation functions
+
+20. buffer manpulation functions
+
+21. time related functions
+
+22. dynamic memory allocation
+
+23. type casting functions
+
+24. miscellaneous functions
+
+25. structure in c
+
+26. typedef
+
+27. union
+
+28. preprocessor directives
+
+29. file handling
+
