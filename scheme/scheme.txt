@@ -1,0 +1,8 @@
+racket
+  https://docs.racket-lang.org/guide/cmdline-tools.html
+  https://docs.racket-lang.org/sicp-manual/SICP_Language.html
+  
+Chez Scheme
+
+gerbil https://github.com/vyzo/gerbil
+
