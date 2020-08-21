@@ -1,3 +1,20 @@
+https://erlang.org/doc/index.html
+
+Programming Examples
+  https://erlang.org/doc/programming_examples/users_guide.html
+
+Erlang Reference Manual
+  https://erlang.org/doc/reference_manual/users_guide.html
+
+OTP Design Principles
+  https://erlang.org/doc/design_principles/users_guide.html
+
+System Principles
+  https://erlang.org/doc/system_principles/users_guide.html
+
+Interoperability Tutorial User's Guide
+  https://erlang.org/doc/tutorial/users_guide.html
+
 URL: https://erlang.org/doc/getting_started/seq_prog.html
 
 1 Introduction
@@ -13,7 +30,7 @@ URL: https://erlang.org/doc/getting_started/seq_prog.html
     Erlang libraries (for example, file handling).
     OTP and (in consequence) the Mnesia database.
     Hash tables for Erlang terms (ETS).
-    Changing code in running systems.
+    Changing code in running systems. 热更新
 
 Everything in this section is true, but only part of the truth
 
@@ -61,6 +78,8 @@ halt().
 
 2.2 Modules and Functions
 
+模块与函数
+
 -module(tut1). 声明一个模块
 -export([fac/1]). 导出可用函数
 
@@ -88,7 +107,9 @@ N X Y 是 variables
 
 2.3 Atoms
 
-原子 小写字母开头 centimeter inch
+原子 小写字母开头
+
+centimeter inch logged_off
 
 不像变量有值，原子只有名字
 
@@ -295,7 +316,7 @@ atom_to_list(hello).
 list_to_atom("goodbye").
 integer_to_list(22).
 
-这些很难或完全不可能在 Erlang 中实现。
+这些函数很难或完全不可能在 Erlang 中实现。
 
 2.14 高级函数 Higher-Order Functions (Funs)
 
@@ -323,7 +344,9 @@ Erlang 可以让你很容易创建并行 parallel 线程，并允许它们之间
 
 Erlang 内置函数 spawn 用来创建一个新 process
 
-spawn(Module, Exported_Function, List of Arguments)
+spawn(Module, Exported_Function, List of Arguments).
+
+spawn(Module_Name, Function_Name, [Argument1, Argument2, ...]).
 
 spawn 中的函数必须被导出
 
@@ -419,9 +442,272 @@ messager. messager 允许用户从不同节点登录并互相发送简单消息�
 
 - 只有消息传递逻辑，无 nice graphical user interface
 
-- 这种问题可以通过 OTP 更简单地解决
+- 这种问题可以通过 OTP 更简单地解决。OTP 中还提供了即时更新代码功能。
+
+- 第一个程序里未处理 nodes 消失的异常。会在后续版本中修复。
+
+messenger.erl
+
+  logon(Name)
+
+  logoff()
+
+  message(ToName, Message)
+
+Erlang Nodes 中有一个运行 server 维护 logged on users 数据，这个 server 注册为 "messenger" "mess_server'"
+
+运行 client process 的 nodes 注册为 mess_client
+
+client 和 server 间协议
+
+To server:
+  {ClientPid, logon, UserName}
+
+Reply:
+  {messenger, stop, user_exists_at_other_node} : stops client
+  {messenger, logged_on} : logon was successful
+
+To server:
+  {ClientPid, logoff}
+
+Reply:
+  {messager, logged_off}
+
+To server:
+  {ClientPid, logoff}
+
+Reply:
+  no reply
+
+To server:
+  {ClientPid, message_to, ToName, Message} : send a message
+Reply:
+  {messenger, stop, you_are_not_looged_on} : stops the client
+  {messenger, receiver_not_found} : no user with the ToName logged on
+  {messenger, sent} : Message has been sent (no guarantee)
+
+To client:
+  {message_from, Name, Message}
+
+Client Commands
+
+Started: messenger:client(Server_Node, Name)
+
+To client: logoff
+To client: {message_to, ToName, Message}
+
+配置: server_node() 函数返回 messenger server 运行 node 名字
+
+编译生成 *.beam 文件
+
+  erlc messenger.erl (messenger.beam)
+
+Four Erlang nodes are started up: messenger@super, c1@bilbo, c2@kosken, c3@gollum.
+
+单机的话 hostname 都为 localhost
+
+erl -sname messenger@localhost
+
+代码中的新概念:
+
+server_transfer/4 和 server_transfer/5 是两个不同的函数
+
+server(User_List) 是一个递归函数，形成了 loop。Erlang compiler 会优化代码，so that this really is a sort of loop and not a proper function call。尾递归优化。但是要求: 最后函数调用后没有代码。
+
+否则，如果有代码的话。compiler 会预期函数调用返回值，进行正常函数调用。结果会 getting bigger and bigger for every loop。
+
+lists:keymember(Key, Position, Lists) 遍历 list of tuple 查找每个 tuple Position 位置的元素是否和 Key 一样。第一个元素是 position 1.如果找到，就返回 true，找不到返回 false。
+
+lists:keydelete() 类似，但是会删除第一个找到的 tuple 返回剩余 list
+
+lists:keysearch() 类似 lists:keymember 返回 {value, Tuple_Found} 或 false
+
+process 在执行完代码就会退出，即最后的函数返回值，也没有调用其他函数。另一个方法是调用 exit/1。exit 的参数有自己的特殊函数 exit(normal) 是正常退出，类似 process 正常执行完代码。
+
+BIF whereis 查找是否有对应名字的 process。找到的话返回 pid 未找到返回 undefined。
+
+4. Robustness
+
+上一章最后的代码有一些问题
+
+- client 挂掉而没有发出 logoff 信号，server 会仍然认为用户处于登录状态。此时，用户就无法再次登录了，因为服务端以为用户已经登录。
+- 如果服务端挂掉，会导致 client 一直等待 await_result 函数
+
+4.1 Time-outs
+
+ping-pong 例子中，除了发送 finished 原子 作为结束信息，还可以给 pong 设置接收 ping 回复信息的超时时间。
+
+receive
+  {ping, Ping_PID} ->
+    io:format("Pong received ping~n", []),
+    Ping_PID ! pong,
+    pong()
+  after 5000 ->
+    io:format("Pong timed out~n", [])
+end.
+
+4.2 Error Handling
+
+Erlang process 如何停止的，或 exit 的。
+
+执行 exit(normal) 的 process 或 仅仅执行完代码的 process 是 normal exit
+
+遇到 runtime error (除以 0，匹配失败，调用不存在的函数 等) exits with an error。是 abnormal exit。以及执行 exit(Reason) 的 process 也是 abnormal exit。
+
+Erlang 进程间可以设置 link。如果一个 process 调用 link(Other_Pid) 它就和 Other_Pid 建立起双向 link。当一个进程终止时，它会向所有关联的 process 发送信号。
+
+信号包含 Pid 和退出信息
+
+接受到 normal exit 信号的 process 默认行为是忽略信号。
+
+对于其他两种情况 abnormal exit:
+
+  bypass all messages to the receiving process
+
+  杀死 接收进程
+
+  向关联进程传播同样的 error signal
+
+这样，我们可以将所有进程以一种事务方式关联。其中一个 abnormally 退出时，事务中的全部进程都被终止。
+
+为了在创建时就 link 到其他 process，有一个 BIF 是 spawn_link
+
+可以修改默认杀死关联进程的行为。
+
+使用 process_flag(trap_exit, true).
+
+https://erlang.org/doc/man/erlang.html#process_flag-2
+
+但通常不这样做，而是在 OTP supervisory programs 中完成。
+
+使用新知识让 messenger.erl 更 more robust
 
 
+如果 server 所在 node go down，会自动发送 {'EXIT', MessengerPID, noconnection} 到关联进程，并将这些进程关闭。 (系统自动生成)
+
+client 在 link 前就终止的情况也被考虑在内。link一个不存在的 process 会产生错误 {'EXIT', From, noproc} 自动产生的错误。
+
+5. Records 和 Macros
+
+大型程序，总是由一组有定义良好接口的文件组合而成的。
+
+5.1 分解例子到多个文件
+
+mess_config.hrl
+
+mess_interface.hrl
+
+user_interface.erl
+
+mess_client.erl
+
+mess_server.erl
+
+使用 record 记录 message between (shell client server)
+
+5.2 头文件
+
+使用 -include("Header_File_Name"). 引入头文件
+
+头文件可以有任意 Erlang code 大多数是 record 和 macro 定义
+
+5.3 Records
+
+定义如下
+
+-record(name_of_record, {field_name1, field_name2, ...}).
+
+erl 中 record 有关命令
+
+rd 在 shell 中定义 record
+
+因为 record definitions are only available at compile time, not at runtime
+
+无法在 erl 中直接定义 record。
+
+可以先在文件中定义，载入到 erl 中。或者用 rd
+
+rl() rl(RecordName) 列出 record 定义
+
+rp() 显示 record
+
+rd(message_to, {to_name, message}).
+
+M1 = #message_to{to_name=james,message="Hello"}.
+
+rp(M1).
+
+rl(message_to).
+
+创建 record
+
+#person{phone=[0,8,2,3,4,3,1,2], name="Robert"}.
+
+未提供值的会使用默认值。
+
+#person{name = "Jakob", _ = '_'}. (From Erlang 5.1/OTP R8B)
+
+_ 表示为其他 field 都赋值为 '_'
+
+获取 field: M1#message_to.to_name.
+
+更新 field: P2 = P1#person{name="Robert"}.
+
+判断是否为 某个类型 record
+
+when is_record(P, person)
+
+模式匹配
+
+#person{name=Name} = P3, Name.
+
+实际是 #person{name=Name} = P3.
+然后显示 Name.
+
+合一起就是 #person{name=Name} = P3, Name.
+
+嵌套 record
+
+-record(name, {first = "Robert", last = "Ericsson"}).
+-record(person, {name = #name{}, phone}).
+
+https://erlang.org/doc/man/shell.html
+
+5.4 Macros
+
+-define(server_node, messenger@localhost).
+
+-include("mess_config.hrl"). 引入 macros
+
+然后每一个 ?server_node 都被替换为 messenger@localhost
+
+也用于 spawn 中 spawn(?MODULE, func_name, [[]]).
+
+?MODULE is always replaced by the name of the current module
+
+In the messenger example, no assumptions have been made about what the message being sent is. It can be any valid Erlang term.
+
+
+LYSE: https://learnyousomeerlang.com/introduction#about-this-tutorial
+
+
+
+# misc
+
+erl -man lists
+No manual entry for lists
+
+run command
+  os:cmd('ifconfig | grep 192').
+
+io:format
+  ~p
+    Test = [1,2,{1,2}].
+    io:format("Test: ~p~n", [Test]).
+
+    Test: [1,2,{1,2}]
+  ~w
+  ~n 换行
 
 Reference Manual
 
@@ -456,7 +742,10 @@ comment %%
 References:
 
 https://learnyousomeerlang.com/the-hitchhikers-guide-to-concurrency
+
 https://github.com/clojurians-org/haskell-example/blob/master/README.org
+
+https://www.theerlangelist.com/article/spawn_or_not
 
 Packages:
 
