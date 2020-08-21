@@ -1345,6 +1345,89 @@ Next: structs / protocols / exception handling / sigils / comprehensions
 
 # 15. Structs
 
+map = %{a: 1, b: 2}
+
+map[:a]
+
+%{map | a: 3} => %{a: 3, b: 2}
+
+structs 是扩展 map 的数据结构，提供 compile-time 检查和默认值。
+
+1. structs 定义
+
+要声明 struct 需要使用 defstruct
+
+defstruct 参数为 keyword list 因此获取 value 可以用 . 操作符 john.name
+
+struct 的名字为所在模块的名字
+
+如果在另一个文件内定义 struct 在 iex 中需要通过
+
+c("file.ex") 或 c("file.exs") 引入
+
+defmodule User do
+  defstruct name: "John", age: 27
+end
+
+compile-time guarantees 指的是只有通过 defstruct 定义的 fileds / keys 才允许出现在 struct 中
+
+%User{oops: :field}
+
+2. 获取 更新 structs
+
+使用 key 为 atom 的 map 中 dot 操作符
+
+john = %User{}
+john.age
+
+更新使用 map 语法
+
+%{ john | name: "James" }
+
+不能给 struct 添加新 key。这些 maps 可以共享 key structure in memory。
+
+Struct 可以用于 pattern matching。
+
+%User{name: name} = john
+name => "John"
+
+3. structs 底层实现是 maps
+
+structs 底层是 有固定 fields 的 maps
+
+structs 中有一个特殊的 fields __struct__，包含 struct 的 name
+
+is_map(john) => true
+
+john.__struct__
+
+所谓 bare maps，是说 maps 中实现的 protocols 都不能在 struct 中使用
+
+例如，无法遍历 struct 或 通过 key 获取 value
+
+但是由于 struct 还是 map，可以使用 map 自己的方法
+
+jane = Map.put(%User{}, :name, "Jane")
+
+Map.merge
+
+Map.keys
+
+struct 自己的 protocols 提供重要特性 data polymorphism 数据多态。
+
+4. structs 默认值和必需 key
+
+如果你不指定默认值，默认值为 nil
+
+defstruct [:name, age: 27]
+
+混合使用不指定默认值参数和指定默认值参数时，要将不指定默认值参数放前边
+
+顺序错误会引发 SyntaxError
+
+@enforce_keys [:make] 指定必需有值的 field
+
+
 # 16. Protocols
 
 # 17. Comprehensions
