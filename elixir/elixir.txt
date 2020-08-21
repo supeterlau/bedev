@@ -472,25 +472,924 @@ do/end 总是 bound to the outermost function call
 
   当 if condition 前有函数等时要注意
 
-
 # 6 Binaries, strings, and charlists
+
+string = "hello"
+is_binary(string)
+
+1. Unicode 和 CodePoints 码点
+
+Unicode 给我们已知的字符进行了编码。每个字符被分配一个唯一数值索引
+
+?a ?字符 可以获得 code point
+
+大部分 Unicode code chart 用 十六进制表示 code point
+
+a => 97 => 0061 => elixir 中表示 "\u0061"
+
+"\u0061" === "a"
+
+2. UTF-9 和 编码
+
+code point 是 what we store, 计算机里存储的东西
+
+encoding 是 how we store it, 计算机存储的方式
+
+  一种机制，将 code point 数字转为 bytes
+
+Elixir 使用 UTF-8，即 codde points 被编码成一系列 8-bit 的 bytes
+
+UTF-8 是变长编码，使用 1 - 4 字节存储每个 codepoint
+
+除了定义字符， UTF-8 还提供了 graphemes notion，即将多个字符显示为一个。
+
+é 可以表示为一个字符，也可以表示为两个字符的组合
+
+string = "hełło"
+
+String.length 和 byte_size 不同
+
+第一个计算 graphemes 第二个计算 raw bytes
+
+Elixir 中查看 inner binary 的技巧
+
+"aaa" <> <<0>>
+
+或者用 IO.inspect("aaa", binaries: :as_binaries)
+
+3. Bitstrings
+
+bitstring 是 Elixir 的基础类型 <<1,2,3>>
+
+bitstring 是内存中连续的比特
+
+默认情况使用 8bits 1byte 来存储 bitstring 中的每个数字，但是可以通过
+
+::n ::size(n) 来人为指定
+
+<<3::4>> <<3::size(4)>>
+
+十进制 5
+二进制形式是 0101
+
+超出可存储范围的数值会被截取掉
+
+  <<1::8>> === <<257::8>>
+
+4. Binaries
+
+binary 基于 bitstring, bitstring 中 bit 数量能被 8 整除的叫 binary
+
+every binary is a bitstring
+
+not every bitstring is a binary
+
+is_bitstring/1 is_binary/1
+
+binary / bitstring 中可以使用 pattern match 模式匹配
+
+<<0, 1, x>> = <<0, 1, 2>>
+
+不使用 0:: 时默认每个实体匹配 1 byte 8 bits
+
+匹配未知长度的 binary 可以用 ::binary
+
+<<0,1,x::binary>>=<<0,1,2,3>>
+
+:: 后边的是 modifier 其他 modifier 有
+
+::binary-size(n) 匹配 n bytes 的 binary
+
+string 是 UTF-9 编码的 binary 即 << >> 可能是 string
+
+every string is a binary
+
+not every binary is a valid string
+
+String.valid?/1 判断是否为 String
+
+因此字符串连接符 <> 实际为 binary 连接符
+
+string 中也可以用模式匹配
+
+<<head, rest::binary>> = 'usa'
+
+需要注意 string 的模式匹配是针对 bytes 的而不是 chars
+
+一个 char 可能占用多个 bytes
+
+当在 string 中用模式匹配是，要加上 utf8 modifier
+
+<<x::utf8, rest:binary>> = "über"
+
+5. Charlists
+
+charlists 是 intergers 列表，每个 integers 都是合法 code points
+
+'hello' charlists
+
+is_list 'hello'
+
+List.first 'hello'
+
+iex 默认输出 0-127 code point 的字符形式，超出范围的只输出 整数
+
+改变这种行为需要用
+
+IO.inspect('hello', charlists: :as_lists)
+
+charlist to string
+
+to_string/1
+
+to_charlist/1
+
+这两个函数也用于 integer atom 等
+
+charlist 是 list 因此连接符号是 ++
 
 # 7 Keyword lists and maps
 
+两种主要的 associative data structure: keyword lists 和 maps
+
+1. Keyword lists
+
+a list fo 2-item tuples 并且第一个元素是 atom 被成为 keyword list
+
+atom 是 key
+
+list = [{:a, 1}, {:b, 2}]
+
+简写为 [a: 1, b: 2]
+
+keyword list 也是 list 支持所有 list 操作
+
+list ++ [c: 3]
+
+list[:a] 会返回第一个 a 对应的值
+
+keyword lists 特性
+
+  keys 是 atoms
+  有序的，开发者指定
+  可以有多个同样的key
+
+if false, do: :this, else: :that
+
+if( false, [do: :this, else: :that] )
+
+if( false, [{:do, :this}, {:else, :that}] )
+
+由此可见，如果 keyword list 是 函数/宏 的最后一个参数，则可以省略 [] 中括号
+
+keyword lists 中可以用 模式匹配，但实际中很少使用。因为必须要求数量和顺序一致。
+
+Elixir 提供 keyword 模块来操作 keyword lists
+
+keyword lists 是 list，因此找 key ，计算长度等是线性操作。
+
+在 Elixir 中常用于 传递 optional 值
+
+如果需要存储大量值，并要求 key value 最多一一对应，应该使用 map
+
+guarantee one-key associates with at maximum one-value
+
+2. Maps
+
+store key-value
+
+map = %{:a => 1, 2 => :b}
+
+  允许任何值作为 key
+
+  key 是无序的
+
+very useful with pattern matching 总是可以匹配到 subset
+
+%{} 匹配任意 map
+
+%{:a => a} = %{:a => 1, 2 => :b}
+
+变量可以用于获取 匹配(pin) 添加 key
+
+n = 1
+map[n]
+map = %{n => :one}
+%{^n => :one} = %{1=>:one,2=>:two,3=>:three}
+
+Map 模块提供方便操作 map 的函数
+
+Map.get(map, :a)
+
+Map.put(map, :c, 3)
+
+Map.to_list(map)
+
+更新 value:
+
+%{ map | 2 => "two" }
+
+不能更新不存在的 key
+
+当key都是 atom 时，可以简写为 map = %{:a=>1,:b=>2}
+
+map == %{a: 1, b: 2}
+
+同时有新方法获取 value
+
+map.a == 1
+
+map.c (访问不存在的 key: KeyError)
+
+尽量使用 map.field 语法和模式匹配来替代 Map 模块的方法
+
+这种写法叫做 assertive style of programming (https://dashbit.co/blog/writing-assertive-code-with-elixir)
+
+3. Nested data structures
+
+开发中可能会用到 maps inside maps, keywords list inside maps 等。 Elixir 中有类似 put_in/2 update_in/2 等其他 macros 提供类似 imperative language 的函数，同时保证 immutable。
+
+users = [
+  john: %{name: "John", age: 27, languages: ["Erlang", "Ruby", "Elixir"]},
+  mary: %{name: "Mary", age: 29, languages: ["Elixir", "F#", "Clojure"]}
+]
+
+users[:john].age
+
+users = put_in users[:john].age, 31
+
+update_in/2 macro 类似 put_in 但是允许传入函数控制数据变化
+
+users = update_in users[:mary].languages, fn languages -> List.delete(languages, "Clojure") end
+
+其他还有
+
+get_and_update_in/2 一次完成获取数据，更新数据
+
+put_in/3
+
+update_in/3
+
+get_and_update_in/3 允许动态访问数据结构
+
 # 8 Modules and Functions
+
+多个函数可以被打包为模块 modules。我们已经使用过很多种模块，String
+
+String.length("Erlang")
+
+通常我们将模块写入文件 math.ex
+
+使用 elixirc 编译到字节码文件 Elixir.Math.beam
+
+在同样目录中启动 iex
+
+用 Math.sum(1,2) 调用模块中函数
+
+Elixir 项目习惯
+
+  ebin 包含编译后字节码
+  lib  包含 elixir 代码 .ex 文件
+  test 包含测试 .exs 文件
+
+实际项目中使用 mix build 工具
+
+脚本模式 scripted mode，不会产生字节码
+
+2. Scripted mode
+
+Elixir 对待 .ex 和 .exs 文件流程大致相同，只是 .exs 文件不会被编译。但执行中，它们都被编译到内存中，只有 .ex 文件会保存字节码到硬盘 .beam 文件。
+
+elixir math.exs
+
+3. Named functions
+
+在模块中，我们可以用 def/2 或 defp/2 定义公共或私有函数。
+
+def/2 定义的函数可以在其他模块中调用，defp/2 定义的函数只能在模块内调用
+
+函数定义支持 guards 和 多语句。当函数有多语句时，Elixir 会尝试每个语句直到找到匹配的函数签名 name/ariry。
+
+zero? 这种形式表示函数返回 布尔值
+
+类似 if 结构， named functions 支持 do: 和 do/end 语法
+
+def zero?(0) do
+  true
+end
+
+可以写做
+
+def zero?(0), do: true
+
+do: 单行
+
+do/end 多行
+
+4. 函数捕获 Function capturing
+
+name/arity 可以用来指代特定函数，也可以用于表示函数类型 function type
+
+Math.zero?(0)
+
+fun = &Math.zero?/1
+
+is_function(fun)
+
+调用匿名函数 fun.(0)
+
+(Erlang:
+
+Fn = fun(X) -> X + 1 end.
+
+函数调用 Fn(1).)
+
+Elixir 中区分了 anonymous 函数和 named 函数，前者必须用 . 调用。
+
+fun = fn x -> x + 1 end
+
+shortcut:
+
+fun = &(&1 + 1)
+
+fun2 = &"Good #{&1}"
+
+fun2.("morning")
+
+&Module.function() 可以 capture 模块中的函数
+
+fun = &List.flattern(&1, &2)
+
+5. 默认参数 Default arguments
+
+Named functions 支持默认参数
+
+def join(a, b, sep \\ " ") do
+  a <> sep <> b
+end
+
+任意表达式都可以作为 默认参数，但在定义函数时不会被求值。
+
+函数调用是才求值
+
+如果有默认参数的函数，有多条语句 multiple clauses。要求创建一个 函数头
+
+def join(, b \\ nil, sep \\ " ")
+
+使用默认参数要注意避免多语句之间互相覆盖
 
 # 9 Recursion
 
+1. 用递归实现循环 Loops through recursion
+
+由于 immutability Elixir 和任何 functional programming language 中 loops 和 imperative languages 不同。 类似 C 的语言中循环是
+
+for(i=0; i< sizeof(array);i++) {
+  array[i] = array[i] * 2;
+}
+
+Elixir 中依赖 recursion 实现循环
+
+递归调用函数，直到达成某个条件停止递归
+
+No data is mutated in this process
+
+持续递归调用直到满足 base case
+
+2. reduce 和 map
+
+利用递归求和
+
+[], accu 作为 base case, 当list中为空时，求得的值保存在 accu 中
+
+递归和尾调用优化是 Elixir 重要部分，常用来实现 loop
+
+Enum 模块已经提供了很多方便的方法
+
+Enum.reduce([1,2,3], 0, fn(x, acc) -> x + acc end)
+
+Enum.map([1,2,3], fn(x) -> x * 2 end)
+
+简写为
+
+Enum.reduce([1,2,3], 0, &+/2)
+
+Enum.map([1,2,3], &(&1 * 2))
+
 # 10 Enumerables and stream
+
+Elixir 中有 enumerables 概念，并且提供了 Enum 模块来处理它们
+
+Enum.map(%{1=>2, 3=>4}, fn {k, v} -> k * v end)
+
+模块中有大量函数用于 transform sort group filter 和 retrieve items from enumerables
+
+也提供了 ranges
+
+Enum.map(1..3, fn x -> x * 2 end)
+
+不过这些函数都限于 枚举 数据结构中的值。如果要添加，更新元素，需要用特定数据结构模块提供的函数。
+
+如 List.insert_at/3
+
+Enum 模块的函数是 多态 的 polymorphic。因为它们可以用于多种数据结构，只需要这种结构实现 Enumerable 协议。（协议，接口）
+
+2. Eager vs Lazy
+
+Enum 模块中函数都是 eager 函数 （即时求值）。很多函数要求传入 enumerable 返回 list
+
+当用 Enum 中函数进行多步计算时，每次函数调用都会产生中间 list
+
+如
+
+1..100_000 |> Enum.map(&(&1 * 3)) |> Enum.filter(add?) |> Enum.sum
+
+3. pipe 操作符 |>
+
+|> 符号，将 left side 表达式的输出作为 right side 函数的第一个参数
+
+可以 highlight 被转换的数据
+
+4. Streams
+
+Elixir 提供 Stream 模块作为 Enum 的 lazy 操作备选。
+
+1..100_000 |> Stream.map(&(&1 * 3)) |> Stream.filter(odd?) |> Enum.sum
+
+Streams are lazy, composable enumerables
+
+streams 构建一系列计算，只有将 stream 传入 Enum 模块函数是才被调用。
+
+Stream 适用于 large, possibly infinite, collections
+
+Stream 模块函数，参数为 任意 enumerable 返回值为 stream
+
+也有创建 stream 的函数。如 Stream.cycle/1 根据参数创建无限循环 stream
+
+Stream.unfold
+
+def unfold(next_acc, next_fun)
+
+@spec unfold(acc(), (acc() -> {element(), acc()} | nil)) ::
+        Enumerable.t()
+
+Emits a sequence of values for the given accumulator.
+
+Successive values are generated by calling next_fun with the previous
+accumulator and it must return a tuple with the current value and next
+accumulator. The enumeration finishes if it returns nil.
+
+Stream.resource/3 用于资源封装，保证资源正常打开和关闭。
+
+Fiel.stream!/1 是基于 Stream.resource 的
+
+stream = File.stream!("path/to/file")
+
+Enum.take(stream, 10) fetch 前 10 行
+
+streams 可以用于处理大文件和网络资源
+
+一般优先使用 Enum 函数，当需要 laziness 操作时使用 Stream
 
 # 11 Process
 
+Elixir 中，代码都是在 processes 中运行的。Processes 之间互相隔离 isolated，并发运行，并通过 message passing 通信。
 
+Processes 仅仅是 Elixir concurrency 的基础，但它们也提供了 build distributed 和 fault-tolerant programs 的方法。
 
+Elixir Processes 不是操作系统进程。Elixir 中的 Processes 很 lightweight，甚至比有些语言中的线程更轻量。
 
+因此很容易同时运行，tens or even hundreds of thousands of processes
 
+1. spawn
 
+启动新 processes 方法是用自动导入的 spawn/1 函数
 
+spawn fn -> 1 + 2 end
+
+spawn 的参数是在新建 process 中运行的函数
+
+spawn 的返回值是 PID (process identifier)
+
+被启动的进程会运行函数并在运行完毕后退出
+
+Process.alive?(pid) 查看进程是否退出
+
+self() 获取当前所在 process pid
+
+2. send 和 receive
+
+用 send/2 发送 messages 用 receive/1 接收 messages
+
+当 message 被发送到 process，它被存放在 process mailbox。
+
+receive/1 遍历当前 process mailbox 寻找能匹配给定模式的 message。
+
+receive/1 支持 guards (when is_integer?(x)) 和 多语句。
+
+发消息的 process 不会在 send/2 处阻塞，它将消息放在接收方 mailbox 中，就继续运行其他代码。process 可以给自己发送 messages。
+
+mailbox 没有消息时，当前 process 会等待匹配消息到达。可以指定等待超时时间。
+
+receive do
+  {:hello, msg} -> msg
+after
+  1_000 -> "time out"
+end
+
+超时可以设置为 0。。。
+
+inspect/1 可以将数据结构内部表示形式转为 string
+
+flush/0 清空并打印 mailbox 中全部信息
+
+3. Links
+
+大多数时候我们以 linked processes 形式启动 process。没有 link 的 process 中出错时，process 打印 log，父进程继续运行。进程间是隔离，互不影响的。如果想让一个进程的错误传播到另一个进程，就需要将它们关联 link 起来。
+
+spawn_link fn -> raise "oops" end
+
+parent process 会接收到另一个进程的 EXIT signal
+
+https://hexdocs.pm/elixir/Process.html
+
+手动 link: Process.link/1
+
+Creates a link between the calling process and the given item (process or port).
+
+Links are bidirectional. Linked processes can be unlinked by using unlink/1.
+
+通常将进程和 supervisors link，当 process 挂掉会原地创建新 process。
+
+在 Elixir 中，失败的 process 可以期待被 supervisors 正确重启。"Failing fast" 是写 Elixir 程序的常见理念。
+
+4. Tasks
+
+大部分时候我们不会直接用 spawn/1 spawn_link/1 这么底层的函数，而是使用基于它们的抽象。例如 Task
+
+Task 提供 better error reports 和 intropection (内省信息)
+
+Task.start fn -> raise "task oops" end
+
+Task.start/1 和 Task.start_link/1 返回 {:ok, pid} 而不仅是 pid。方便用于 supervision trees。
+
+Task 还有 Task.async/1 Task.await/1 以及实现分布式的函数。
+
+5. State
+
+如果你的应用需要状态来保存配置，保存解析的文件，应该保存在哪呢？
+
+Processes 是最常用的地方。我们可以写很多 loop infinitely 的进程来维护状态，收发消息。
+
+defmodule KV do
+end
+
+iex kv.exs 可以加载 exs 中的模块
+
+任何知道 pid 值的进程，都能给它发送 message
+
+还可以给 pid 注册 name，根据 name 发送消息
+
+Process.register(pid, :kv)
+
+send :kv, {:get, :hello, self()}
+
+使用 process 存储 state 及注册名字是很常见的模式。但大部分时候我们不会手动实现，而是用 Elixir 提供的很多抽象来实现，例如 agent 模块，就是 state 的抽象
+
+{:ok, pid} = Agent.start_link(fn -> %{} end)
+
+Agent.update(pid, fn map -> Map.put(map, :hello, :world) end)
+
+Agent.get(pid, fn map -> Map.get(map, :hello) end)
+
+Agent.start_link 参数 name 可以自动注册名字。
+
+除了 Agent，还有实现 generic servers 的 GenServer 等
+
+将会在 Mix 和 OTP 指南中介绍。
+
+# 12 IO 和 file system
+
+简单介绍 input/output 机制和 file-system-related 功能，涉及模块 IO File Path。
+
+1. IO 模块
+
+reading writing to 标准输入输出 :stdio :stderr，files 和其他 IO 设备。
+
+IO.puts("output")
+
+IO.gets("input your name")
+
+IO 模块默认从标准输入读，写入到标准输出。
+
+可以用 :stderr 作为参数改变这一行为
+
+IO.puts(:stderr, "Output to standard error")
+
+2. File 模块
+
+读取文件。默认以 binary 模式打开，使用 IO.binread/2 和 IO.binwrite/2 来读写。
+
+可以指定用 :utf8 打开
+
+File.read(path/to/file) utf8 编码
+
+File 还提供很多 file system 相关函数
+
+  File.rm/1
+  File.mkdir/1
+  File.mkdir_p/1
+  File.cp_r/2
+  File.rm_rf/1
+
+变体 带 trailing bang (!)
+
+  File.read!/1
+
+  只返回文件内容，不返回 tuple，如果出错会抛出错误。
+
+  没有 ! 的函数以模式匹配形式处理错误。
+
+  如果你预期文件存在，要避免写 {:ok, body} = File.read(file)
+
+  因为如果出错，错误信息将是 匹配错误，而不是文件不存在。如果不想处理错误，就使用 File.read!/1
+
+3. Path 模块
+
+File 模块以 paths 为参数。paths 是普通的 binaries。Path 模块提供处理 path 的函数。
+
+Path.join("foo", "bar")
+
+Path.expand("~/hello")
+
+4. Processes
+
+File.open/2 返回 tuple {:ok, pid}
+
+File.open/2 返回 process，当你写入 file 时，实际是向 process 发送消息
+
+IO.write(file, "content")
+
+IO 模块需要特定的结果
+
+用 process 代替 IO 设备，Erlang VM 允许 IO 消息在不同节点间传递，甚至跨节点交换文件。
+
+5. iodata 和 chardata
+
+IO 和 File 也允许使用 charlists 作为参数，也允许混用 charlists integers binaries
+
+IO.puts(['hello', ?\s, "-world"])
+
+list 可能表示 a bunch of bytes 或 a bunch of characters，取决于 IO 设备编码。
+
+如果是未指定编码打开的文件，必须使用 IO 中 bin* 开头的函数。这些函数以 iodata 为参数，即 a list of integers 或 binaries
+
+如果设备是 :stdio 或 utf8 编码文件，则使用其他函数。它们以 char_data 为参数，即 a list of characters 或 strings
+
+Although this is a subtle difference, you only need to worry about these details if you intend to pass lists to those functions
+
+# 13. alias, require, import
+
+facilitate software reuse:
+
+提供代码重用机制：
+
+三种 directives: alias require import (都是 lexical scope)
+
+一个 macro: use (allow used module to inject code)
+
+alias Foo.Bar, as: Bar
+
+  为模块创建别名
+
+require Foo
+
+  require 模块，使用其中的 macros
+
+import Foo
+
+  import 模块中的函数，可以省去 Foo. 前缀
+
+use Foo
+
+  调用 Foo 中定义的 custom code，作为 extension point
+
+1. alias
+
+alias Math.List, as: List
+
+会覆盖默认的 List 模块
+
+默认 List 模块指的是 Elixir.List 但是 Elixir 默认可以忽略。
+
+覆盖后，仍然可以通过 Elixir.List 使用原 List 模块
+
+alias Math.List 等价于 alias Math.List, as: List
+
+alias 是 lexically scoped 意味着可以为不同的函数，不同作用域单独设置 alias
+
+2. require
+
+Elixir 提供 macros 作为 meta-programming 机制。Macros 在 compile time 展开
+
+默认 public 函数可以直接通过模块使用，但 macros 需要 require 模块后使用
+
+require Integer
+
+Integer.is_odd(3)
+
+Integer.is_odd/1 is defined as a macro so that it can be used as a guard
+
+因为 is_odd 是宏，所以可以用于 guard
+
+也是 lexically scoped。
+
+3. import
+
+可以省略模块名来使用其中的 public functions 和 macros
+
+import List, only: [duplicate: 2] -> 引入 List.duplicate/2
+
+除了 only 还有 :except
+
+也是 lexically scoped。
+
+4. use
+
+use 会调用模块的 __using__/1 回调
+
+use OtherModule, option: :value
+
+编译为
+
+require OtherModule
+OtherModule.__using__(option: :value)
+
+use allows any code to run, we can’t really know the side-effects of using a module without reading its documentation
+
+推荐优先使用 import alias。
+
+5. 理解 alias
+
+首字母大写的 identifier，编译期转为 atom
+
+String alias 转为 :"Elixir.String"
+
+alias/2 改变 alias 展开成的 atom
+
+alias 转为 atoms 是因为在 Erlang VM 中，模块以 atom 形式表示
+
+例如调用 Erlang 函数
+
+:lists.flattern([1,[2],3])
+
+6. 嵌套 Module
+
+defmodule Foo do
+  defmodule Bar do
+  end
+end
+
+与
+
+defmodule Elixir.Foo do
+  defmodule Elixir.Foo.Bar do
+  end
+
+  alias Elixir.Foo.Bar, as: Bar
+end
+
+一样
+
+Bar 移出 Foo 后必须通过 Foo.Bar 访问
+
+定义 Foo.Bar 前不需要定义 Foo 模块
+
+alias 也保证 marcors 是 hygienic 的
+
+7. 引入多个模块
+
+Elixir v1.2 后，可以一次 alias import require 多个模块
+
+alias MyApp.{Foo, Bar, Baz}
+
+# 14. Module attributes
+
+1. 作为注释 注解 As annotations
+
+information to be used by user or VM
+
+@vsn 被用作 code reload 机制，检查模块是否要更新
+
+如果没有 @vsn，就以模块函数 MD5 作为 version
+
+常用 attributes
+
+  @moduledoc
+
+  @doc
+
+  @behaviour 指定 OTP 或自定义 behaviour
+
+  @before_compile
+
+Elixir 中 documentation 是 first-class 的，提供很多访问文档的函数
+
+@moduledoc """
+
+support Markdown
+
+"""
+
+elixirc module.ex 编译后才有文档
+
+iex
+
+h ModuleName 访问 @moduledoc
+
+ExDoc 工具可以生成 HTML 格式
+
+更多支持的 attributes: https://hexdocs.pm/elixir/Module.html#module-module-attributes
+
+2. 作为 常量
+
+让值更 visible 和 reuseable
+
+@initial_state
+
+与 Erlang 不同，用户定义的 attribute 只在 compilation time 存在。
+
+通过调用 Module.register_attribute/3 使 attribute 行为类似 Erlang
+
+访问为定义的 attribute 会引发 warning
+
+每次读取 attribute，会获得它的当前值 snapshot，值在编译期读取而不是 runtime。这也使得 attribute 能用作 模块编译期 storage
+
+正常情况下，重复赋值 attribute 会导致值变化。但你可以配置 attribute 累积值到 list
+
+@param :foo
+@param :bar
+# @param == [:bar, :foo]
+
+attribute 中可以调用函数（除本模块定义函数，因为本模块函数还未编译）
+
+attribute name 和 value 之间不能换行
+
+3. 作为临时存储 temporary storage
+
+ExUnit
+
+use ExUnit.Case, async: true
+
+Next: structs / protocols / exception handling / sigils / comprehensions
+
+# 15. Structs
+
+# 16. Protocols
+
+# 17. Comprehensions
+
+# 18. Sigils
+
+# 19. try catch and rescue
+
+# 20. Typespecs and behaviours
+
+# 21. Debugging
+
+# 22. Erlang libraries
+
+MIX AND OTP
+
+# 1. Mix
+
+# 2. Agent
+
+# 3. GenServer
+
+# 4. Supervisor and Application
+
+# 5. Dynamic supevisors
+
+# 6. ETS
+
+# 7. Dependencies and umbrella projects
+
+# 8. Task and gen_tcp
+
+# 9. Doctests, patterns and with
+
+# 10. Distributed tasks and tags
+
+# 11. Configuration and releases
+
+META-PROGRAMMING in ELIXIR
+
+# 1. Quote and unquote
+
+# 2. Macros
+
+# 3. Domain-specific languages DSLs
 
 =========
 
