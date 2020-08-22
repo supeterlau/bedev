@@ -1427,8 +1427,110 @@ defstruct [:name, age: 27]
 
 @enforce_keys [:make] 指定必需有值的 field
 
-
 # 16. Protocols
+
+Protocols 是 Elixir 中实现多态 polymorphism 的机制。根据数据类型，有不同的行为。
+
+多态可以通过 pattern matching 和 guard 实现
+
+def type(value) when is_binary(value), do: "string"
+def type(value) when is_integer(value), do: "integer"
+
+为每个类型实现 type/1 函数，问题在于不好扩展 extend its functionality。
+
+protocols 允许我们实现初始类型的函数。protocol 可以分发函数到实现 protocol 的任意数据类型。protocol 可以被任意类型在任意时刻实现。
+
+定义 protocol
+
+defprotocol Utility do
+  @spec type(t) :: String.t()
+  def type(value)
+end
+
+实现 protocol
+
+defimpl Utility, for: BitString do
+  def type(_value), do: "string"
+end
+
+调用 protocol 函数，类似模块
+
+Utility.type(1000)
+
+常用的 protocl 是 String.Chars 实现 to_string/1 函数会通知 Elixir Kernel 如何展示 custom structs
+
+1. Example
+
+描述元素个数 length size
+
+length 表示需要通过计算才知道的数量，需要遍历 list
+
+而 tupel_size byte_size 不需要计算 pre-computed
+
+为不同数据类型实现通用 Size protocol
+
+2. Protocols and structs
+
+使用 struct 时，protocols 会更强大
+
+struct 基于 map，但没有实现 map 的 protocol，比如 MapSet 是 struct
+
+需要为 MapSet 实现 Size protocol : MapSet.size/1
+
+利用 struct 可以实现更 robust 的数据结构，如 queues
+
+defmodule User do
+  defstruct [:name, :age]
+end
+
+defimpl Size, for: User do
+  def size(_), do: 3
+end
+
+3. Implementing Any
+
+为每种类型都实现 protocol 很麻烦。 Elixir 提供一些参数
+
+可以指定某个类型自动继承 protocol 实现
+
+可以自动为每个类型都实现 protocol
+
+3.1 Deriving
+
+defimpl Size, for: Any do
+  def size(_), do: 0
+end
+
+defmodule Other do
+  @derive [Size]
+  defstruct [:name, :age]
+end
+
+指定继承 Size protocol，会使用 Any 对应的实现
+
+3.2 Fallback to Any
+
+另一种方式是在 protocol 中设置 fallback 为 Any
+
+即在未找到对应类型的实现时，使用 Any 的实现
+
+通常未找到实现要抛出 protocol is not implemented 错误
+
+Elixir 开发者喜欢 explicit 胜过 implicit 因此多用 derive
+
+4. Built-in protocols
+
+Enum 模块针对实现 Enumerable protocol 的数据结构
+
+String.Chars protocol
+
+inspect 函数基于 Inspect protocol
+
+  the protocol used to transform any data structure into a readable textual representation.
+
+  IEx 就是用这个函数来显示结果的。
+
+当 inspect 结果以 # 开头时，表示显示的信息可能有丢失
 
 # 17. Comprehensions
 
