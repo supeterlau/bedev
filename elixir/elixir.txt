@@ -1534,7 +1534,134 @@ inspect 函数基于 Inspect protocol
 
 # 17. Comprehensions
 
+经常会遇到要遍历 可迭代对象 Enumerable 的情况，比如 过滤出需要的数据，或者转为另一个 list (map)。 列表解析是执行这样操作的语法糖。
+
+使用 for special form
+
+for n <- [1,2,3], do: n * n
+
+comprehension 由三部分组成 generators filters collectables
+
+对比 Erlang: [N * N || N <- [1,2,3]].
+
+1. Generators, filters
+
+n <- [1,2,3,4] 是 generator
+
+<- 的右侧可以是任意 Enumerable
+
+例如 Range: for n <- 1..4, do: n * n
+
+<- 左侧支持模式匹配
+
+generators 后 do 前可以加入 filter，
+
+comprehensions 会过滤掉所有使 filter 求值为 false / nil 的值
+
+comprehensions 提供了等价于 Enum Stream 模块方法的更简洁表示形式
+
+它还支持多重 generator 和 filter
+
+for dir <- dirs,
+    file <- File.ls!(dir),
+    path = Path.join(dir, file),
+    File.regular?(path) do
+  File.stat!(path).size
+end
+
+多个 generators
+
+for i <- [:a, :b, :c], j <- [1,2], do: {i,j}
+
+comprehensions 内的赋值不影响外部
+
+2. Bitstring generators
+
+对 bitstring streams 使用列表解析
+
+pixels = <<213, 45 ... >>
+
+for <<r::8, g::8, b::8 <- pixels>>, do {r, g, b}
+
+对比 Erlang: RGB = [ {R,G,B} || <<R:8,G:8,B:8>> <= Pixels ].
+
+可以和普通 comprehension 一起用，同样支持 filter
+
+In Elixir, the word string means a UTF-8 binary and there is a String module that works on such data. Elixir also expects your source files to be UTF-8 encoded.
+
+On the other hand, string in Erlang refers to char lists and there is a :string module that works mostly with both char lists and UTF-8 encoded binaries.
+
+Elixir also supports multiline strings (also called heredocs)
+
+Erlang
+
+is_list('Hello').        %=> false
+is_list("Hello").        %=> true
+is_binary(<<"Hello">>).  %=> true
+
+Elixir
+
+is_list 'Hello'          #=> true
+is_binary "Hello"        #=> true
+is_binary <<"Hello">>    #=> true
+<<"Hello">> === "Hello"  #=> true
+
+3. :into option
+
+以上结果都是 list，但也可以插入到不同数据结构中
+
+:into 选项
+
+:into 支持实现 Collectable 的类型: String Sets Maps Stream
+
+for <<c <- " remove all spaces ">>, c != ?\s, into: "", do: <<c>>
+
+常用于插入 map
+
+for {key, val} <- %{"a" => 1, "b" => 2}, into: %{}, do: {key, val * val}
+
+例如 stream
+
+stream = IO.stream(:stdio, :line)
+for line <- stream, into: stream do
+  String.upcase(line) <> "\n"
+end
+
+(hit Ctrl+C twice to exit IEx)
+
 # 18. Sigils
+
+Elixir 提供 double-quoted strings 和 single-quoted char lists
+
+这仅仅是部分 textual representation
+
+例如 Atoms 使用 :atom 形式表示
+
+sigils 是处理 textual representations 的一种方法
+
+以 tilde 符号 ~ 开头紧跟着一个字母 (用于识别 sigil) 然后是分隔符 delimiter。尾部分隔符后可以有 modifiers。
+
+regex = ~r/foo|bar/
+
+1. 正则 Regular expression
+
+第一个常用的 sigil 是 ~r 用于创建正则表达式
+
+regex = ~r/foo|bar/
+
+Elixir 支持 Perl-compatible 正则
+
+"foo" =~ regex 用于测试是否匹配
+
+2. Strings, char lists, word lists sigils
+
+3. Interpolation and escaping in string sigils
+
+在 string sigils 中内插值和转义字符
+
+4. Calendar sigils
+
+5. 自定义 sigils
 
 # 19. try catch and rescue
 
