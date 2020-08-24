@@ -1904,6 +1904,116 @@ try catch rescue after 结构中的变量，无法作用于外部环境
 
 # 20. Typespecs and behaviours
 
+1. Types 和 specs
+
+Elixir 是动态类型语言，所有 Elixir 类型是在 runtime 检查的。
+
+但 Elixir 自带 typespecs，提供类型注释，用于
+
+  声明带类型函数签名 函数签名又叫 specifications
+
+  声明自定义类型
+
+1.1 函数类型 Function specification
+
+Elixir 提供很多内置类型 integer pid，可以用于函数签名。
+
+例如 round/1 函数签名 round(number()) :: integer()
+
+:: 左侧是函数和输入，右侧是输出
+
+类型可能省略括号 parentheses
+
+代码中函数签名写在 @spec 属性后，紧挨着函数定义前，可以描述 public 和 private 函数。spec 函数名和定义函数名必须一致。
+
+Elixir 支持组合类型 [integer] 或 maps
+
+1.2 定义自定义类型
+
+通过 @type 可以自定义类型，帮助解释代码含义，增加可读性
+
+@type year :: integer
+
+@typedoc 是 type 的文档 类似 @doc @moduledoc
+
+例如定义组合类型
+
+@type error_map :: %{
+  message: String.t, 使用 String.t 而不是 string
+  line_number: integer
+}
+
+使用 Struct 可以达到类似效果
+
+自定义类型可以在其他模块中使用，默认是 exported 的
+
+  ModuleName.type_name
+
+@typep 可以让类型 private，也会影响 ExDoc 生成的文档
+
+还是要在计算时抛出错误，而不是根据类型直接抛出类型错误
+
+1.3 静态代码分析 Static code anylysis
+
+类似 Erlang 工具 Dialyzer 可以利用 typespecs 进行静态分析
+
+2. Behaviours
+
+规定一些模块必须实现的某些公共函数，从而使这些模块共享 public API
+
+例如 Plug，每个 plug 都是至少实现 init/1 和 call/2 的模块
+
+Behaviours 可以
+
+  定义模块必须实现的一组函数
+
+  确保模块实现了规定的函数
+
+可以将 behaviours 类比 interfaces in Java
+
+2.1 定义 behaviours
+
+假定实现一组 parser
+
+有 JSON parser，MessagePack parser
+
+每个 parser 都提供 parse/1 extensions/0 函数
+
+parse/1 返回结构数据的 Elixir 表示
+
+extensions/0 返回这个 parser 支持的 file extensions 列表
+
+Parser behaviour
+
+defmodule Parser do
+  @callback parse(String.t) :: {:ok, term} | {:error, String.t}
+  @callback extensions() :: [String.t]
+end
+
+Elixir 中 term 代指 any type
+
+2.2 应用 behaviours
+
+在实现模块中
+
+@behaviour Parser
+
+函数前使用 @impl
+
+@impl Parser
+def parse(str), do: {:ok, "Json Parser " <> str}
+
+@impl Parser
+def extensions, do : ["json"]
+
+如果有 callbacks 没有实现, 或函数名错误，会产生 compile-time 错误
+
+函数签名实现错误，无法发现。
+
+2.3 动态分发 Dynamic dispatch
+
+在 behaviour 声明模块中可以动态调用对应的实现
+
 # 21. Debugging
 
 # 22. Erlang libraries
