@@ -11,5 +11,11 @@ defmodule KV.BucketTest do
 
     KV.Bucket.put(bucket, "milk", 30)
     assert KV.Bucket.get(bucket, "milk") == 30
+
+    KV.Bucket.delete(bucket, "noop")
+    assert KV.Bucket.get(bucket, "milk") == 30
+
+    KV.Bucket.delete(bucket, "milk")
+    assert KV.Bucket.get(bucket, "milk") == nil
   end
 end
