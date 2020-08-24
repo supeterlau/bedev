@@ -1653,17 +1653,254 @@ Elixir 支持 Perl-compatible 正则
 
 "foo" =~ regex 用于测试是否匹配
 
+regex 支持 i modifier 表示正则 case insensitive
+
+Regex 模块中有其他支持的 modifier
+
+分隔符不仅可以用 / sigil 支持 8 种符号
+
+/foo/
+|foo|
+"foo"
+'foo'
+(foo)
+[foo]
+{foo}
+<foo>
+
+这样就可以简化 ~r/^https?:\/\// 为
+
+~r(^https?://)
+
 2. Strings, char lists, word lists sigils
+
+Elixir 内置其他三种 sigils
+
+表示 Strings
+
+~s 等价 ""
+
+  避免转义双引号
+
+表示 char lists
+
+~c 等价 ''
+
+  避免转义单引号
+
+表示 word lists
+
+~w 表示词列表，按照空格分隔
+
+  支持 modifier: c s a 表示分隔后结果为 char list, strings, atoms
 
 3. Interpolation and escaping in string sigils
 
 在 string sigils 中内插值和转义字符
 
+一些 sigil 变体处理变量内插和转义
+
+  sigil 识别字母的大写形式，不处理 变量内插和转义
+
+转义
+  \a - bell/alert
+  \b - backspace
+  \d - delete
+  \e - escape
+  \f - form feed
+  \n - newline
+  \r - carriage return
+  \s - space
+  \t - tab
+  \v - vertical tab
+  \0 - null byte
+  \xDD - \x13 表示单个 byte (hexadecimal)
+  \uDDD \u{D...} - 表示单个 Unicode codepoint (hexadecimal) \u{1F600}
+
+Sigil 支持 heredocs
+
+~s'''
+
+'''
+
+~s"""
+
+"""
+
+主要用于写文档
+
+~S"""
+    iex> convert("\"foo\"")
+    "'foo'
+"""
+
 4. Calendar sigils
+
+处理 times dates 的 sigils
+
+- Date
+
+%Date{} struct 包含 year month day calendar 属性 可以用 ~D sigil 创建
+
+d = ~D[2020-08-24]
+
+d.day
+
+- Time
+
+%Time{} 包含 hour minute second microsecond calendar 用 ~T 创建
+
+~T[23:03:06.0]
+
+t.second
+
+- NaiveDateTime
+
+%NaiveDateTime{} 包行 Date 和 Time 的 fields 用 ~N 创建
+
+~N[2020-10-31 23:09:09]
+
+不包含 timezone
+
+- DateTime
+
+%DateTime{} 比 NaiveDateTime 多了 timezone 用 ~U 创建
+
+~N[2020-10-31 23:09:09Z]
+
+%DateTime{minute: minute, time_zone: time_zone} = dt
+
+time_zone
 
 5. 自定义 sigils
 
+Elixir 的 sigils 是 extensible 的
+
+使用 ~r/foo/i 相当于调用 sigil_r(<<"foo">>, 'i')
+
+其中 modifier 为 char list ( 'i' == [?i]  )
+
+<<"foo">> == "foo"
+
+通过 h sigil_r 可以查看详细信息
+
+自定义 sigil 只需要实现 sigil_{identifier} 函数即可
+
+modifier 类似 [?n]
+
+sigils 可以在 compile-time 完成，这样可以在 run-time 跳过编译的步骤。这需要利用macro 完成。
+
+https://hexdocs.pm/elixir/Regex.html
+
+处理其他时区:
+
+  https://hexdocs.pm/tzdata/readme.html
+  https://hexdocs.pm/elixir/DateTime.html
+
 # 19. try catch and rescue
+
+Elixir 有三种错误处理机制。 errors throws exits
+
+1. errors
+
+errors 或者叫 exceptions 用于代码出出现 exceptional 时
+
+例如 :foo + 1 ArithmeticError
+
+runtime error 可以用 raise/1 抛出 参数为 message
+
+  error 类型为 RuntimeError
+
+其他异常可以用 raise/2 抛出，参数为 error name 和 keyword list
+
+  message 用于显示错误内容
+
+  raise ArgumentError, message: "invalid argument foo"
+
+自定义 error 定义模块，并使用 defexception 构造器。这样就会创建和模块名一致的 error
+
+defmodule SomeError do
+  defexception message: "error message"
+end
+
+异常可以通过 try/rescue 结构恢复
+
+try do
+  raise "oops"
+rescue
+  e in RuntimeError -> e
+  # 如果处理 error
+  RuntimeError -> "Error!"
+end
+
+实际开发中，Elixir 开发者很少使用 try/rescue 结构。
+
+大部分语言在无法打开文件时，强制要求 rescue 代码。但 Elixir 提供 File.read/1 函数，返回 tuple 来表示是否成功打开文件，通过模式匹配选择要执行的行为。
+
+Elixir 中避免使用 try/rescue 因为不将 error 用于流程控制。如果的确要用于流程控制，需要用 throws。
+
+2. throws
+
+值可以被 thrown 并在稍后 caught。 当必须使用 throw/catch 才能获取值时，采用 throw / catch。
+
+这种情景很少，例如使用未提供恰当 API 的 libraries 时。
+
+假设 Enum 模块没有提供找到一个符合要求值的方法时
+
+try do
+  Enum.each -50..50, fn(x) ->
+    if rem(x, 13) == 0, do: throw(x)
+  end
+  "Got nothing"
+catch
+  x -> "Got #{x}"
+end
+
+使用 Enum 提供的 API
+
+  Enum.find -50..50, &(rem(&1, 13) == 0)
+
+3. exits
+
+Elixir 代码都在 processes 中运行。当 process 自然终止时，例如未处理的异常，它会发送 exit 信号。process 可以明确发送 exit 信号来终止自己
+
+spawn_link fn -> exit(1) end
+
+exit 信号可以通过 try/catch 捕获，但这种情况很少见
+
+exit 信号是 fault tolerant 系统的重要组成部分。
+
+Processes usually run under supervision trees which are themselves processes that listen to exit signals from the supervised processes. Once an exit signal is received, the supervision strategy kicks in and the supervised process is restarted.
+
+4. after
+
+确保资源正常 cleaned up
+
+try do
+  raise ""
+after
+  File.close(file)
+end
+
+如果是 linked process 退出，after 没有机会执行。但 file process 总是和当前 process linked，当前进程 crash 后 file 总会被关闭，这是独立于 after 的。
+
+这一特性也适用于 ETS tables，sockets，ports 等
+
+当函数内只有 try 结构时，可以省略 try ，需要指定 after rescue catch 中的一个
+
+5. else
+
+try 结构中不发生 throw 或 error 时执行，
+
+在多个子句中使用模式匹配，如果没有匹配则 raise 错误，这个错误无法被当前结构捕获
+
+6. variables scope
+
+try catch rescue after 结构中的变量，无法作用于外部环境
+
+只能将 try 结构赋值给外部变量
+
+这些内容很少用到，只有对付 没有遵守 Elixir 规则的库时会用到。
 
 # 20. Typespecs and behaviours
 
