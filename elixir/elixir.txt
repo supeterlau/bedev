@@ -2016,6 +2016,84 @@ def extensions, do : ["json"]
 
 # 21. Debugging
 
+一些 debug code 的方法
+
+1. IO.inspect/2
+
+IO.inspect(item, opts \\ [])
+
+强大在于，它不影响原有代码的运行逻辑，仅仅显示中间状态
+
+IO.inspect 可以有 label 参数，用于标记输出
+
+IO.inspect binding() 可以返回全部的变量和值
+
+2. IEx.pry/0 IEx.break!/2
+
+IO.inspect/2 是静态的，Elixir 的交互终端提供更多动态 debug 方法
+
+第一个是 IEx.pry/0 替代 IO.inspect binding()
+
+代码需要在 iex session 中运行
+
+代码暂停执行，使用 continue 恢复执行
+
+在项目内运行 iex 使用 iex -S mix TASK
+
+缺点在于也要修改原始代码
+
+IEx 提供 break!/2 允许设置，管理 断点
+
+break!/2 无法访问 aliases 和 imports，因为它是在 compiled artifact 上工作，而不是 source code
+
+3. Debugger
+
+Erlang/OTP 提供的图形化 debugger 工具
+
+iex
+
+c "example.ex"
+
+:debugger.start()
+
+:int.ni(Example)
+
+  必须保证编译生成 Elixir.ModuleName.beam 文件
+
+  准备 module 用于 debugging
+
+:int.break(Example, 3) 设置断点
+
+Example.double_sum(1,2)
+
+4. Observer
+
+debug 复杂系统
+
+需要理解整个 virtual machine, processes, applications, 设置 tracing mechanisms
+
+:observer.start() 启动 observer
+
+这会启动一个图形界面，提供很多面板帮助理解 runtime 和 project。
+
+5. 其他工具
+
+:crashdump_viewer 查看 crash dumps
+
+Linux Trace Toolkit, DTRACE, SystemTap
+
+Microstate accounting
+
+Mix 的 profile (cprof fprof)
+
+社区工具
+
+  wObserver : observer 的 Web 界面
+
+  visualixir : 开发阶段 process message visualizer
+
+  erlyberly : 开发过程中用于 tracing 的 GUI
+
 # 22. Erlang libraries
 
 MIX AND OTP
