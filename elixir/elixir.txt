@@ -2096,13 +2096,486 @@ Mix 的 profile (cprof fprof)
 
 # 22. Erlang libraries
 
+Elixir 可以同 Erlang 很好地交互。Elixir 可以直接使用 Erlang 库。
+
+http://erlang.org/doc/apps/stdlib/index.html
+
+1. binary 模块
+
+处理非 UTF-8 编码模块，不返回 Unicode codepoints 返回 raw data bytes
+
+String.to_charlist "Ø"
+
+:binary.bin_to_list "Ø"
+
+2. 格式化输出
+
+Elixir 没有类似 printf 的函数。 Erlang 有 :io.format/2 和 :io_lib.format/2
+
+前者输出到 terminal output，后者输出为 iolist
+
+:io.format("Pi : ~10.3f~n", [:math.pi])
+
+to_string :io_lib.format("Pi : ~10.3f~n", [:math.pi])
+
+Erlang 中要注意对 Unicode 的处理
+
+3. crypto 模块
+
+有 hashing 函数，digital signatures，encryption 等
+
+Base.encode16(:crypto.hash(:sha256, "Elixir"))
+
+:crypto 并非标准库之一，但包含在发行版中。要使用 :crypto 需要加入到 application extra_application 列表中
+
+def application do
+  [extra_application: [:crypto]]
+end
+
+4. digraph 模块
+
+处理 directed graphs，寻找最短路径，或环
+
+:digraph 原地修改 grpah 结构，因为用 ETS table 实现的
+
+5. Erlang Term Storage
+
+:ets :dets 分别处理在内存和硬盘上保存的大型数据结构
+
+ETS 创建包含 tuples 的表。默认是 Protected，即只有创建表的 process 可以写入，其他 process 可以读出。
+
+ETS 的函数可以让我们把 ETS 当作数据库，key-value 存储或缓存使用
+
+:ets 中函数副作用 side-effect 是修改 table 状态
+
+6. math 模块 :math
+
+:math.pi
+:math.sin
+:math.exp
+:math.log
+
+7. queue 模块
+
+:queue 实现 双向 FIFO 先进先出队列
+
+8. rand 模块
+
+:rand.uniform()
+
+:rand.uniform(6)
+
+9. zip zlib 模块
+
+:zip 读写 ZIP 文件，获取文件信息
+
+计算 zip 文件中文件个数
+
+:zip.foldl(fn _,_,_, acc -> acc + 1 end, 0, :binary.bin_to_list("file.zip"))
+
+:zlib 处理 zlib 格式数据压缩
+
+compressed = :zlib.compress(String.t)
+
+byte_size compressed
+
+:zlib.uncompress(bytes)
+
 MIX AND OTP
 
 # 1. Mix
 
+创建一个完整的 Elixir application，拥有 supervision tree, configuration, tests 等
+
+elixir -v
+
+要创建一个 distributed key-value store。
+
+保存 key-value 对，并分布到多个 nodes
+
+包含一个简单的 client 支持命令
+
+CREATE shopping (table name / key name)
+
+PUT shopping milk 1
+
+PUT shopping eggs 3
+
+GET shopping mil
+
+DELETE shopping eggs
+
+使用三种工具
+
+  OTP Open Telecom Platform
+
+  Mix Elixir 构建工具。提供任务来完成 create compile test 管理依赖等
+
+  ExUnit Elixir 单元测试框架
+
+1. 第一个项目
+
+mix new kv --module KV
+
+  --module 让 mix 创建模块 KV 而不是默认的 Kv
+
+2. 项目编译
+
+mix.exs 文件是配置项目的地方
+
+两个 public 函数
+
+  project 项目配置，如项目名，项目版本
+
+  application 用于生成 application 文件
+
+deps private 函数
+
+  在 project 中调用，定义项目依赖
+
+在项目根目录
+
+mix compile
+
+生成 application manifest 名为 kv.app，位于 _build 下 _build/dev/lib/kv/ebin
+
+在项目中启动 iex session
+
+iex -S mix
+
+在 iex 中可以用 recompile 重新编译 (有变动返回 :ok，无变动返回 :noop)
+
+3. 运行测试
+
+mix 生成基本测试
+
+测试文件命名 <filename>_test.exs
+
+test/kv_test.exs 对应 lib/kv.ex
+
+test/kv/bucket_test.exs 对应 lib/kv/bucket.ex
+
+  测试是 exs 文件，因为不需要编译
+
+  测试模块叫 KVTest 用 use ExUnit.Case 插入 testing API
+
+  引入的宏 doctest : doctest KV 表示 KV 中有 doctests
+
+  用 test 宏定义测试
+
+test/test_helper.exs 用于设置 test 框架
+
+基本测试执行 mix test (重新编译源代码，生成 application manifest)
+
+执行单个测试 test/kv_test.exs
+
+4. 自动格式化代码
+
+mix format
+
+diff test/kv_test.exs test/kv_test_backup
+
+mix format --check-formatted
+
+mix help format
+
+5. 环境
+
+mix 默认支持三种环境
+
+:dev mix 任务默认执行环境
+
+:test
+
+:prod
+
+这些都是针对当前项目的。我们添加的依赖默认在 :prod 环境
+
+在 project 函数中可以通过 Mix.env 获取项目环境
+
+start_permanent: Mix.env == :prod
+
+  start_permanent 为 true 时，当应用 supervision tree shuts down，VM 会 crash。因此只在 :prod 中设为 true
+
+修改 mix 环境 MIX_ENV=prod mix compile
+
+6. Exploring
+
+mix help
+
+mix help TASK: mix help compile
+
 # 2. Agent
 
+学习保存以及如何在多个 entities 间分享 state
+
+可能考虑用 globally shared variables，但我们会学不一样的方法。
+
+1. 状态带来的问题
+
+Elixir 是 immutable language, nothing is shared by default。
+
+如果想分享信息，多个地方可以读及修改数据，我们有两个选择
+
+  使用 processes 并传递 message
+
+  ETS
+
+当使用 processes 时，很少用自己从头实现，可以使用 Elixir 和 OTP 提供的一些抽象:
+
+  Agent - 简单的状态封装
+
+  GenServer - Generic servers processes 封装状态，提供同步和异步调用，支持代码更新等
+
+  Task - 异步计算单元，允许创建 process，并在稍后获得结果
+
+以上都是基于 process，并通过基本的 send receive spawn link 实现。
+
+先使用 Agent
+
+2. Agents
+
+如果 process 就是用来保存状态，agents 很适合
+
+启动 iex: iex -S mix
+
+Agent.start_link 匿名函数 （初始化状态）
+
+Agent.update(agent, fn current_state -> new_state end)
+
+Agent.get(agent, fn current_state -> state end)
+
+Agent.stop(agent)
+
+可以任意修改 agent 内容。
+
+将 Agent 相关操作封装在模块 KV.Bucket 中
+
+先写点测试
+
+use ExUnit.Case 导入 test 相关宏如 docset/1 test/2
+
+async: true 多个测试并行执行 run in parallel 用于加速测试
+
+  只在测试之间不相互依赖，或不修改全局值时启用
+
+  如果需要写入文件系统或访问数据库，一般保持 synchronous (取消 :async 选项)
+
+实现 start_link/0 get/2 put/3
+
+mix test 通过
+
+3. Test setup with ExUnit callbacks
+
+ExUnit callbacks 所有的 KV.Bucket 测试都需要启动 bucket agent。
+
+ExUnit 支持 callbacks
+
+setup do
+  # 启动 bucket
+end
+
+setup/1 宏定义 callback，在每个测试运行前执行
+
+  非共用 agent，而是测试前自动启动 agent
+
+test context
+
+test "test info", test_context do
+end
+
+4. Other agent actions
+
+Agent.get_and_update + Map.pop 实现 delete/2 (bucket, key)
+
+5. Client/Server agents
+
+类似 delete 这样的函数运行在 agent process 中，这个 process 就是 server。
+
+其他发生在这些函数外的都是 client。
+
+如果有耗时操作要执行，你需要考虑在 client 还是 server 上执行。
+
+如果在 server 上执行，那么它就无法响应其他请求，会造成其他 client 超时。
+
+GenServer 中会更清晰地划分 client server
+
 # 3. GenServer
+
+(用 GenServer 构建 registry)
+
+每个 bucket 有自己的 pid，可以注册为 具名 process
+
+Agent.start_link(fn -> %{} end, name: :shopping)
+
+命名为 :shopping
+
+不过，用 atom 命名动态进程不好，因为我们要把用户输入的 bucket name 转为 atom，而永远不应该将用户输入转为 atom。atom 没有回收机制。
+
+用户输入可能超出内存限制。当然，实际会先达到 Erlang VM 对 atom 数量的限制，然后系统会挂掉。
+
+因此我们需要创建自己的 process registry。关联 bucket name 和 bucket process。
+
+registry 需要能保证 always up to date。例如有 bucket crash 后，registry 需要避免提供旧数据，即 registry 需要 monitor 每个 bucket 进程。
+
+registry 需要能接收处理 ad-hoc message，Agent API 不够用了。
+
+用 GenServer 创建 registry process，monitor bucket processes。
+
+在 Elixir 和 OTP 中，GenServer 提供工业级功能来构建 server。
+
+1. GenServer callbacks
+
+GenServer 是在特定条件下，调用有限函数的 process。
+
+在 Agent 中，client 和 server 是在一起的
+
+def put(bucket, key, value) do
+  # client code
+  Agent.update(bucket, fn state ->
+    Map.put(state, key, value)
+  end)
+end
+
+GenServer 里，上边的代码划分为
+
+# Client code
+def put(bucket, key, value) do
+  GenServer.call(bucket, {:put, key, value})
+end
+
+# Server code
+def handle_call({:put, key, value}, _from, state) do
+  {:reply, :ok, Map.put(state, key, value)}
+end
+
+可以向 GenServer 发送两种请求
+
+calls 和 casts
+
+calls 是同步请求，server 必须返回响应，client 在 server 处理请求时处于 waiting 状态。
+
+casts 是异步请求，server 不会返回响应，client 不需要等待 server 回复
+
+这两种请求都是 sent 到服务器的消息，会按照顺序处理。
+
+启动 GenServer:
+
+{:ok, registry} = GenServer.start_link(KV.Registry, :ok)
+
+  参数 :ok 对应 init/1 中的 :ok
+
+异步调用 无返回值
+
+GenServer.cast(registry, {:create, "shopping"})
+
+同步调用 有返回值
+
+{:ok, bk} = GenServer.call(registry, {:lookup, "shopping"})
+
+2. The Client API
+
+GenServer 的实现分两部分 client API 和 server callbacks
+
+二者可以在一个模块，也可以分开在两个模块
+
+client 是任意调用 client 函数的进程
+
+server 是传递到 client 中的 process indentifier 或 process name
+
+KV.Registry start_link/1 中 opts 可以指定 server process 的 name
+
+Client 请求常写成 tuple 形式
+
+GenServer 还有 callback 来保证 server 初始化，终止 server，处理请求。
+
+  terminate/2
+
+  code_change/3
+
+目前用到的有 init/1 handle_call/3 handle_cast/2
+
+3. Testing a GenServer
+
+测试流程
+
+  spawn server on a setup callback
+
+setup 中使用 来自 ExUnit.Case 的 start_supervised!/2
+
+确保下一个 test 启动前，关闭上一次 test 启动的 registry process
+
+推荐都使用 start_supervised!/2
+
+4. The need for monitoring
+
+以上 GenServer 中的功能在 Agent 中也可以实现。下边的就无法在 Agent 中实现。
+
+应对 bucket stops 或 crashes 的情况
+
+先测试:
+
+fail 被 Agent.stop(pid) 杀掉的进程还在 registry 中
+
+为了解决这个问题，需要让 registry 能 monitor bucket processs，建立 monitor 后，bucket process 退出时会发 notification 到 registry
+
+创建 bucket process
+建立 monitor
+杀掉 bucket process
+显示接收的消息
+
+iex(1)> {:ok, pid} = KV.Bucket.start_link([])
+{:ok, #PID<0.156.0>}
+iex(2)> Process.monitor(pid)
+#Reference<0.2112787397.2546991106.12284>
+iex(3)> Agent.stop(pid)
+:ok
+iex(4)> flush()
+{:DOWN, #Reference<0.2112787397.2546991106.12284>, :process, #PID<0.156.0>,
+ :normal}
+:ok
+
+Process.monitor 生成 unique reference 因此需要保存 ref 和 pid 对应关系
+
+refs = %{}
+
+5. call, cast or info
+
+可以定义一个处理其他任意 unknown 消息的 handle_info/2 callback
+
+handle_call/3 用于同步请求，等待 server 返回
+
+handle_cast/2 用于异步，不保证消息送达，应当节俭使用
+
+handle_info/2 处理其他不是由 call/2 cast/2 发出的 messages，比如普通的 send/2 发出的
+
+如果未处理到达 handle_info/2 的 unexpected message，GenServer 会 crash。
+
+而未处理的到达 handle_cast/2 handle_call/3 的消息，大概率是 a developer mistake
+
+https://elixir-lang.org/cheatsheets/gen-server.pdf
+
+6. Monitors or links
+
+link 和 monitor 区别
+
+  link 是双向的，一个 crash 另一个也 crash 除非是 trapping exist
+
+    Agent crash: Agent.stop(pid, :bad)
+
+    :normal 才返回 :ok 其他值 crash
+
+    :reason 是 :normal, :shutdown or {:shutdown, _} 之外的值，error report will be logged
+
+    https://hexdocs.pm/elixir/Agent.html#stop/3
+
+  monitor 是单向的，被 monitor 的进程 crash，另一个仅接收到对应消息 crashes, exits 等
+
+上边的 hadle_cast 里 同时 link 和 monitor 到 registry
+
+这种实现里，registry 会和 bucket 一起 crash
+
+正确方法是: 不 link registry 和 bucket，将 bucket link 到一种特殊的 process 上，这种 process 叫 Supervisors，被设计用来处理 failures 和 crashes。
 
 # 4. Supervisor and Application
 
@@ -2129,6 +2602,8 @@ META-PROGRAMMING in ELIXIR
 # 3. Domain-specific languages DSLs
 
 =========
+
+https://github.com/tony612/the-zen-of-elixir tony612/the-zen-of-elixir: Collection of top articles reflecting the Zen of Elixir
 
 iex
 
