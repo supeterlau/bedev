@@ -713,6 +713,9 @@ GUI
     https://zxq9.com/ The Intellectual Wilderness
     https://zxq9.com/archives/1650 Starting a simple GUI project in Erlang with ZX « The Intellectual Wilderness
 
+Books:
+
+http://1.droppdf.com/files/rxD90/erlang-programming.pdf
 
 # misc
 
