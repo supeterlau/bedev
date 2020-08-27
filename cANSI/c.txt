@@ -277,33 +277,473 @@ register 变量是本地变量，但是存储在 register memory，auto 变量�
 
 14. array in c
 
+同样类型数据集合
+
+array size 是 常量
+
+存储在连续内存中 contiguous/adjacent memory locations
+
+声明时最好初始化为 0 或 null
+
+int a[10];
+
+char b[10]; // aka. string
+
+One dimensional array
+
+Multi dimensional array
+
 15. string
+
+仅仅是 characters array 以 null character '\0' 结尾
+
+null character 表示字符串结尾
+
+双引号
+
+例子
+
+char str[20] = {'f', 'r','e','s','h','\0'};
+
+char str[20] = "fresh";
+
+char str[] = "fresh";
+
+str[] 按需分配内存，str[20] 固定分配内存
+
+#include <string.h>
+
+https://fresh2refresh.com/c-programming/c-strings/c-strcat-function/
+
+https://www.tutorialspoint.com/c_standard_library/c_function_strcat.htm
 
 16. pointer
 
+存储另一个变量的内存地址，用于动态分配内存 allocate memory
+
+可以存储任意数据类型变量的地址
+
+int *p; char *p;
+
+指针的值是 number 内存地址
+
+指针初始化为 null int *p = null;
+
+null 指针的值为 0
+
+从变量中获取地址 &
+* 从指针中获取指向的值
+
+指针为 null 表示不指向值
+
+两个指针可以做减法
+
+指针大小为 2 byte (16 位编译上)
+
 17. function
 
-18. arithmetic functions
+basic building blocks.
 
-19. int char validation functions
+函数声明。 prototype 包含 function name, function parameters, return value's data type
 
-20. buffer manpulation functions
+函数调用两种方法
 
-21. time related functions
+  call by value
 
-22. dynamic memory allocation
+    变量值传入函数。actual parameter 的值无法被 formal parameter 修改。
+    为 actual parameter， formal parameter 分配不同内存，actual parameter 被复制到 formal parameter
 
-23. type casting functions
+  call by reference
 
-24. miscellaneous functions
+    variable address 被传入函数。
+    actual parameter 可被修改
+    不分配新内存空间给 formal parameters
 
-25. structure in c
+- 返回值
 
-26. typedef
+函数原型
 
-27. union
+int modify(int a, int arr[], int str[])
 
-28. preprocessor directives
+函数调用
 
-29. file handling
+modify(a, arr, str) 或 modify(a, &arr[0], &str[0])
 
+函数定义
+
+modify(int a, int *arr, char *str)
+
+- C Library functions
+
+inbuilt functions
+
+由 设计和创建 C 编译器的人写的函数
+
+declared in file_name.h
+
+函数声明，macros 定义在 header file 中
+
+include header files, C program is compiled by compiler 并执行
+
+Most used header files:
+
+https://www.tutorialspoint.com/c_standard_library/index.htm
+
+  stdio.h  标准 input/output header file
+  string.h string related
+  stdlib.h general functions
+  math.h   maths related functions
+  time.h   time and clock related functions
+  ctype.h  character handling functions
+  stdarg.h variable argument
+  signal.h signal handling functions
+  setjmp.h jump of functions
+  locale.h locale functions
+  errno.h  Error handling functions
+  assert.h diagnostics functions
+
+- user defined library functions
+
+https://fresh2refresh.com/c-programming/c-creating-library-functions/
+
+- command line arguments
+
+main 函数接收命令行参数
+
+argc argv[]
+
+- 变长参数函数
+
+3 dots ...
+
+int add(int num, ...);
+
+Function Example:
+
+  1. arithmetic functions
+
+  abs() 计算绝对值
+  floor() 返回 less than or equal to 的最接近整数
+  round() 小数为 .1 to .5 返回小于参数的整数；.6 to .9 返回大于参数的整数
+  ceil()  返回 greater than or equal to 的最接近整数
+  sin()
+  cos()
+  cosh()  hyperbolic cosine
+  exp()
+  tan()
+  tanh()
+  sinh()
+  log()
+  log10()
+  sqrt()
+  pow()
+  trunc()  获取整数部分
+
+  2. int char validation functions
+
+    validate 给定变量的 data type
+
+    convert upper to lower;
+
+  3. buffer manpulation functions
+
+    操作内存地址的函数
+
+    memset() 初始化内存 null 或 其他值
+    memcpy() copy
+    memmove()
+    memcmp()
+    memicmp()
+    memchr() 定位第一个出现的字符
+
+  4. time related functions
+
+  5. dynamic memory allocation
+
+  6. type casting functions
+
+  7. miscellaneous functions
+    getenv()
+    setenv()
+    putenv()
+    perror() 显示最近库函数错误
+    rand() 随机 0 - 32767
+    delay() mille seconds 非 POSIX 函数
+
+  8. pointer function
+    https://www.guru99.com/c-function-pointers.html
+
+
+18. structure in c
+
+不同数据类型集合。每个元素叫做 member
+
+structure 可以保存不同数据类型的值
+
+struct student
+{
+  int a;
+  char b[10];
+};
+
+变量
+
+struct student
+{
+  int mark;
+  char name[10];
+  float average;
+};
+
+声明
+struct student student1;
+
+初始化
+struct student student1 = {100, "Mary", 99};
+
+访问成员
+student1.mark;
+student1.name;
+
+
+指针变量
+
+struct student
+{
+  int mark;
+  char name[10];
+  float average;
+};
+
+声明
+struct student *student1_ptr, student1;
+
+初始化
+struct student student1 = {100, "Mary", 99};
+student1_ptr = &student1;
+
+访问成员
+student1->mark;
+student1->name;
+
+定义 struct 时声明变量
+
+struct student
+{
+
+} record;
+
+- 嵌套的 structure
+
+ptr->nested_structure.field;
+
+- 结构体内存分配
+
+依次分配内存
+
+- Structure Padding
+
+为了对齐内存数据，一个或多个空 bytes (即地址) 被插入到内存地址中
+
+computer processor CPU 架构设计为每次从内存读取 1 word (即 4 bytes in 32 bit processor)
+
+32 位机，一个 word 是 32 bits, 4bytes
+
+64 位机，一个 word 是 64 bits, 8bytes
+
+为了高效利用 CPU，数据经常按照 4 bytes 对齐数据，导致不足 4 bytes 的时候要插入空地址
+
+因此，sizeof 获取的 structure 大小和我们认为的大小不同
+
+每4个bytes 对齐一次
+
+struct structure1
+{
+       int id1;
+       int id2;
+       char name;
+       char c;
+       float percentage;
+};
+
+struct structure2
+{
+       int id1;
+       char name;
+       int id2;
+       char c;
+       float percentage;
+};
+
+structure1 占用 16 bytes
+
+structure2 占用 20 bytes
+
+  因为 name char 类型仅占用 1 byte 空出来 3 bytes 又无法放下后边的 int 类型，只能补充 3 bytes 空值。
+
+有些编译器支持不对齐
+
+#pragma pack(1)
+
+- 动态分配内存
+
+malloc() mcalloc(number * sizeof(int) );
+
+  不初始化内存
+
+calloc() calloc(number, sizeof(int));
+
+  calloc 初始化值为 zero
+
+realloc() realloc(pointer_name, number * sizeof(int));
+
+  修改 malloc calloc 分配的内存大小，如果原位置内存不够，则找新位置分配内存，复制数据并释放旧地址内存
+
+free() free(pointer_name);
+
+int *ptr;ptr = malloc(20 * sizeof(int));
+
+分配一块内存 20 * 4 bytes
+
+int *ptr;ptr = calloc(20, 20 * sizeof(int));
+
+分配 20 块内存 20 * 20 * 4 bytes
+
+int *ptr; ptr=(int*)malloc(sizeof(int)*20);
+
+19. typedef
+
+用来给已有变量创建 symbolic / alias
+
+struct student
+{
+  ...;
+};
+
+struct student record;
+struct student *record;
+
+typedef struct student status;
+
+status record;
+status *record;
+
+定义 struct 同时设置别名
+
+typedef struct student
+{
+  ...;
+} status;
+
+typedef long long int TTI;
+
+20. union
+
+类似 structure 区别在于内存分配
+
+structure 结构体 为每个 member 分配内存
+
+union 组合体 为全部 member 分配一块内存
+
+每次只能访问 union 的一个 member
+
+union name
+{
+  data_type member_name1;
+  data_bype member_name2;
+};
+
+union student
+{
+  int mark;
+  char name[10];
+  float average;
+};
+
+union student report; 或 union student *report_ptr, report;
+
+union student report = { 100, "Mary", 100.0 };
+
+report.mark; report_ptr->mark;
+
+如果想获取每个 member 就要在为 赋值 另一个 member 前获取数据
+
+21. preprocessor directives
+
+预处理器
+
+Macro
+
+#define
+
+Header file
+
+#include <>
+#include ""
+
+条件编译
+
+#ifdef
+#endif
+#if
+#else
+#ifndef
+
+其他 directives
+
+#undef
+#pragma
+
+C 编译顺序
+
+Source code : sample.c
+
+- preprocessor 替换 #define #include #ifdef 等
+
+Expanded source code : sample.i
+
+- compiler (to assembly source code)
+
+Assembly source code : sample.s
+
+- assembler (convert assembly source code to object code)
+
+Object code : sample.o
+
+- linker (convert object code to executable code, combines all object codes together)
+
+Executable code : sample (sample.exe)
+
+- loader (load executable code in CPU, executed by loader program)
+
+Execution
+
+C program 创建 4 个 区域
+
+1st region - 保存 executable code of program
+2nd region - 保存 global variables
+3rd region - stack
+4th region - heap
+
+  macro
+
+22. file handling
+
+open/create file
+
+close file
+
+read file
+
+write file
+
+Topic:
+
+  error handling
+
+  macro
+
+  https://www.guru99.com/c-function-pointers.html
+
+https://www.guru99.com/c-programming-language.html
+https://www.tutorialgateway.org/c-programming/
