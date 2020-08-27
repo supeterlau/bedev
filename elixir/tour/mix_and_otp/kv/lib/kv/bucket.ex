@@ -1,5 +1,6 @@
 defmodule KV.Bucket do
-  use Agent
+  # 这个 Agent crash 后不再重启
+  use Agent, restart: :temporary
 
   @doc """
   Starts a new bucket agent.

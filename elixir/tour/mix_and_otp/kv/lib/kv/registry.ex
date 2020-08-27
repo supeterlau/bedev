@@ -54,7 +54,14 @@ defmodule KV.Registry do
     if Map.has_key?(names, name) do
       {:noreply, {names, refs}}
     else
-      {:ok, bucket} = KV.Bucket.start_link([])
+      # KV.Registry 同时 link monitor bucket Processes
+      # Link 是双向的，bucket 的崩溃会导致 registry 崩溃
+      # {:ok, bucket} = KV.Bucket.start_link([])
+
+      # start_child(supervisor, child_spec)
+      # 使用 DynamicSupervisor 启动 bucket，获取 bucket pid
+      {:ok, bucket} = DynamicSupervisor.start_child(KV.BucketSupervisor, KV.Bucket)
+
       # 建立 monitor
       ref = Process.monitor(bucket)
       refs = Map.put(refs, ref, name)

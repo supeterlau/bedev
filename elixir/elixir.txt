@@ -2775,17 +2775,116 @@ registry -> bucket (启动，但没 supervisor)
 
 # 5. Dynamic supevisors
 
+尽管我们已经有 supervisor 来监督 registry，但当 bucket 使 registry 崩溃时，我们还会丢失全部 registry 中的数据即 状态，就无法继续 lookup bucket processes 了。
 
+我们希望 bucket 崩溃不影响 registry
+
+写 bucket crash 测试
+
+Agent.stop(bucket, :shutdown)
+
+process 终止原因不是 :normal 时，所有关联 processes 会收到 EXIT 信号，这些 关联 processes 会终止，除非这个信号是 trapping exits
+
+我们要使用新的 supervisor 来动态监督启动监督全部 bucket。这些 supervisor 的 children 是动态产生的。因此叫 DynamicSupervisor
+
+每个 child 通过 DynamicSupervisor.start_child/2 启动。
+
+DynamicSupervisor 一对多 KV.Bucket process
 
 1. bucket supervisor
 
+由于不知道 supervisor 的 child 信息，我们可以不用在新文件中定义 supervisor，不需要有 start_link 和 init 函数。
+
+可以直接在 KV.Supervisor 下定义 DynamicSupervisor
+
+目前，我们用模块名命名进程
+
+:one_for_one 是目前唯一的 strategy
+
+新的问题，当 bucket crash 后，它会被 supervisor 立即重启
+
+但新重启的 bucket 并没有被加入到 registry 中，因此无法访问到
+
+解决方案是 配置 KV.Bucket 中的 Agent 为 :temporary 的，
+
+即 crash 后不再重启
+
+设置之后，这个 supervisor 就无法重启子进程。那么这个 supervisor 意义何在呢？
+
+supervisor 提供了正常 startup 和 shutdown 子进程的方法，尤其在 supervisor tree 中。
+
 2. Supervision trees
+
+supervisors that supervise other supervisors 形成 supervision tree
+
+当添加 child 到 supervisor 时，需要注意 supervisor strategy
+
+:one_for_one 保证 KV.Registry 在 KV.BucketSupervisor 前启动
+
+而 KV.Registry 需要调用 KV.BucketSupervisor 来创建 Bucket，要求 KV.BucketSupervisor 在 KV.Registry 前启动。（两者冲突）
+
+另外 如果 KV.Registry 挂掉，KV.Bucket 名字和进程对应信息都丢失，因此这种情况下 KV.BucketSupervisor 的 children processes 都要终止
+
+另外可选的策略是 :one_for_all :rest_for_one
+
+:rest_for_one 重启在 挂掉进程启动后 启动的进程
+
+  我们希望在 KV.Registry 挂掉后，终止 KV.BucketSupervisor
+  这就需要把 KV.Registry 放在 KV.BucketSupervisor 后，而这违反之前讨论的限制
+
+:one_for_all 任意 child 挂掉，就重启所有 children
+
+因此修改 KV.Supervisor
+
+先启动 DynamicSupervisor / KV.BucketSupervisor，再启动 KV.Registry
+
+Supervisor strategy :one_for_all
 
 3. 在测试中共享状态
 
+现在为了保证测试隔离性，每次测试前都新建 registry
+
+但现在 registry 依赖全局注册的 KV.BucketSupervisor
+
+只要我们仅依赖与共享状态中不共享的部分，就可以依赖共享状态。
+
+当运行并行测试，并使用访问共享数据的函数时会出问题。
+
+如果这里出现问题，可以每次测试前启动新的
+
+  bucket supervisor
+
+  将 bucket supervisor 作为参数传入 registry start_link 函数
+
+  对应要修改 registry start_link 函数
+
 4. Observer 工具
 
+是时候介绍 Observer 了。
+
+iex -S mix
+
+:observer.start
+
+Application 标签页需要切出去回来才能看到新选择应用的 示意图 ???
+
+新创建一个 bucket
+
+iex(2)> KV.Registry.create(KV.Registry, "shopping")
+
+就会看到出现一个新的 child (切换下标签)
+
+可以右键发送 kill signal
+
+always start processes inside supervision trees, even if they are temporary, to ensure they are always reachable and introspectable.
+
+使用 Observer 这样的工具可以看到
+
+下一章介绍如何 speed things up
+
 # 6. ETS
+
+每次查询 bucket 都需要发送 message 到 registry。如果同时有很多查询，这里会成为瓶颈。 bottlenect !
 
 # 7. Dependencies and umbrella projects
 
@@ -2805,6 +2904,17 @@ META-PROGRAMMING in ELIXIR
 
 # 3. Domain-specific languages DSLs
 
+=========
+
+Books:
+
+https://subscription.packtpub.com/book/application_development/9781784397517 Elixir Cookbook
+
+Blogs:
+
+https://blog.appsignal.com/category/elixir-alchemy.html Elixir Alchemy email series | AppSignal Blog
+
+https://thinkingelixir.com/ Thinking Elixir – Transforming your Mindset.
 =========
 
 https://github.com/tony612/the-zen-of-elixir tony612/the-zen-of-elixir: Collection of top articles reflecting the Zen of Elixir
