@@ -14,7 +14,9 @@ defmodule KV.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      # 添加 mod 配置 supervisor 自动启动
+      mod: {KV, []}
     ]
   end
 

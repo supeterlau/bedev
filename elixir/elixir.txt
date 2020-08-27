@@ -2579,7 +2579,211 @@ link 和 monitor 区别
 
 # 4. Supervisor and Application
 
+实现 KV.Registry 管理 buckets。KV.Registry mointors buckets 从而在 bucket 崩溃采取行动。这就引入一个问题，当执行失败时会发生什么？
+
+没有监控，bucket crash 后 registry 的状态是错误状态。用户无法读写崩溃的 bucket，无法新建与崩溃 bucket 同名的 bucket。
+
+加上监控，在 bucket 崩溃时就可以从 registry 中移除 bucket pid。
+
+实践中我们不期待 processes 崩溃。但无论因为什么原因崩溃时，我们能确保系统依然正常工作。
+
+也许会想，保证绝对不会出错就可以了。这种思路是 defensive programming。
+
+运行中的系统有很多可能导致崩溃的原因，要处理全部的 errors，会浪费时间去处理错误而不是实现功能。
+
+Elixir developer prefers to “let it crash” or “fail fast”.
+
+从失败中恢复的常见方法就是 restart whatever part of the system crashed。
+
+back to initial state，那个状态是一定能保证工作的
+
+Elixir 中 restart 由 Supervisor 完成。
+
+A Supervisor is a process that supervises other processes and restarts them whenever they crash
+
+Supervisor 管理任意受监督 processes 的 life-cycle，如 启动，关闭。
+
+接下来会监督 KV.Regisgry。创建 KV.Supervisor
+
+Application，Mix 将全部代码打包成 application。了解如何定制 application 来保证 Supervisor 和 Registry 能够启动，运行。
+
+1. 第一个 supervisor
+
+监督进程三个功能
+  启动 child processes
+  restart child processes
+    原因: 不正常关闭，特定条件
+  关闭 child processes
+
+Supervisor 定义类似 GenServer
+
+strategy: :one_for_one 意味着 只重启挂掉的进程
+
+supervisor 启动时，会遍历 children 列表，调用每个模块中的 child_spec/1 函数
+
+child_spec/1 返回子进程设置，包括 如何启动进程，进程是 worker 还是 supervisor，进程是 temporary transient 还是 permanent 等
+
+当 use Agent/GenServer/Supervisor 时，自动定义 child_spec/1
+
+KV.Registry.child_spec([])
+
+%{id: KV.Registry, start: {KV.Registry, :start_link, [[]]}}
+
+supervisor 按定义顺序一个个启动子进程
+
+  启动参数为 :start 里的内容
+
+    如上则是 KV.Registry.start_link([])
+
+{:ok, sup} = KV.Supervisor.start_link([])
+Supervisor.which_children(sup) -> 显示子进程
+
+supervisor 启动时，它的子进程也同时启动
+
+[{_, registry, _, _}] = Supervisor.which_children(sup)
+
+  获取 registry 进程
+
+GenServer.call(registry, :bad_input)
+
+  发送错误命令使 registry crash
+
+Supervisor.which_children sup
+
+  会发现 Registry 被重启了，pid 改变
+
+现在 registry 被 supervisor 启动，而我们无法直接获取它的 pid。
+
+必须询问 supervisor 才能得到，我们可以给进程起名作为 uniquely identified in a single machine，然后通过名字与进程交互。
+
+alias 别名
+
+require 必须 require 后才能用 macro
+
+import 导入 函数或宏 支持 :only :except
+
+use 基于 require 实现
+
+2. 给 processes 命名
+
+在 KV.Registry.start_link/1 中传入 :name
+
+这样 supervisor 调用
+
+  KV.Registry.start_link(name: KV.Registry) 启动进程
+
+:name 参数是 locally named 意味着对所在 machine 可用
+
+现在我们可以不用 PID 创建 bucket
+
+{:ok, sup} = KV.Supervisor.start_link([])
+
+KV.Registry.create(KV.Registry, "shopping")
+
+之所以为 Registry 命名是因为只有这一个进程，bucket 的进程是基于用户输入内容创建的，如果基于用户输入命名进程，就会有很多无法被垃圾回收的 atom 存在，最终达到 VM 设置的上限。
+
+现在 supervisor 可以启动 registry 了，但如何在运行项目时启动 supervisor 呢？这就需要 application
+
+application -> supervisor -> children processes
+
+3. 理解 application
+
+到目前为止我们都在 application 中工作
+
+每次修改代码，运行 mix compiler，都有 Generated kv app 信息
+
+查看这个文件 _build/dev/lib/kv/ebin/kv.app
+
+它包含 Erlang term。Erlang syntax
+
+lib/kv 下有两个文件夹
+
+  ebin 存放 Elixir artefact 如 .beam 和 .app
+
+  priv 下存放所有其他文件
+
+启动 applications
+
+运行 iex -S mix (mix 编译并运行 :kv application)
+
+Application.start(:kv) -> :error
+
+iex -S mix run --no-start 仅编译不启动
+
+Application.start(:kv) -> :ok
+
+Application.stop :kv
+Application.stop :logger
+
+再次启动 :kv 时，{:error, {:not_started, :logger}}
+
+  原因是 :kv 依赖 :logger
+
+  可以使用 Application.ensure_all_started :kv
+
+iex -S mix == iex -S mix run
+
+4. application callback
+
+自定义 applications 启动
+
+mix.exs 中 application/1 里的 mod 指定 application callback module
+
+mod: {KV, []}
+
+mod 中的模块可以是任何实现 Application behaviour 的模块
+
+实现 callback
+
+  start/1
+
+  还有 stop/1
+
+配置自动启动两步
+
+  1. 添加模块到 application mod 列表中
+
+  2. 在 mod 中实现 start/1
+
+application callback 就是用来启动 supervisor tree 的。有时 supervisor 也可以被 supervised
+
+5. Project 还是 applications
+
+mix 区分 projects 和 applications
+
+即 mix.exs 中
+
+我们的这个 mix project (KV.MixProject) 有一个 :kv application
+
+也有不定义 application 的 project (lib?)
+
+所谓 project 指一个 mix project
+
+application 指 OTP Application
+
+  started and stopped as a whole by the runtime
+
+6. Next steps
+
+ExUnit 的 start_supervised! 就启动了一个 supervisor
+
+动态启动的 bucket 也需要有 supervisor
+
+application -> supervisor -> registry
+
+registry -> bucket (启动，但没 supervisor)
+
 # 5. Dynamic supevisors
+
+
+
+1. bucket supervisor
+
+2. Supervision trees
+
+3. 在测试中共享状态
+
+4. Observer 工具
 
 # 6. ETS
 
@@ -2611,6 +2815,8 @@ command
   i Prints information about the data type of any given term
   h Helper
   v Returns the value of the nth expression in the history
+
+https://hexdocs.pm/logger/Logger.html#content Logger — Logger v1.10.4
 
 http://elixirstatus.com/
 https://elixirweekly.net/
