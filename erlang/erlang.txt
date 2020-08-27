@@ -165,9 +165,11 @@ true
 
 #{"key" => 42}.
 
-查看 color.erl
+获取 更新 key 模块 maps
 
-define 定义 macro
+  maps:get(key, SomeMap).
+
+  maps:update(key, SomeMap).
 
 大于等于 >=
 
@@ -179,10 +181,21 @@ update 存在的 key: SomeMap#{ existingKey := newValue }.
 
 update 不存在的 key 报错。
 
-Module name 'color' does not match file name 'tut_map'
-error
+查看 color.erl
 
-文件名和模块名必须一样
+  define 定义 macro
+
+  -define(
+    is_channel(V),
+    (is_float(V) andalso V >= 0.0 andalso V =< 0)
+  ).
+
+  使用 macro ?is_channel(R) 带 ?
+
+  Module name 'color' does not match file name 'tut_map'
+  error
+
+  文件名和模块名必须一样
 
 2.7 标准模块和帮助文档 Manual Pages
 
@@ -671,6 +684,10 @@ when is_record(P, person)
 -record(name, {first = "Robert", last = "Ericsson"}).
 -record(person, {name = #name{}, phone}).
 
+http://erlang.org/doc/reference_manual/records.html#internal-representation-of-records
+
+  编译期 record 转为 tuple
+
 https://erlang.org/doc/man/shell.html
 
 5.4 Macros
@@ -690,6 +707,11 @@ In the messenger example, no assumptions have been made about what the message b
 
 LYSE: https://learnyousomeerlang.com/introduction#about-this-tutorial
 
+GUI
+
+  wxWidget
+    https://zxq9.com/ The Intellectual Wilderness
+    https://zxq9.com/archives/1650 Starting a simple GUI project in Erlang with ZX « The Intellectual Wilderness
 
 
 # misc
