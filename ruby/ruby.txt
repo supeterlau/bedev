@@ -1384,8 +1384,10 @@ Test
   https://semaphoreci.com/community/tutorials/getting-started-with-rspec
   https://www.rubyguides.com/2018/07/rspec-tutorial/
   https://www.rubyguides.com/2018/10/rspec-mocks/
+
 Gem
   https://guides.rubygems.org/make-your-own-gem/
+
 Rake
   https://www.rubyguides.com/2019/02/ruby-rake/
 
@@ -1400,6 +1402,10 @@ Queue
   https://www.rubyguides.com/2019/10/ruby-queues/
 
 Pattern Design
+  https://refactoring.guru/design-patterns
+
+Refactoring
+  https://refactoring.guru/refactoring/technical-debt
 
 New Ruby Version
   https://www.rubyguides.com/2019/12/ruby-2-7-new-features/#Enumerablefilter_map
@@ -1418,7 +1424,10 @@ Pre-defined variables
 
 Refs:
 
+https://www.rubyguides.com/ruby-post-index/
 https://www.rubyguides.com/2017/10/array-zip-method/
+
+https://refactoring.guru/refactoring/what-is-refactoring
 
 Resource:
 
