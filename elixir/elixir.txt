@@ -2886,6 +2886,104 @@ always start processes inside supervision trees, even if they are temporary, to 
 
 每次查询 bucket 都需要发送 message 到 registry。如果同时有很多查询，这里会成为瓶颈。 bottlenect !
 
+(仅仅是 ETS 示例，不要将 ETS 用做永久 cache)
+
+1. ETS 做缓存
+
+ETS 存储任意 Elixir/Erlang term 到 in-memory table。
+
+:ets 模块
+
+创建 ETS table
+
+  :ets.new
+    :set 表示 key 不能重复
+    :protected 表示只能创建 table 的进程写入，其他进程可以读出
+    (:public 任意进程可以读写 :private 仅有创建进程可以读写)
+
+    :named_table 表示给 table 进程命名为 table name，通过 table name 可以访问
+
+让 KV.Registry 使用 ETS
+
+KV.Registry.lookup/2 不请求 server 直接从 ETS 中读取，ETS 是在 processes 间共享的。
+
+ETS table 默认只有 registry process 可写，其他进程可读
+
+read_concurrency: true 优化并发读性能
+
+有些测试会时好时坏，这是因为
+
+  1. 过早优化，增加了 cache layer
+  2. 应该使用 call/2 而不是 cast/2
+
+2. Race conditions
+
+用 Elixir 不会让代码逃离 race conditions
+
+竞态条件
+
+Elixir 默认不共享状态能让我们更容易摆脱它
+
+测试出现问题的原因:
+  在操作和观察到 ETS table 发生变化之间有 delay
+
+我们期待的行为
+
+  调用 KV.Registry.create(registry, "shopping")
+
+  registry 创建 bucket ，更新 cache table
+
+  访问 cache: KV.Registry.lookup(registry, "shopping")
+
+  返回 {:ok, bucket}
+
+但 KV.Registry.create/2 是一个 cast 异步操作，返回命令早于实际写入 cache
+
+  (实际发生的一种情况可能是)
+
+  调用 KV.Registry.create(registry, "shopping")
+
+  访问 cache: KV.Registry.lookup(registry, "shopping")
+
+  返回 {:error}
+
+  registry 创建 bucket ，更新 cache table
+
+(为何不适用 ETS 无影响？还是影响小到测不出来)
+
+解决方案: 用 call/2 而不是 cast/2
+
+Elixir 中更常用 call/2 而非 cast/2，call/2 能够提供 back-pressure: block until get a reply
+
+在非必要时使用 cast/2 也是一种过度优化
+
+mix test --trace
+
+  当测试中有 deadlocking 或 race conditions 时，--trace option 可以让测试同步执行，async: true 参数无效
+
+新错误和刚才解决的类似，删除 bucket 操作比查询操作晚执行。
+
+刚才使用 call/2 替代 cast/2，但 handle_info/2 没有等价同步操作
+
+解决方案之一是向 registry 发送同步请求
+
+  Agent.stop/2 是同步请求，只有在 bucket process 终止后才返回。
+  此时，:DOWN 消息也被 registry 接收到（但可能还未处理）
+
+测试 exit 和 crash 时移除 pid 是为了确保 registry Process 正确处理 shutdown message。
+
+KV.Regsitry.lookup/2 返回 valid bucket 不代表 bucket 还 alive
+
+bucket 可能随时 crash
+
+  test "bucket crash any time"
+
+当数据可以被异步读取是，要注意 race condition 可能出现
+
+实践中，如果你需要为 dynamic process 创建 registry，应该使用 Registry 模块。
+
+提供类似 GenServer + :ets 的功能，又能同时并发处理读写。能在 40 核的机器上 scale。
+
 # 7. Dependencies and umbrella projects
 
 # 8. Task and gen_tcp
