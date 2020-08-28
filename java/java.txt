@@ -1,0 +1,30 @@
+
+https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-application.html
+
+Create New Project
+  choose menu New Project
+  in the New Project wizard, select Java
+  choose SDK
+  Don't create a project from the template
+  choose project path
+
+Create a package and a class
+  In the Project tool window, select the src folder, press CMD-N, and select Java Class.
+  Name field, type com.example.helloworld.HelloWorld and click OK
+  (com.java.tour.HelloWorld)
+  type main, CMD+J choose suggestion
+  Ctrl-. complete
+  open the completion list manually by pressing ⌃Space
+  Enter autocomplete semicolon
+
+Build and run
+
+  Ctrl Shift r
+
+  Once javac finishes compilation, it places the compiled bytecode to the out directory
+
+打包，运行 JAR
+
+https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-application.html#package
+
+https://www.javatpoint.com/intellij-idea-first-java-program IntelliJ IDEA First Java Program - javatpoint
