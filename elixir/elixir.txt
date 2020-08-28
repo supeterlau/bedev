@@ -3002,7 +3002,25 @@ META-PROGRAMMING in ELIXIR
 
 # 3. Domain-specific languages DSLs
 
+
 =========
+
+Misc:
+
+Erlang call Elixir
+
+  elixirc file.ex -> Elixir.Module.beam
+
+  erl
+  > :'Elixir:Module':function_name().
+
+Elixir call Erlang
+
+  :erlang.
+  :timer.
+
+  file.beam
+  > :file.double 4
 
 Books:
 
@@ -3025,6 +3043,8 @@ command
   v Returns the value of the nth expression in the history
 
 https://hexdocs.pm/logger/Logger.html#content Logger — Logger v1.10.4
+
+https://elixirschool.com/en/
 
 http://elixirstatus.com/
 https://elixirweekly.net/
