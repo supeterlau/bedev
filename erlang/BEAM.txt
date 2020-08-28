@@ -1,0 +1,12 @@
+https://github.com/llaisdy/beam_languages#languages-28 llaisdy/beam_languages: Languages, and about languages, on the BEAM
+
+https://gleam.run/index.html Hello, Gleam! - The Gleam Book
+
+  written in Rust
+
+Clojurl
+
+Hamber
+
+LFE
+https://lfe.io/books/tutorial/index.html The LFE Tutorial - The LFE Tutorial
