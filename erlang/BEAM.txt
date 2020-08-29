@@ -10,3 +10,21 @@ Hamber
 
 LFE
 https://lfe.io/books/tutorial/index.html The LFE Tutorial - The LFE Tutorial
+
+
+http://gomoripeti.github.io/beam_by_example/ gomoripeti.github.io/beam_by_example/
+
+Intermediate representaions:
+
+Erlang source code --> Abstract Syntax Tree ('P') --> expanded AST ('E') --> Core Erlang ('to_core') --> BEAM byte-code
+
+In erl:
+c('module.erl', [to_core]).
+
+In erlang code:
+case compile:file(File, [to_core]) of
+    {ok, _, CoreForms} ->
+      CoreForms;
+    _Other ->
+      io:fwrite("Error: Could not compile file.~n", []).
+end.
