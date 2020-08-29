@@ -2986,7 +2986,235 @@ bucket 可能随时 crash
 
 # 7. Dependencies and umbrella projects
 
+build TCP server 作为 kv 应用的 client。
+
+break projects into smaller applications。不要创建 big monolithic 应用。
+
+1. 外部依赖
+
+在 mix.exs 的 deps 函数中列出外部依赖
+
+def deps do
+  [
+    {:plug, "~> 1.0"}
+  ]
+end
+
+~> 1.0 表示安装 1.x.x 版本
+
+  https://hexdocs.pm/elixir/Version.html
+
+Hex 上是 stable release，如果需要其他版本，可以提供 Git 链接
+
+{:plug, git: "plug.git"}
+
+mix.lock 加入版本管理，方便其他人使用和你一样版本的依赖
+
+常用 mix deps 命令
+
+mix deps.get
+
+mix deps.update
+
+mix deps.tree
+
+mix help deps
+
+2. 内部依赖
+
+项目特定依赖。
+
+Mix 支持 Git repositories 和 umbrella projects
+
+Elixir 项目不鼓励对内部依赖使用 Git 形式。
+
+Elixir 鼓励将项目分割到不同 applications。但管理很多 Git repositories 会很麻烦。因此 Mix 支持 雨伞应用。
+
+Umbrella 项目用来构建在单个 repository 内的项目。
+
+创建新 Mix 项目 kv_umbrella
+
+kv_umbrella
+  apps
+    kv
+    kv_server -> now kv
+
+mix 可以用一个命令编译 apps 下的全部 applications
+
+你也可以分别 build test deploy 它们。
+
+3. Umbrella projects
+
+mix new kv_umbrella --umbrella
+
+umbrella 项目的 mix.exs project 中
+
+有 apps_path: "apps" 而不是 app: :kv
+
+这表示项目是 umbrella 项目
+
+在 apps 中创建 kv_server
+
+mix new kv_server --module KVServer --sup
+
+这表示项目是 umbrella 项目
+
+在 apps 中创建 kv_server
+
+mix new kv_server --module KVServer --sup
+
+这次 --sup 参数给 application 添加 supervisor tree
+
+mix 自动设置了 build_path config_path deps_path lockfile
+
+--sup 自动在 application 中增加 mod:
+
+KVServer.Application 中直接定义 KVServer.Supervisor 而不是在新文件里定义
+
+现在可以到 umbrella 下运行 mix test
+
+kv_server 功能和 kv 一样，但不需要从头开发，可以直接将 kv 作为一个依赖引入。
+
+4. 雨伞项目内依赖
+
+修改 apps/kv_server 下的 mix.exs
+
+defp deps do
+  [{:kv, in_umbrella: true}]
+end
+
+这样 :kv_server 将 :kv 作为依赖，并在启动前启动 :kv application
+
+将 kv 移动到 apps 下
+
+还需要修改 kv mix.exs 中的 project/0 函数
+
+添加 build_path config_path deps_path lockfile
+
+5. 不要死板 Don’t drink the kool aid
+
+Umbrella 基于 "mono-repo" 模式，将多个应用放在一个 repository 中。
+
+Umbrella 通过提供简便的 compile test 和 run 操作优化了这个模式。
+
+这个模式里，应用不是完全隔离的，它们共享同样的配置和依赖（版本）。
+
+如果你的项目里几个应用需要使用同一个依赖的不同配置，或不同版本，那就超出 umbrella 的能力。
+
+从 umbrella 拆成常规模式很容易。最差也可以仅仅移除 umbrella 相关配置，每个应用使用自己的配置文件，都还继续放在一个 repository 中。 （repository 是枷锁。。。）应用间依赖通过 :path （代替 :git）实现。
+
+mix bump ?
+
+6. 总结
+
+Finally, keep in mind that applications in an umbrella project all share the same configurations and dependencies.
+
 # 8. Task and gen_tcp
+
+用 Erlang 的 :gen_tcp 模块处理请求。
+
+1. Echo server
+
+TCP server，随后会增加 supervisor 并处理多个连接。
+
+server 需要
+  监听端口
+  等待客户端连接
+  读取客户端请求，返回响应
+
+lib/kv_server.ex
+
+loop_acceptor/1 中的 loop_acceptor 无法被调用，但我们需要这行代码来完成 tail call。
+
+测试 server
+
+在 kv_server 中启动
+
+iex -S mix
+
+KVServer.accept(4040) 启动服务器
+
+用 telnet 测试 telnet 127.0.0.1 4040
+
+新 macOS 没有 telnet 可以用 nc (netcat) 替代
+
+nc -v 127.0.0.1 4040
+
+现在有一些bug，
+
+  退出 telnet 或 nc 时 server 会因为 client 关闭连接 crash,
+
+  server 因为其他原因 crash 了怎么办
+
+2. Tasks
+
+之前学了 agents，generic servers, supervisors 都用来处理多信息或多状态。
+
+Task 模块提供仅运行任务的功能。
+
+Task 的 start_link/1 函数接收匿名函数，并在新进程中运行它，新进程会是 supervisor tree 的一部分。
+
+修改 lib/kv_server/application.ex 中 start/2
+
+application 的 children 列表中，传入 two-element tuple
+
+Supervisor 会调用 Task 的 start_link/1 函数
+
+现在可以通过 PORT=4321 mix run --no-halt 运行服务器
+
+启动多个 clients 发现第二个客户端不正常工作，这是因为处理请求的是同一个进程，而它已经接受第一个的请求，无法处理第二个。
+
+3. Task supervisor
+
+为了处理多个连接，可以在 acceptor 里启动其他进程处理新请求。
+
+修改 loop_accepter/1
+
+直接启动 Task.start_link/1 可能导致主进程随着新进程崩溃。
+
+和 KV.Registry 中解决方案类似，不过现在可以使用 Task 自带的 supervisor
+
+Task.Supervisor
+
+child spec: {Task.Supervisor, name: KVServer.TaskSupervisor}
+
+注意要先于 KVServer.accept/1 启动 KVServer.TaskSupervisor
+
+在 loop_acceptor/1 中改写为:
+
+{:ok, server_pid} = Task.Supervisor.start_child(
+  KVServer.TaskSupervisor,
+  fn -> server(client) end
+)
+
+语法有点冗长，如何能写成
+
+{:ok, server_pid} = KVServer.TaskSupervisor.start_child(
+  fn -> server(client) end
+)
+
+:get_tcp.controlling_process(client, server_pid) 将 client 的 controlling_process 设置为 server_pid，默认是执行 :gen_tcp.accept/1 的进程，即主进程。
+
+看看 supervisor tree 中的 restart 策略是否合适。
+
+Task 默认 :restart 策略是 :temporary
+
+对于处理请求的 task，这一策略合理。
+
+对于 accept 部分，希望在 crash 后还能重启
+
+  因此需要设置 restart: :permanent
+
+  解决方法一，单独写自己的 Task 模块，替换 Task
+
+    {CustomTask, fn -> KVServer.accept(port)}
+
+  方法二，多用于定制别人写的 agents tasks servers。使用 Supervisor.child_spec/2，第一个参数为 child_spec tuple，第二个是 keyword list options
+
+    Supervisor.child_spec({Task, fn -> KVServer.accept(port) end}, restart: :permanent)
+
+    Supervisor.child_spec 支持从 module/tuple 创建 child spec，并支持覆写 child spec 选项
+
 
 # 9. Doctests, patterns and with
 
