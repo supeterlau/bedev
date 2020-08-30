@@ -1,0 +1,26 @@
+# Play
+
+https://ejpcmac.net/blog/typed-elixir-structs-without-boilerplate/ ejpcmac.net/blog - Typed Elixir structs without boilerplate
+
+# Posts
+
+### 2020-08-30
+
+https://ejpcmac.net/blog/typed-elixir-structs-without-boilerplate/ ejpcmac.net/blog - Typed Elixir structs without boilerplate
+
+https://elixirforum.com/t/getting-each-stage-of-elixirs-compilation-all-the-way-to-the-beam-bytecode/1873 Getting each stage of Elixir's compilation all the way to the BEAM bytecode - Chat / Discussions - Elixir Forum
+
+### 2020-08-06
+
+https://hashrocket.com/blog/posts/build-the-ultimate-elixir-ci-with-github-actions
+
+https://elixirschool.com/blog/instrumenting-phoenix-with-telemetry-part-one/
+https://elixirschool.com/en/lessons/libraries/benchee/
+https://elixirschool.com/en/lessons/advanced/metaprogramming/
+
+Build a real-time Twitter clone in 15 minutes with LiveView and Phoenix 1.5
+https://www.youtube.com/watch?v=MZvmYaFkNJI
+
+- tag
+
+# Blogs

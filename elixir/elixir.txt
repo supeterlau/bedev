@@ -3213,8 +3213,9 @@ Task 默认 :restart 策略是 :temporary
 
     Supervisor.child_spec({Task, fn -> KVServer.accept(port) end}, restart: :permanent)
 
-    Supervisor.child_spec 支持从 module/tuple 创建 child spec，并支持覆写 child spec 选项
+    Supervisor.child_spec 支持从 module/tuple 创建 child spec，并支持覆写 child spec 选项。
 
+Now we have an always running acceptor that starts temporary task processes under an always running task supervisor.
 
 # 9. Doctests, patterns and with
 
@@ -3234,6 +3235,11 @@ META-PROGRAMMING in ELIXIR
 =========
 
 Misc:
+
+NIF:
+  https://cs.mcgill.ca/~mxia3/2017/06/18/tutorial-extending-elixir-with-c-using-NIF/ Tutorial: Extending Elixir with C using NIF | Meng Xuan Xia
+  https://simplabs.com/blog/2020/06/25/writing-rust-nifs-for-elixir-with-rustler/ Writing Rust NIFs for Elixir With Rustler | Blog | simplabs
+  https://sudonull.com/post/97911-How-to-write-your-NIF-in-Elixir How to write your NIF in Elixir / Sudo Null IT News
 
 Erlang call Elixir
 
