@@ -2,6 +2,6 @@
 -export([add/2]).
 
 add(A, B) ->
-  id(A) + id(B).
+  A + B.
 
-id(I) -> I.
+%%% https://gist.github.com/sashaafm/c129fdb307355fa2067949e4d0e74985

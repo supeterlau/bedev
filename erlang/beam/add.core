@@ -8,24 +8,10 @@ module 'add' ['add'/2,
 'add'/2 =
     %% Line 4
     ( fun (_0,_1) ->
-	  let <_3> =
-	      apply %% Line 5
-		    'id'/1
-		  (_0)
-	  in  let <_2> =
-		  apply %% Line 5
-			'id'/1
-		      (_1)
-	      in  %% Line 5
-		  call 'erlang':'+'
-		      (_3, _2)
+	  %% Line 5
+	  call 'erlang':'+'
+	      (_0, _1)
       -| [{'function',{'add',2}}] )
-'id'/1 =
-    %% Line 7
-    ( fun (_0) ->
-	  ( _0
-	    -| [{'function',{'id',1}}] )
-      -| [{'function',{'id',1}}] )
 'module_info'/0 =
     ( fun () ->
 	  call 'erlang':'get_module_info'
