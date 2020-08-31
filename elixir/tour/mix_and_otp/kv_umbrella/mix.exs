@@ -6,6 +6,24 @@ defmodule KvUmbrella.MixProject do
       apps_path: "apps",
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
+      releases: [
+        deploy_both: [
+          version: "0.0.1",
+          # permanent 意味着如果有一个 crash，整个 node 就停止
+          applications: [
+            kv_server: :permanent,
+            kv: :permanent
+          ]
+        ],
+        foo: [
+          version: "0.0.1",
+          # permanent 意味着如果有一个 crash，整个 node 就停止
+          applications: [
+            kv_server: :permanent,
+            kv: :permanent
+          ]
+        ]
+      ],
       deps: deps()
     ]
   end

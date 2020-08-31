@@ -54,7 +54,7 @@ defmodule KVServer.Command do
     # {:ok, "OK\r\n"}
 
     # 处理创建失败情况
-    case KV.Registry.route(bucket, KV.Registry, :create, [KV.Registry, bucket]) do
+    case KV.Router.route(bucket, KV.Registry, :create, [KV.Registry, bucket]) do
       pid when is_pid(pid) -> {:ok, "OK\r\n"}
       _ -> {:error, "FALED TO CREATE BUCKET"}
     end

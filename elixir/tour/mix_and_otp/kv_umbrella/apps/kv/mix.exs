@@ -19,6 +19,7 @@ defmodule KV.MixProject do
   def application do
     [
       extra_applications: [:logger],
+      env: [routing_table: []],
       # 添加 mod 配置 supervisor 自动启动
       mod: {KV, []}
     ]

@@ -1,5 +1,5 @@
 defmodule KV.Router do
-  @local "lxy-mbp"
+  # @local "mbp"
 
   @doc """
   Dispatch `mod`, `fun`, `args` request to the appropriate node
@@ -35,9 +35,10 @@ defmodule KV.Router do
   routing table
   """
   def table do
-    [
-      {?a..?m, :"foo@#{@local}"},
-      {?n..?z, :"bar@#{@local}"}
-    ]
+    Application.fetch_env!(:kv, :routing_table)
+    # [
+    #   {?a..?m, :"foo@#{@local}"},
+    #   {?n..?z, :"bar@#{@local}"}
+    # ]
   end
 end

@@ -16,3 +16,16 @@ import Config
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
+
+config :iex, default_prompt: ">>>"
+
+config :kv, :routing_table, [{?a..?z, node()}]
+
+local = "lxy-mbp"
+
+if Mix.env() == :prod do
+  config :kv, :routing_table, [
+    {?a..?m, :"foo@#{local}"},
+    {?n..?z, :"bar@#{local}"}
+  ]
+end

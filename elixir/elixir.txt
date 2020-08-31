@@ -3506,7 +3506,6 @@ test "" do
 
 添加标签后，可以检查 node 是否 alive
 
-
 如果不 alive，就从测试代码中 exclude 全部分布式相关测试
 
 修改 test/test_helper.exs
@@ -3551,6 +3550,251 @@ Routing table 还是 hard-code，需要改进。
 每个 node 上运行一个 registry
 
 # 11. Configuration and releases
+
+让 routing table 可配置，并打包到生产环境
+
+1. application environment
+
+配置不仅是针对 dev/test/prod 环境，还为不同模块配置不同的 entries in the routing table。
+
+OTP 提供的 application environment 正是做这个的。
+
+每个应用都用 key 保存特定配置。
+
+:kv application environment
+
+def application do
+  [
+    ...,
+    env: [routing_table: []],
+    ...,
+  ]
+end
+
+application 中适合提供 empty table，实际运行根据所处环境获取
+
+Application.fetch_env!(:kv, :routing_table)
+
+将根据 config 中的配置决定环境参数
+
+2. configuration
+
+入口位于 config/config.exs
+
+配置文件在 build time 读取 compile-time
+
+例如配置 iex
+
+config :iex, default_prompt: ">>>"
+
+简单起见，可以设置 :routing_table 为 [{?a..?z, node()}]
+
+即请求都由一个 node 处理，这样可以移除 test/kv_server_test.exs 中的 distributed tag
+
+但 KV.RouterTest 还是需要有两个 node
+
+这可以通过在测试启动前修改 environment 实现
+
+KV.RouterTest 中
+
+在所有测试前执行
+
+setup_all do
+  ...
+end
+
+测试步骤
+
+1) iex --sname bar -S mix
+
+2) 新终端 elixir --sname foo -S mix test --include distributed
+
+3. release
+
+为了打包到生产环境，Elixir 提供 releases
+
+release 是 self-contained directory，由
+
+  application code
+  all of its dependencies
+  whole Erlang Virtual Machine
+  runtime
+
+组成
+
+release assembled 后，可以打包并部署到与 assemble release 环境相同的操作系统上。
+
+Once a release is assembled, it can be packaged and deployed to a target as long as the target runs on the same operating system (OS) distribution and version as the machine that assembled the release.
+
+普通项目可以直接 mix release
+
+对于 umbrella 项目需要额外输入
+
+  由于 umbrella 项目的应用可以一起部署也可以分别部署
+
+在 def project 中配置
+
+releases: [],
+
+此外还要为 prod 环境配置 routing_table
+
+if Mix.env() == :prod do
+  ...
+end
+
+配置有个问题是，我们无法预知部署服务器的 computer-name
+
+这可以在 config/release.exs 文件中解决，release.exs 会在生产环境运行，
+
+让开发者有机会设置正确的 node name
+
+  runtime configuration : config/releases.exs
+
+assembling release:
+
+  MIX_ENV=prod mix release deploy_both
+
+release 位于 _build/prod/rel/<release_name>/bin/<release_name>
+
+一些提示
+
+Release created at _build/prod/rel/deploy_both!
+
+    # To start your system
+    _build/prod/rel/deploy_both/bin/deploy_both start
+
+Once the release is running:
+
+    # To connect to it remotely
+    _build/prod/rel/deploy_both/bin/deploy_both remote
+
+    # To stop it gracefully (you may also send SIGINT/SIGTERM)
+    _build/prod/rel/deploy_both/bin/deploy_both stop
+
+To list all commands:
+
+    _build/prod/rel/deploy_both/bin/deploy_both
+
+(Docker-like)
+
+bin/release_name start
+bin/release_name start_iex
+bin/release_name restart
+bin/release_name stop
+
+bin/release_name rpc COMMAND
+bin/release_name remote
+  在运行系统中执行命令或连接到运行系统
+
+bin/release_name eval COMMAND
+  启动新 system 执行命令，然后关闭
+
+bin/release_name daemon
+bin/release_name daemon_iex
+  作为 daemon 启动系统
+
+bin/release_name install
+  在 Windows 上作为 service 安装
+
+release 启动的 shortname 和 release_name 一致
+
+# 设置 shorname bin/release --sname start
+
+4. why release
+
+release 好处: precompile package 全部代码和运行时为一个单元
+
+  Code preloading
+    VM 开发环境是在 interactive mode 下，按需加载模块。这样如果生产环境用这个模式，首次响应时会因为要加载大量模块而拖慢响应时间。releases 中 VM 运行在 embedded 模式下，提前载入全部可用模块，启动后可以立即响应请求
+
+  配置和自定义
+    开发者可以自由控制系统配置和 VM flags 来启动系统
+
+  self-contained
+    不需要部署服务器预先有代码或 Erlang/Elixir。release 中只包含用到的 Erlang/Elixir 标准库。
+
+  多版本 release
+    每个应用可以在不同配置下 release
+
+5. assembling multiple release
+
+启动 release
+
+_build/prod/rel/<release_name>/bin/<release_name> start
+
+测试命令: ❌
+
+配置 release: foo bar
+
+6. configuring release
+
+Release 提供内置 hooks 来满足几乎各种配置需求
+
+config/config.exs: build-time application configuration
+
+  经常根据环境导入其他配置文件
+
+config/releases.exs: runtime application configuration
+
+  release boots 时运行，可以通过 config providers 扩展 (k8s)
+
+rel/vm.args.eex
+  template file，复制到每个 release 中，提供对 Erlang VM 及其他 runtime flags 的静态配置
+
+rel/env.sh.eex rel/env.bat.eex
+  模板文件，复制到每个 release。在 set up 环境变量时运行，环境变量包括针对 VM 的和 general environment 的。
+
+- 操作系统环境配置
+
+每个 release 包含环境文件，env.sh (Unix-like) env.bat (Windows)
+
+在 Elixir system 启动前执行。
+
+在这个文件里可以运行 OS-level 代码，如调用其他应用，设置环境变量，有些变量可以设置 release 如何启动自己。
+
+例如生产环境中，我们需要动态设置 --name 参数
+
+可以通过设置 RELEASE_DISTRIBUTION 达到目的
+
+Mix 预置了模板，通过
+
+  mix release.init 复制到 application 中
+
+  * creating rel/vm.args.eex
+  * creating rel/env.sh.eex
+  * creating rel/env.bat.eex
+
+取消最后两行注释
+
+- runtime 配置
+
+另一个常见需求是: 在 release 运行时计算配置
+
+例如从 disk 或其他服务 读取 routing_table
+
+这可以在 config/releases.exs 中完成
+
+如配置 KVServer 的 port
+
+import Config
+config :kv_server, :port, System.fetch_env!("PORT")
+
+为何不用 System.get_env/2
+
+7. summing up
+
+完成了一个简单的 key-value store.
+
+类似 Riak，Riak 不同在于
+
+  buckets 是复制备份的，
+
+  使用 consistent hashing 代替 router
+    consistent hashing, 帮助减少在增加节点后需要迁移的数据
+
+Embedded systems, data-processing and data-ingestion, web applications, streaming systems, and others are many of the different domains Elixir excels at.
+
+Happy coding!
 
 META-PROGRAMMING in ELIXIR
 
