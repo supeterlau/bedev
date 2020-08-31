@@ -3722,7 +3722,7 @@ release 好处: precompile package 全部代码和运行时为一个单元
 
 _build/prod/rel/<release_name>/bin/<release_name> start
 
-测试命令: ❌
+测试 Key Value Store 命令: ❌
 
 配置 release: foo bar
 
@@ -3800,10 +3800,121 @@ META-PROGRAMMING in ELIXIR
 
 # 1. Quote and unquote
 
+介绍 meta-programming 技术。
+
+用 Elixir 数据结构，表示 Elixir 程序的能力
+
+1. Quoting
+
+Elixir 程序的内部表示形式是 three-elements-tuple 三元素元组
+
+sum(1, 2, 3) -> {:sum, [], [1, 2, 3]}
+
+使用 quote 宏可以得到任意表达式的内部形式
+
+quote do: sum(1, 2, 3)
+
+第一个: 函数名
+
+第二个: metadata
+
+第三个: arguments list 参数列表
+
+更复杂的结构也会表示为类似的 tuple 嵌套格式，形成树状。
+
+其他语言称之为 Abstract Syntax Tree (AST)
+
+Elixir 称为 quoted expressions
+
+从 quoted expressions 得到 textual 表示形式 (textual code representation)
+
+  Macro.to_string(quote do: sum(1,2+3,4))
+
+quoted expressons 通用表示形式
+
+{atom | tuple, list, list | atom}
+
+第一项是 atom 或其他同样形式的三元元组
+
+第二项是 包含 metadata 的 keyword list
+
+第三项是 函数调用的参数列表，或 atom。如果是 atom，表示这个元组代表变量
+
+有五种字面量，quoted expressions 和 textual code representation 一致
+
+:sum (Atoms)
+1.0 (Numbers)
+[1,2] (Lists)
+"strings" (Strings)
+{key, value} (二元元组)
+
+2. Unquoting
+
+quote 是为了获得代码特殊部分的内部形式。
+
+有时需要将某些代码添加到内部表示形式
+
+例如将变量插入到 quoted expression，用实际值替代形参
+
+Macro.to_string(quote do: 11 + number)
+
+此时需要在 quote 内部使用 unquote
+
+Macro.to_string(quote do: 11 + unquote(number))
+
+要将 list 插入 list 需要用 unquote_splicing
+
+  用 unquote 会将整体插入，而不是元素
+
+  unquote_splicing 参数为 list with quoted expressions
+
+inner = [1,2,3]
+
+# Macro.to_string(quote do: [31,32,unquote(inner),100])
+
+Macro.to_string(quote do: [31,32,unquote_splicing(inner),100])
+
+
+写宏时，需要从其他代码中获取代码或插入代码，从而在编译期生成代码
+
+3. Escaping
+
+Elixir 中只有部分形式是有效 quoted expressions
+
+例如 map 不是有效 quoted expression，四元元组也不是，但可以表示为 quoted expression
+
+quote do: %{1 => 2}
+
+{:%{}, [], [{1,2}]}
+
+escape 也是为了添加代码到 quoted expressions，
+
+unquote 添加 valid quoted expression，
+
+escape 将 invalid quoted expression 转为 valid
+
+Macro.escape(%{hello: :world})
+
+inner = %{"three" => 3}
+
+Macro.to_string(quote do: [31,32,unquote(inner |> Macro.escape),100])
+
+Macros receive quoted expressions and must return quoted expressions.
+
+regular Elixir value 和 quoted expression 区别:
+
+integers atoms strings 等，quoted expression，textual code representation 一样
+
+maps 等，需要用 Macro.escape 转为 quoted expression
+
+函数或引用等，无法转为 quoted expression
+
+
 # 2. Macros
 
 # 3. Domain-specific languages DSLs
 
+quoted expression 可视化
 
 =========
 
