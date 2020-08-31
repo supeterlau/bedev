@@ -28,6 +28,7 @@ defmodule Tour do
     Macro.to_string(quote do: [31,32,unquote_splicing(inner),100])
 
     inner = %{"three" => 3}
+    Macro.to_string(quote do: [31,32,unquote(inner),100])
     Macro.to_string(quote do: [31,32,unquote(inner |> Macro.escape),100])
 
     # inner = fn -> 100 end

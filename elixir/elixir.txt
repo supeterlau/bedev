@@ -3909,10 +3909,189 @@ maps 等，需要用 Macro.escape 转为 quoted expression
 
 函数或引用等，无法转为 quoted expression
 
+example: 例如 map = %{a: 100, b: 200}
+
+> quote do: map
+{:map, [], Elixir}
+
+> quote do: unquote(map)
+%{a: 100, b: 200} -> invalid quoted expression
+
+> quote do: unquote(map |> Macro.escape)
+{:%{}, [], [a: 100, b: 200]}
+
+这才和 quote do: %{a: 100, b: 200} 的结果一致
 
 # 2. Macros
 
+1. Foreword
+
+Elixir 尽量为 macros 提供安全环境。
+
+但开发者有责任写出干净代码。macros 比普通 Elixir 代码难写，在不该用宏的地方使用宏是不好的代码风格。
+
+宏应当是最后的选择。
+
+explicit is better than implicit.
+
+clear code is better than concise code.
+
+2. first macro
+
+Elixir 里的宏用 defmacro 定义
+
+macro 接收 quoted expression，返回 quoted expression
+
+函数版本会比宏版本的 unless 多打印一行。
+
+原因是函数求值前，会先对所有参数求值
+
+宏不会，它只是单纯地将一种 quoted-expression 转为另一种
+
+Macro.expand_once/2 将 quoted expression 根据当前环境展开，
+
+这一过程中，expanded/invoked Unless.macro_unless/2 返回其结果
+
+随后将结果转为 string 就是原代码展开后的代码
+
+可以定义任意函数和宏，除了那些不是 Elixir 实现的特殊形式 Kernel.SpecialForms
+
+3. Macro hygiene
+
+quote 内定义的变量，不会与宏展开环境中的变量冲突。
+
+使用 quote do: var!(a) = 1 影响 context
+
+Elixir 用 context 对变量进行注解
+
+第三行定义的变量  x quoted-expression 是 {:x, [line: 3], nil}
+
+模块内的 quote do: x 是 {:x, [line: 3], Sample}
+
+注明变量来自 Sample 模块
+
+可以用 var! alias! 绕过 Hygiene，但必须小心使用
+
+大部分使用可以用 Macro.var/2 动态创建变量
+
+如 Sample
+
+Macro.var 第二个参数是用于检测 hygiene 的。
+
+3. environment
+
+__ENV__ 返回 Macro.Env struct 实例
+
+包含与编译有关的信息，当前模块，文件，行数，所有作用域内的变量，imports，requires 等
+
+多数 Macro 模块的函数都需要 Macro.Env 为参数
+
+4. 私有宏
+
+类似私有函数 defmacrop
+
+只在定义宏的模块内有用，仅在编译期有用
+
+使用 macros 前必须定义。否则会报 runtime error。
+
+因为 macros 不展开，而被转为函数调用，产生函数为定义的错误
+
+5. Write macros responsibly
+
+宏的特点
+
+  hygiene
+
+  lexical
+
+  explict 有些语言，允许通过解析转换或反射在暗中重写函数，Elixir 要求必须明确调用宏
+
+  clear 使用 quote unquote 而非 shortcuts form (' , '@)
+
+假如你必须使用 macros。要注意 macros 不是 API。
+
+Keep macro definitions short
+
+这样便于测试，并提供给其他模块不依赖 macros 的 API
+
 # 3. Domain-specific languages DSLs
+
+1. foreword
+
+Domain-specific language (DSL)
+
+不需要用 macro 实现 DSL: 每个定义的数据结构，函数都是 DSL 一部分
+
+例如在一个 Validator 数据验证模块中
+
+可以用 data structures, functions, macros 实现
+
+# 用 data structure
+import Validator
+
+validate user, name: [length, 1..100]
+               email: [matches: ~r/@/]
+
+# function
+user
+|> validate_length(:name, 1..100)
+|> validate_matches(:email, ~r/@)
+
+# modules macros
+
+defmodule UserValidator do
+  use Validator
+  validate_length :name, 1..100
+  validate_matches :email, ~r/@/
+end
+
+UserValidator.validate(user)
+
+数据结构是最 flexible 的，如果你的问题可以用数据结构表示，那是最简单的实现方法。
+
+函数适合更复杂的 API。可以传入参数，可以用 pipe 操作符
+
+macros 是最复杂的。代码量多，难以测试，限制 library 的使用（validator 必须定义成模块）
+
+假设要检查一个某些条件下才有的属性，通过修改数据结构可以很容易实现，通过条件可以在函数中实现，但 macro 必须能支持参数才能实现。
+
+2. our own test case
+
+定义 TestCase 模块，test 宏，
+
+run 函数来运行所有模块内测试
+
+用 = 做 assertions
+
+3. test macro
+
+暂时还没有运行函数
+
+4. store information with attributes
+
+为了执行全部测试，需要有办法能访问全部定义的 test cases
+
+一种办法是: 通过 __MODULE__.__info__(:functions) 在运行时得到
+
+但这不能得到除 函数名 外更多信息。还需要更灵活的方法。
+
+之前提到，module attributes 可以用作临时存储，适合用在这里。
+
+在 __using__/1 中定义
+
+@tests [] 存放每个测试函数名字
+
+@before_compile 在导入 TestCase 的模块编译前，调用 TestCase.__before_compile__/1 添加 run/0 函数
+
+和 @before_compile 类似的还有 @on_definition @after_compile
+
+apply(anonymous 函数, 参数列表)
+
+apply(M, F, A) 模块，函数，参数列表
+
+https://hexdocs.pm/elixir/Module.html#module-compile-callbacks Module — Elixir v1.10.4
+
+???
 
 quoted expression 可视化
 
