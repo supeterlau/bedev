@@ -3219,7 +3219,336 @@ Now we have an always running acceptor that starts temporary task processes unde
 
 # 9. Doctests, patterns and with
 
+解析之前提到的命令
+
+CREATE
+PUT
+GET
+DELETE
+
+然后将命令分发到 :kv application
+
+1. Doctests
+
+Elixir 里 documentation is first-class citizen
+
+文档可以通过
+
+mix help 或 h Enum 获取
+
+流程: 实现功能，写文档，保证文档和 doctests 一致
+
+创建 command parser
+
+  lib/kv_server/command.ex
+
+Doctest
+
+iex> 前有 4 格空格
+
+多行用 ...> 代表换行继续
+
+预期结果在 iex> 或 ...> 之后，到 换行或 iex> 截止
+
+@doc ~S"""""" 阻止 \r\n 被转义
+
+对应测试 test/kv_server/command_test.exs
+
+执行 doctests
+
+use ExUnit.Case, async: true
+doctest KVServer.Command
+
+执行一个 app 下的测试
+
+mix cmd --app kv_server mix test --color
+
+--color 带颜色输出
+
+mix.exs 中的 aliases 函数可以简化命令
+def project do
+  [
+    aliases: aliases,
+  ]
+end
+
+defp aliases do
+  [
+    child_app_test: "cmd --app child mix test --color"
+  ]
+end
+
+https://elixirschool.com/blog/til-umbrella-app-child-app-tests/ TIL How to Run Tests for One Child App in an Umbrella · Elixir School
+
+继续实现功能.
+
+doctest 是按照空行区分测试的，一个空行表示一个测试结束，移除空行会合并两个测试为一个
+
+doctest 是先写文档后测试，目的不是取代 tests 而是保证文档和代码同步
+
+2. with
+
+解析命令后可以执行命令运行逻辑了。
+
+stub definition
+
+def run(command) do
+end
+
+实现具体逻辑前，先让 kv_server 使用 parse/1 run/1。
+
+现在 kv_server 中的 read_line/1 还会在关闭客户端时 crash。先修复这个问题。
+
+pipe 操作符用于处理单个数据流，但代码中有多个嵌套数据流时，可以使用 with 简化代码。
+
+with {:ok, data} <- read_line(),
+
+特别当匹配失败时，会跳过剩余代码直接返回 不匹配的值。
+
+将嵌套的 case 转为 with
+
+3. Running commands
+
+实现 KVServer.Command.run/1，执行 :kv application 的 API
+
+第一个 bodiless 无函数体的函数头，声明有默认参数的多分支函数
+
+def run(command)
+
+补上测试
+
+KVServer.Command.run/1 直接发送命令到名为 KV.Registry 的 server，这是由 :kv application 注册的。
+
+这个 server 是全局的，即如果同时两个测试发送消息，测试之间会冲突。需要决定是写互相隔离 的单元测试，还是写使用全局状态 global state 的集成测试 integration tests
+
+目前只写了单元测试，每次只测试一个模块。但是为了把 KVServer.Command.run/1 作为单元进行测试，需要改变实现，不直接发送命令到 KV.Registry 而是传入 server 作为参数
+
+run/1 改写为
+
+def run(command, pid) do
+  KV.Registry.create(pid, bucket)
+  {:ok, "OK\r\n"}
+end
+
+这样可以在测试中启动新的 KV.Registry 实例，并传入 run/2
+
+现在写基于全局状态的 integration tests
+
+即测试从 TCP server 到 bucket 的整个流程。
+
+集成测试依赖 global state 必须是同步的 synchronous.
+
+可以测出应用中组件如何一起工作，代价是测试性能。
+
+集成测试是测试主要流程的，避免测试边界条件。
+
+test/kv_server_test.exs 集成测试 使用 TCP client 发送命令到 server，断言得到希望的返回值。
+
+defmodule KVServerTest do
+end
+
+集成测试依赖 global state 所以不加 async: true 选项
+
+为保持状态干净，每次测试前重启 :kv application
+
+停止 :kv 会打印 warning，
+
+使用 :capture_log 避免打印 log 信息
+
+每个测试前加 @tag :capture_log 或在 testcase 上加
+
+@moduletag :capture_log
+
+测试有可能进入超时。
+
+需要基于 code quality, confidence, test suite runtime 选择合适的测试策略。
+
+例如开始只进行集成测试，在项目变复杂时引入单元测试。
+
 # 10. Distributed tasks and tags
+
+回到 :kv 添加 routing layer，这会根据 bucket 名字把请求分布到多个 Nodes 上
+
+routing layer 中有 node 列表
+
+[
+  {?a..?m, :"num1@computer-name"},
+  {?n..?z, :"num2@computer-name"}
+]
+
+根据匹配情况，将请求分发到对应 Node 上执行。
+
+没有匹配会报错。
+
+1) 确保 ./erlang.cookie 值一致
+2) 保证 epmd 运行 epmd -d 显示 debug info
+
+1. first distributed code
+
+在分布式环境中，继续使用同样的 processes，message passing， receiving message 概念。
+
+Elixir processes 是 location transparent 的。即在发送消息时，不考虑接收方是在同一个 node 还是在不同 node。VM 在两种情况下都能传递消息。
+
+用不同名字启动 VM 即启动不同的 node。
+
+在同一网络下使用 short name: iex --sname foo
+
+不同网络下使用 long name: iex --name foo@ip-or-domain-address
+
+在一个 node vm (node2) 中定义一个模块 Hello
+
+iex(node2@mbp)1> defmodule Hello do
+...(node2@mbp)1> def world, do: IO.puts "hello world"
+...(node2@mbp)1> end
+
+启动 node1 vm:
+
+运行 Hello.world -> UndefinedFunctionError
+
+但 node1 可以在 node2 上 spawn 执行这个函数
+
+Node.spawn_link :"node2@mbp", fn -> Hello.world end
+
+结果 node2 上进程的 pid，运行函数，并将结果返回给 node1
+
+pid = Node.spawn_link :"node2@mbp", fn ->
+  receive do
+    {:ping, client} -> send client, :pong
+  end
+end
+
+send pid, {:ping, self}
+
+用 flush 查看接收到的返回值
+
+可以看出我们可以用 spawn_link 在其他 node 启动进程。
+
+但基于已有知识，要避免在 supervison trees 外启动进程。
+
+可选的改进方法有
+
+  - :rpc 模块
+
+    :rpc.call(:"foo@computer-name", Hello, :world, [])
+
+  - 如果另一个 node 上有 server (GenServer) 运行，可以通过 GenServer.call({name, node}, arg) 或将远端 GenServer 作为第一个参数传入
+
+  - 可以用 Task 模块
+
+这些方法有不同的特性。 :rpc 和 GenServer 会将请求序列化到服务器，task 仅仅异步执行，只序列化 supervisor 启动 task 部分。
+
+在 routing layer 中会使用 task
+
+2. async/await
+
+对于需要获取返回值的 task 提供 async/await 模式
+
+task = Task.async(fn -> do_something() end)
+res = do_otherthing()
+res + Task.await(task)
+
+在 supervision tree 内启动:
+
+Task.Supervisor.async/2 替代 Task.Supervisor.start_child/2
+
+然后用 Task.await 接收结果
+
+3. distributed tasks
+
+在 :kv 中增加 KV.RouterTasks 到 lib/kv/supervisor.ex init/1
+
+$ iex --sname foo -S mix
+
+$ iex --sname bar -S mix
+
+在一个 node 上启动另一个 node 的 task
+
+task = Task.Supervisor.async {KV.RouterTasks, :"node1@mbp"}, fn -> {:ok, node} end
+
+node 类似 self 返回 node name
+
+这里我们的参数是 anonymous function，分布式情况最好用 module, function, arguments (MFA)
+
+task = Task.Supervisor.async {KV.RouterTasks, :"foo@mbp"}, Kernel, :node, []
+
+通过 Task.await(task) 获取结果
+
+anonymouse 要求目标 node 和 caller 代码版本完全一致
+
+4. routing layer
+
+lib/kv/router.ex
+
+String.valid? <<23,24,125::3>>
+false
+
+String.valid? <<23,24,125::8>>
+true
+
+增加 test: test/kv/router_test.exs
+
+运行测试的前提是启动两个 node
+
+在 apps/kv 中运行
+
+iex --sname bar -S mix
+
+执行测试 elixir --sname foo -S mix test
+
+5. test filters and tags
+
+测试变得更复杂了。分布式相关的测试需要启动两个 node 无法和普通模块一同测试。
+
+ExUnit 有一些 tag 来执行特定 callbacks 或用来过滤测试。
+
+@tag :distributed 等价于 @tag distributed: true
+test "" do
+
+添加标签后，可以检查 node 是否 alive
+
+
+如果不 alive，就从测试代码中 exclude 全部分布式相关测试
+
+修改 test/test_helper.exs
+
+exclude =
+  if Node.alive?, do: [], else: [distributed: true]
+
+这样常规的 mix test 运行时会跳过 标记为 distributed 的测试
+
+要运行 disributed 测试需要用
+
+  elixir --sname foo -S mix test
+
+同时要保证 bar@computer-name 节点可用
+
+mix test 可以动态 include exclude 测试
+
+mix test --include distributed
+mix test --exclude distributed
+mix test --only distributed
+
+6. wiring it all up
+
+route layer 已经可用。修改 KVServer 使用 router 分发请求
+
+替换 KVServer.Command 中的 lookup/2
+
+server interaction 测试要使用 routing table，而测试失败
+
+添加 distributed tag
+
+注意添加了tag的测试，会较少被测到。因为预备步骤较多。
+
+其他可选解决方案是在 test/test_helper.exs 中启动 distributed node。
+
+Erlang/OTP 提供这样的 API，但这里不再涉及。
+
+还有一个选择是，让 routing table 可配置。即在特定测试下，改变 routing table。 缺点是会使得特定测试不再异步，需要谨慎使用。
+
+Routing table 还是 hard-code，需要改进。
+
+每个 node 上运行一个 registry
 
 # 11. Configuration and releases
 
@@ -3235,6 +3564,15 @@ META-PROGRAMMING in ELIXIR
 =========
 
 Misc:
+
+serve_ch8 是 defp 时无法使用
+@compile {:nowarn_unused_function, [
+  serve_ch8: 1,
+  serve_ch9_no_with: 1,
+  write_line_ch8: 2
+]}
+defp serve_ch8 -> def _serve_ch8
+  带有 module_attribute @ignore 的通过 macro 转为 def _func_name
 
 NIF:
   https://cs.mcgill.ca/~mxia3/2017/06/18/tutorial-extending-elixir-with-c-using-NIF/ Tutorial: Extending Elixir with C using NIF | Meng Xuan Xia
