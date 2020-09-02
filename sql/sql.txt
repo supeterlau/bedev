@@ -1,0 +1,9 @@
+SQL
+
+https://www.tutorialgateway.org/sql/
+
+https://www.tutorialgateway.org/mysql-tutorial/
+
+PostgreSQL
+
+https://www.toptal.com/database/sql-indexes-explained-pt-1 SQL Index Tutorial—Everything Developers Need to Know, Pt. 1 | Toptal
