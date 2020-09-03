@@ -540,6 +540,8 @@ push 元素到数组
 
 将模块嵌入 class，被嵌入的模块需要先 require 导入
 
+require './some.rb'
+
 class Decade
   include Week
 end
@@ -839,6 +841,11 @@ some_hash = Hash.new("Default")
 some_hash[0] == "Default"
 
 Hash["a"=>:a, "b"=>:b]
+
+字面量
+
+map = {a: 1, b: 2} 等价 {:a => 1, :b => 2}
+=> {:a=>1, :b=>2}
 
 任意 Ruby object 可以做 key 或 value
 
@@ -1364,20 +1371,491 @@ Terminated with exception - nil
 
 9. Class Methods / Instance Methods
 
+Ruby Plus
 
-
-
-
-attr
+ch1. OOP 
   https://www.rubyguides.com/ruby-tutorial/object-oriented-programming/
   https://www.rubyguides.com/2020/04/self-in-ruby/
 
+类变量默认是 private 的 
+
+需要用 getter 或设置为 public 或用 attribute accessors
+
+- attribute accessors 属性访问限制
+
+attr_reader :title, :author
+
+attr_reader 是 
+
+def author 
+  @author 
+end 
+
+的简写形式
+
+attr_reader (read-only)
+attr_writer (write-only)
+attr_accessor (read & write)
+
+- method 访问限制
+
+private :getWidth, :getHeight
+
+
+- Class Method: class-level method 
+
+def self.cook
+end 
+
+- ruby 中的 self 
+
+gives you access to the current object，这个当前 object 取决于 context 
+
+context is where your code is at any given moment
+
+self 的用途
+  - 区分变量和方法
+  - 定义类方法
+  - 比较当前对象和其他对象
+  - 用于 debug 过程
+  - 用于返回值，返回 self，实现设计模式 design patterns like the Builder Design Pattern
+
+ch2. Thread fiber 
+Thread
+  https://www.rubyguides.com/2015/07/ruby-threads/
 fiber
   https://www.rubyguides.com/2019/11/what-are-fibers-in-ruby/
 
-proc lambda block
+- Thread
+
+make your Ruby programs do multiple things at the same time
+
+WARNING:
+
+  In MRI (Matz’s Ruby Interpreter), the default way to run Ruby applications, you will only benefit from threads when running i/o bound applications. 仅在处理 i/o 密集应用时受益
+
+  This limitation exists because of the GIL (Global Interpreter Lock).
+
+MRI 外的实现，JRuby 或 Rubinius 能充分利用 multi-threading
+
+  Rubinius: Rubinius is to have a Ruby interpreter written in Ruby itself (but there are still some parts written in C++).
+
+I/O 密集应用
+  api 请求
+  数据库查询
+  硬盘读取
+
+线程在等待资源可用时可以暂停，切换执行其他线程。
+
+创建线程 
+
+Thread.new { block }
+
+block 中执行长时间任务时，需要明确指定等待程序返回: t.join 才行。
+
+如果有多个线程，需要对每个线程调用 t.join 
+
+  threads.each(&:join)
+
+默认线程中的异常 die silently
+
+debug 时要设置 Thread.abort_on_exception = true 
+
+Thread Pools 如果有很多任务要处理，一次性启动上百个线程会拖垮系统，需要使用 Thread pools.
+
+最好用 gem 完成 thread pool, 例如 celluloid gem
+
+worker_pool    = Worker.pool(size: 5)
+# If you need to collect the return values check out 'futures'
+pages_to_crawl.each do |page|
+   worker_pool.process_page(page)
+end
+
+concurrency-focused gems
+  https://github.com/grosser/parallel
+  https://github.com/chadrem/workers
+  https://github.com/ruby-concurrency/concurrent-ruby
+
+- fiber 
+
+workers, run code & keep track of their own progress
+
+与 thread 相比，对 fiber 有更多的控制能力
+
+例如，操作系统决定何时切换线程 （when to run threads & when to pause them）
+
+fiber 的启动和停止是开发者决定的。
+
+Thread 像是在后台执行的。
+
+而 Fiber 运行时会成为 main program 
+
+f = Fiber.new { puts 1 }
+
+执行 fiber 
+
+f.resume 
+
+Fiber.yield 停止 fiber 
+
+再次调用 f.resume 才会再启动
+
+类似生成器，语句到执行时才运行
+
+1. 和 loop 一起可以 实现无限序列
+
+Fiber.new do
+  loop do 
+  end
+end 
+
+2. Async Operations : Fibers & IO 
+
+in a simple Ruby application, fibers generate 3 times less context switches than threads.
+
+https://github.com/socketry/falcon socketry/falcon: A high-performance web server for Ruby, supporting HTTP/1, HTTP/2 and TLS.
+
+ch3. proc lambda block
   https://www.rubyguides.com/2016/02/ruby-procs-and-lambdas/
   https://mixandgo.com/learn/ruby-blocks
+
+  https://scoutapm.com/blog/how-to-use-lambdas-in-ruby How to Use Lambdas in Ruby | Scout APM Blog
+  https://www.honeybadger.io/blog/using-lambdas-in-ruby/ Using Lambdas in Ruby - Honeybadger Developer Blog
+
+- blocks 
+
+block 是可以传递给其他函数的 匿名函数/代码块
+
+结构为:
+
+{} 单行
+
+do 
+  ...
+end 多行
+
+block 可以有 0 到多个参数 ，带参数形式
+
+{ |v1, v2, v3| puts v1, v2, v3}
+
+1-10
+(1..count).each do |v1, v2, v3|
+  ...
+end 
+
+1...10 1-9
+
+Blocks 可以是 明确的 explicit 或 implicit 
+
+explicit block
+
+要求最后一个参数才能是 &block 
+
+def call_block(&block)
+  block.call 
+end
+
+:join Symbol
+  https://stackoverflow.com/questions/4421986/how-to-check-in-ruby-if-methods-parameter-is-a-symbol How to check in Ruby if method's parameter is a symbol? - Stack Overflow
+&:join -> block 
+&:+
+
+call_block {puts "call explicit block"}
+
+在方法内调用 block_given? 检测是否有 block 传入
+
+- yield 
+
+在 yield 出现的地方调用 block 
+
+yield 可以多次使用，可以有参数（参数被传入 block 中）
+
+- procs 
+
+- lambdas 
+
+lambda 是用特殊语法定义 block 和参数的方法
+
+say = -> { puts "say lambda"}
+
+这种方法，可以将 block 保存在 变量里
+
+调用和 block 一样, say.call 
+
+- lambda vs procs 
+
+procs: Proc.new {|x| puts x}
+
+lambda 并非 class, 而是特殊的 Proc 对象。
+
+proc 有 lambda? 方法 some_proc.lambda?
+
+lambda 参数必须一致，
+proc 没有参数也不报错
+
+lambda 像正常函数一样返回
+proc 返回当前 current context 
+
+区别:
+
+Lambdas are defined with -> {} and procs with Proc.new {}.
+
+Procs return from the current method, while lambdas return from the lambda itself.
+  即: lambda 的 return 终止 lambda，控制权交给调用方；proc 的 return 连调用方一起终止
+
+Procs don’t care about the correct number of arguments, while lambdas will raise an exception.
+
+lambda: 
+
+  add = ->(x,y) {x + y} (literal lambda operator)
+
+  add = lambda {|x,y| x + y} (call a lambda function)
+
+proc: add = Proc.new {|x, y| x + y}
+
+调用都是 lambda.call proc.call 
+
+lambda 用途
+  Encapsulating complicated logic 
+  An in-memory state machine or data pipeline
+  Callbacks
+  ActiveRecord scopes
+  Preventing a collection from being preloaded in active admin
+    (evaluate collections at run time in ActiveAdmin)
+  Dynamic mapping
+  A faux hash
+
+lambda 性能问题:
+  it looks like lambda functions are about 30% slower than method or function calls
+
+As always, premature optimization is the root of all evil.
+
+- closure
+
+创建 proc 或 lambda 时，它捕获当前执行作用域
+
+即 proc 中有局部变量和作用域内定义的方法
+
+[注意]
+  它们不包含值 value，而是包含引用 reference，如果变量改变，proc 总是得到最新的版本
+
+- binding class 
+
+procs lambda 在 binding class 中存放作用域信息
+
+create a Binding object via the binding method,
+
+  You don’t need to use binding objects directly, but it’s still good to know this is a thing 
+
+ch4. MetaProgramming
+
+MetaProgramming
+  https://www.toptal.com/ruby/ruby-metaprogramming-cooler-than-it-sounds
+  https://www.rubyguides.com/2016/04/metaprogramming-in-the-wild/
+
+metaprogramming 是写能在运行时生成代码的技术
+
+在运行时定义方法和类，用元编程可以
+
+  reopen and modify classes 
+  catch methods that don't exist, and create it on the fly 
+  避免重复代码
+
+类中定义类方法和实例方法时的背后
+
+  每个类都是类 Class 的实例，父类是 Object，更上一级父类是 BasicObject
+
+puts Developer.class
+
+self 指向的 object 是变化的，Ruby interpreter 执行时，会追踪 self 的值。
+
+在 类内 (实例方法外) self 指向 类 
+在类方法内，self 指向类
+在实例方法内，self 指向 类实例 
+
+class method 到底是什么？首先要讨论 metaclass，又叫 singleton class 和 eigen class
+
+- metaclass
+
+每个对象都有自己的 metaclass，无法直接看到但可以很容易使用
+
+example = 'a string object'
+
+def example.what
+  self.upcase 
+end 
+
+这样给 example 对象添加 singleton method，与 class method 区别就是
+
+  class methods 所有实例可用
+  singleton method 只能用于单个实例
+
+example 可以写成
+
+class << example 
+  def what 
+    self.upcase 
+  end 
+end 
+
+class << self, making self equal to Developer’s metaclass.
+
+  让 self 等于 Developer 的 metaclass 
+
+  然后在 metaclass 里定义方法
+
+class Developer 
+  class << self (class << Developer)
+    def backend 
+      "a backend developer“
+    end 
+  end 
+end 
+
+backend 被添加到 Developer metaclass 上
+
+用一点 hack 揭示 metaclass 
+
+class Object 
+  def meta_example
+    class << self 
+      self 
+    end 
+  end 
+end 
+
+In metaclass: self = #<Class:#<Developer:0x00007fbd26016040>>
+
+使用 Ruby 提供的 singleton_class 方法也能得到
+
+p developer.class.singleton_class.instance_methods false
+
+- 另一种定义方法的方式
+
+class method 可以用 instance_eval 
+
+class Developer 
+end 
+
+Developer.instance_eval do 
+  p "instance_eval - self : " + self.to_s 
+  def backend 
+    p "inside method: " + self.to_s 
+  end 
+end 
+
+instance_eval 被求值为实例的 context，在这里是 Developer 
+
+当在对象上定义方法时，创建的不是类方法就是 singleton 方法
+
+  例子中是 类方法，类方法是 class 的 singleton 方法；其他是对象的 singleton 方法
+
+此外可以用 class_eval 创建实例方法
+
+Developer.class_eval do 
+  p "class_eval self: " + self.to_s 
+  def frontend 
+    p 'inside method self: ' + self.to_s 
+  end 
+end 
+
+调用 class_eval，将 self 改为原 class 
+调用 instance_eval，self 改为原 class 的 metaclass 
+
+- 定义 missing methods (on the fly)
+
+method_missing
+
+当你调用对象方法时，Ruby 先看 class 的实例方法，然后在继承链上找，如果还找不到，
+
+就调用 Kernel 的 method_missing 方法
+
+Kernel 是所有对象都继承的类
+
+define_method 是 Module 类的方法，可以动态定义方法
+
+  define_method 可以接收一个 方法名 和 block 来创建方法
+
+  define_method :some_method do |x|
+    x + 2
+  end 
+
+用 def 和 用 define_method 没什么区别，但 define_method 可以和 method_missing 一起写 DRY 代码。
+
+(To be exact, you can use define_method instead of def to manipulate scopes when defining a class
+
+define_method :frontend do |*my_arg|
+  my_arg.inject(1, :*)
+end
+
+处理 method_missing 
+
+def method_missing method, *args, &block 
+  self.class.send(:define_method, method) do
+  end 
+end 
+
+define_method 是私有方法，需要用 send 来调用
+
+x.send(method, arg1, arg2, &block)
+
+ch5. Queue 
+
+https://www.rubyguides.com/2019/10/ruby-queues/
+
+Queue 类似 waiting list 
+
+  模拟现实的队列
+  实现 Breadth-First Search BFS 
+  控制访问共享资源 CPU Disk 
+
+在 Ruby 实现 队列
+
+array 
+
+  unshift (prepend)
+  pop 
+
+Ruby 的 Queue 类实现 thread-safe, blocking 的队列
+
+queue 空时，调用 queue.pop 会 block 
+
+用 queue.pop(true) 避免 block， 抛出 ThreadError: queue empty 错误
+
+Sized Queue
+
+queue = SizedQueue.new(5)
+
+
+
+
+Pattern Design 
+
+https://refactoring.guru/design-patterns
+
+Refactoring
+
+https://refactoring.guru/refactoring/technical-debt
+
+Test 
+
+ch9. Gem Rake Rack
+
+Ruby 花活
+  threads.each(&:join)
+  Fiber.yield (1..count).inject(:*)
+  Array.new(5) { factorial.resume }
+
+irb 
+  defined? a
+  => "local-variable"
+
+Gem, Bundler 
+  Bundler: The best way to manage a Ruby application's gems
+  https://www.rubyguides.com/2018/09/ruby-gems-gemfiles-bundler/
+
+MRI 内部实现
+  https://www.rubyguides.com/2016/02/exploring-mri/ Exploring MRI Source Code - RubyGuides
 
 Test
   https://rollout.io/blog/unit-testing-in-ruby/
@@ -1391,21 +1869,6 @@ Gem
 Rake
   https://www.rubyguides.com/2019/02/ruby-rake/
 
-MetaProgramming
-  https://www.toptal.com/ruby/ruby-metaprogramming-cooler-than-it-sounds
-  https://www.rubyguides.com/2016/04/metaprogramming-in-the-wild/
-
-Thread
-  https://www.rubyguides.com/2015/07/ruby-threads/
-
-Queue
-  https://www.rubyguides.com/2019/10/ruby-queues/
-
-Pattern Design
-  https://refactoring.guru/design-patterns
-
-Refactoring
-  https://refactoring.guru/refactoring/technical-debt
 
 New Ruby Version
   https://www.rubyguides.com/2019/12/ruby-2-7-new-features/#Enumerablefilter_map
