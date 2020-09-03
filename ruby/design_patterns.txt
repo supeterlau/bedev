@@ -1,0 +1,124 @@
+Design Pattern
+
+- https://refactoring.guru/design-patterns
+
+# Design Pattern
+
+## what is pattern
+
+- What’s a design pattern
+
+Design Patterns 是对软件设计中常见问题的经典解决方案。
+
+类似预置模板，在你解决一再出现的设计问题时，可以通过对它们的定制解决难题。
+
+但你不能直接找到模式并粘贴代码。模式不是代码，而是普遍的解决特定问题思路。
+
+你可以遵循模式内容，并实现适合自己程序的解决方案。
+
+模式常和算法混淆。但算法定义清晰的动作来完成已知问题。模式更加抽象。
+
+模式的组成：
+  Intent 描述问题和解决方案
+  Motivation 进一步解释问题和解决方案
+  Structure 一些展示模式各部分及其关系的 classes
+  Code example
+
+  其他还可能包括：模式适用范围 applicability，实现步骤，与其他模式的关系
+
+- 模式的历史
+
+模式不是隐晦复杂的概念。是面向对象设计对常见问题的解决方案。
+
+模式概念首先在 Christopher Alexander in A Pattern Language: Towns, Buildings, Construction 中描述。
+
+后来在 1994 年， Design Patterns: Elements of Reusable Object-Oriented Software，提出 23 种解决各类问题的 OO 设计。这本书太火热而被称作 'the GoF book'。
+
+同时也有很多在 object-oriented design 之外的模式。
+
+- 为何学习模式
+
+即使你一个模式都不知道，也可能作为程序员工作多年。但你可能在工作中已经实现了一些模式，只是你不认识它们。
+
+  设计模式是尝试测试方案工具箱。即使你永远不会遇到这些问题，知道设计模式会教你如何用面向对象设计解决问题。
+
+设计模式定义了通用语言，可以让你和同事更高效地交流。你只需要说 用单例模式，然后每个人都知道你的建议是什么意思，而无需解释什么是单例模式。
+
+- 对设计模式的批评
+
+只有懒人还没批评设计模式。。。
+
+  对 'week' 编程语言的补充
+    通常人们需要设计模式，是因为选择了一门缺少必要抽象能力的语言。例如 Strategy 模式在其他语言里可以用匿名函数实现。
+
+  解决方法不高效
+    设计模式尝试系统化广泛使用的流程，从而形成一种教条。
+    很多人为了实现设计模式而实现，并没有适用于自己的项目。
+
+  滥用设计模式
+    If all you have is a hammer, everything looks like a nail.
+
+- 设计模式分类
+
+按照 complexity 复杂度，level of detail，scale of applicability 分类
+
+  就好像要改善交通安全，可以装红绿灯，也可以建地下通道。
+
+low-level 模式是语言 idioms
+
+high-level 是架构模式，可以在任何语言中实现，可以用于构建整个应用。
+
+根据 intent 分类
+
+1. Creational Patterns
+
+  提供对象生成机制，增加代码的灵活性和复用性
+
+2. Strucctural Patterns
+
+  解释如何在大型项目中组织项目和类，保持结构灵活高效
+
+3. Behavioral Patterns
+
+  处理对象间的高效通信和职责分配
+
+## Catalog
+
+### Creational Patterns
+
+- Factory Method
+
+Intent
+
+在父类中提供创建对象的接口，其中允许子类改变要所创建对象的类型。
+
+Problem
+
+假设你在开发后勤管理系统。第一版只能处理 truck 运输的物品，你的代码都在 Truck 类中。
+
+后来，海运的货物也想使用你的系统。现在你需要将 Ships 添加到 codebase 中。未来可能还有更多要添加的。
+
+之后，你需要写很多条件判断来根据运输类决定行为。
+
+Solution
+
+Factory Method 建议替换掉直接创建对象的函数，代之以特殊的 工厂方法 factory method。对象依然通过 new 操作符创建，但是会从 factory method 中调用。
+
+工厂方法返回的对象被称作 products。
+
+好处在于，现在你可以在子类中覆盖父类的 factory method
+
+一个小小的限制是：你返回不同类型 products 的子类，需要有共同的 基类 或 接口。
+
+Also, the factory method in the base class should have its return type declared as this interface.
+
+例如，你的后勤管理系统中应当有一个 Trannsport 接口定义 deliver 方法。
+
+不同的类可以实现自己的 deliver 方法。
+
+使用方可以将返回的 products 都当作抽象 Transport 使用，都有 deliver 方法。
+
+Structure
+
+
+
