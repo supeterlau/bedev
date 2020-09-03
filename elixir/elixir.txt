@@ -4128,6 +4128,9 @@ Elixir call Erlang
   file.beam
   > :file.double 4
 
+elixir_bootstrap
+  https://github.com/elixir-lang/elixir/blob/master/lib/elixir/src/elixir_bootstrap.erl elixir/elixir_bootstrap.erl at master · elixir-lang/elixir
+
 Books:
 
 https://subscription.packtpub.com/book/application_development/9781784397517 Elixir Cookbook
