@@ -1373,11 +1373,11 @@ Terminated with exception - nil
 
 Ruby Plus
 
-ch1. OOP 
+ch1. OOP
   https://www.rubyguides.com/ruby-tutorial/object-oriented-programming/
   https://www.rubyguides.com/2020/04/self-in-ruby/
 
-类变量默认是 private 的 
+类变量默认是 private 的
 
 需要用 getter 或设置为 public 或用 attribute accessors
 
@@ -1385,11 +1385,11 @@ ch1. OOP
 
 attr_reader :title, :author
 
-attr_reader 是 
+attr_reader 是
 
-def author 
-  @author 
-end 
+def author
+  @author
+end
 
 的简写形式
 
@@ -1402,14 +1402,14 @@ attr_accessor (read & write)
 private :getWidth, :getHeight
 
 
-- Class Method: class-level method 
+- Class Method: class-level method
 
 def self.cook
-end 
+end
 
-- ruby 中的 self 
+- ruby 中的 self
 
-gives you access to the current object，这个当前 object 取决于 context 
+gives you access to the current object，这个当前 object 取决于 context
 
 context is where your code is at any given moment
 
@@ -1420,7 +1420,7 @@ self 的用途
   - 用于 debug 过程
   - 用于返回值，返回 self，实现设计模式 design patterns like the Builder Design Pattern
 
-ch2. Thread fiber 
+ch2. Thread fiber
 Thread
   https://www.rubyguides.com/2015/07/ruby-threads/
 fiber
@@ -1447,19 +1447,19 @@ I/O 密集应用
 
 线程在等待资源可用时可以暂停，切换执行其他线程。
 
-创建线程 
+创建线程
 
 Thread.new { block }
 
 block 中执行长时间任务时，需要明确指定等待程序返回: t.join 才行。
 
-如果有多个线程，需要对每个线程调用 t.join 
+如果有多个线程，需要对每个线程调用 t.join
 
   threads.each(&:join)
 
 默认线程中的异常 die silently
 
-debug 时要设置 Thread.abort_on_exception = true 
+debug 时要设置 Thread.abort_on_exception = true
 
 Thread Pools 如果有很多任务要处理，一次性启动上百个线程会拖垮系统，需要使用 Thread pools.
 
@@ -1476,7 +1476,7 @@ concurrency-focused gems
   https://github.com/chadrem/workers
   https://github.com/ruby-concurrency/concurrent-ruby
 
-- fiber 
+- fiber
 
 workers, run code & keep track of their own progress
 
@@ -1488,15 +1488,15 @@ fiber 的启动和停止是开发者决定的。
 
 Thread 像是在后台执行的。
 
-而 Fiber 运行时会成为 main program 
+而 Fiber 运行时会成为 main program
 
 f = Fiber.new { puts 1 }
 
-执行 fiber 
+执行 fiber
 
-f.resume 
+f.resume
 
-Fiber.yield 停止 fiber 
+Fiber.yield 停止 fiber
 
 再次调用 f.resume 才会再启动
 
@@ -1505,11 +1505,11 @@ Fiber.yield 停止 fiber
 1. 和 loop 一起可以 实现无限序列
 
 Fiber.new do
-  loop do 
+  loop do
   end
-end 
+end
 
-2. Async Operations : Fibers & IO 
+2. Async Operations : Fibers & IO
 
 in a simple Ruby application, fibers generate 3 times less context switches than threads.
 
@@ -1522,7 +1522,7 @@ ch3. proc lambda block
   https://scoutapm.com/blog/how-to-use-lambdas-in-ruby How to Use Lambdas in Ruby | Scout APM Blog
   https://www.honeybadger.io/blog/using-lambdas-in-ruby/ Using Lambdas in Ruby - Honeybadger Developer Blog
 
-- blocks 
+- blocks
 
 block 是可以传递给其他函数的 匿名函数/代码块
 
@@ -1530,7 +1530,7 @@ block 是可以传递给其他函数的 匿名函数/代码块
 
 {} 单行
 
-do 
+do
   ...
 end 多行
 
@@ -1541,38 +1541,38 @@ block 可以有 0 到多个参数 ，带参数形式
 1-10
 (1..count).each do |v1, v2, v3|
   ...
-end 
+end
 
 1...10 1-9
 
-Blocks 可以是 明确的 explicit 或 implicit 
+Blocks 可以是 明确的 explicit 或 implicit
 
 explicit block
 
-要求最后一个参数才能是 &block 
+要求最后一个参数才能是 &block
 
 def call_block(&block)
-  block.call 
+  block.call
 end
 
 :join Symbol
   https://stackoverflow.com/questions/4421986/how-to-check-in-ruby-if-methods-parameter-is-a-symbol How to check in Ruby if method's parameter is a symbol? - Stack Overflow
-&:join -> block 
+&:join -> block
 &:+
 
 call_block {puts "call explicit block"}
 
 在方法内调用 block_given? 检测是否有 block 传入
 
-- yield 
+- yield
 
-在 yield 出现的地方调用 block 
+在 yield 出现的地方调用 block
 
 yield 可以多次使用，可以有参数（参数被传入 block 中）
 
-- procs 
+- procs
 
-- lambdas 
+- lambdas
 
 lambda 是用特殊语法定义 block 和参数的方法
 
@@ -1580,9 +1580,9 @@ say = -> { puts "say lambda"}
 
 这种方法，可以将 block 保存在 变量里
 
-调用和 block 一样, say.call 
+调用和 block 一样, say.call
 
-- lambda vs procs 
+- lambda vs procs
 
 procs: Proc.new {|x| puts x}
 
@@ -1594,7 +1594,7 @@ lambda 参数必须一致，
 proc 没有参数也不报错
 
 lambda 像正常函数一样返回
-proc 返回当前 current context 
+proc 返回当前 current context
 
 区别:
 
@@ -1605,7 +1605,7 @@ Procs return from the current method, while lambdas return from the lambda itsel
 
 Procs don’t care about the correct number of arguments, while lambdas will raise an exception.
 
-lambda: 
+lambda:
 
   add = ->(x,y) {x + y} (literal lambda operator)
 
@@ -1613,10 +1613,10 @@ lambda:
 
 proc: add = Proc.new {|x, y| x + y}
 
-调用都是 lambda.call proc.call 
+调用都是 lambda.call proc.call
 
 lambda 用途
-  Encapsulating complicated logic 
+  Encapsulating complicated logic
   An in-memory state machine or data pipeline
   Callbacks
   ActiveRecord scopes
@@ -1639,13 +1639,13 @@ As always, premature optimization is the root of all evil.
 [注意]
   它们不包含值 value，而是包含引用 reference，如果变量改变，proc 总是得到最新的版本
 
-- binding class 
+- binding class
 
 procs lambda 在 binding class 中存放作用域信息
 
 create a Binding object via the binding method,
 
-  You don’t need to use binding objects directly, but it’s still good to know this is a thing 
+  You don’t need to use binding objects directly, but it’s still good to know this is a thing
 
 ch4. MetaProgramming
 
@@ -1657,8 +1657,8 @@ metaprogramming 是写能在运行时生成代码的技术
 
 在运行时定义方法和类，用元编程可以
 
-  reopen and modify classes 
-  catch methods that don't exist, and create it on the fly 
+  reopen and modify classes
+  catch methods that don't exist, and create it on the fly
   避免重复代码
 
 类中定义类方法和实例方法时的背后
@@ -1669,9 +1669,9 @@ puts Developer.class
 
 self 指向的 object 是变化的，Ruby interpreter 执行时，会追踪 self 的值。
 
-在 类内 (实例方法外) self 指向 类 
+在 类内 (实例方法外) self 指向 类
 在类方法内，self 指向类
-在实例方法内，self 指向 类实例 
+在实例方法内，self 指向 类实例
 
 class method 到底是什么？首先要讨论 metaclass，又叫 singleton class 和 eigen class
 
@@ -1682,8 +1682,8 @@ class method 到底是什么？首先要讨论 metaclass，又叫 singleton clas
 example = 'a string object'
 
 def example.what
-  self.upcase 
-end 
+  self.upcase
+end
 
 这样给 example 对象添加 singleton method，与 class method 区别就是
 
@@ -1692,37 +1692,37 @@ end
 
 example 可以写成
 
-class << example 
-  def what 
-    self.upcase 
-  end 
-end 
+class << example
+  def what
+    self.upcase
+  end
+end
 
 class << self, making self equal to Developer’s metaclass.
 
-  让 self 等于 Developer 的 metaclass 
+  让 self 等于 Developer 的 metaclass
 
   然后在 metaclass 里定义方法
 
-class Developer 
+class Developer
   class << self (class << Developer)
-    def backend 
+    def backend
       "a backend developer“
-    end 
-  end 
-end 
+    end
+  end
+end
 
 backend 被添加到 Developer metaclass 上
 
-用一点 hack 揭示 metaclass 
+用一点 hack 揭示 metaclass
 
-class Object 
+class Object
   def meta_example
-    class << self 
-      self 
-    end 
-  end 
-end 
+    class << self
+      self
+    end
+  end
+end
 
 In metaclass: self = #<Class:#<Developer:0x00007fbd26016040>>
 
@@ -1732,19 +1732,19 @@ p developer.class.singleton_class.instance_methods false
 
 - 另一种定义方法的方式
 
-class method 可以用 instance_eval 
+class method 可以用 instance_eval
 
-class Developer 
-end 
+class Developer
+end
 
-Developer.instance_eval do 
-  p "instance_eval - self : " + self.to_s 
-  def backend 
-    p "inside method: " + self.to_s 
-  end 
-end 
+Developer.instance_eval do
+  p "instance_eval - self : " + self.to_s
+  def backend
+    p "inside method: " + self.to_s
+  end
+end
 
-instance_eval 被求值为实例的 context，在这里是 Developer 
+instance_eval 被求值为实例的 context，在这里是 Developer
 
 当在对象上定义方法时，创建的不是类方法就是 singleton 方法
 
@@ -1752,15 +1752,15 @@ instance_eval 被求值为实例的 context，在这里是 Developer
 
 此外可以用 class_eval 创建实例方法
 
-Developer.class_eval do 
-  p "class_eval self: " + self.to_s 
-  def frontend 
-    p 'inside method self: ' + self.to_s 
-  end 
-end 
+Developer.class_eval do
+  p "class_eval self: " + self.to_s
+  def frontend
+    p 'inside method self: ' + self.to_s
+  end
+end
 
-调用 class_eval，将 self 改为原 class 
-调用 instance_eval，self 改为原 class 的 metaclass 
+调用 class_eval，将 self 改为原 class
+调用 instance_eval，self 改为原 class 的 metaclass
 
 - 定义 missing methods (on the fly)
 
@@ -1778,7 +1778,7 @@ define_method 是 Module 类的方法，可以动态定义方法
 
   define_method :some_method do |x|
     x + 2
-  end 
+  end
 
 用 def 和 用 define_method 没什么区别，但 define_method 可以和 method_missing 一起写 DRY 代码。
 
@@ -1788,37 +1788,37 @@ define_method :frontend do |*my_arg|
   my_arg.inject(1, :*)
 end
 
-处理 method_missing 
+处理 method_missing
 
-def method_missing method, *args, &block 
+def method_missing method, *args, &block
   self.class.send(:define_method, method) do
-  end 
-end 
+  end
+end
 
 define_method 是私有方法，需要用 send 来调用
 
 x.send(method, arg1, arg2, &block)
 
-ch5. Queue 
+ch5. Queue
 
 https://www.rubyguides.com/2019/10/ruby-queues/
 
-Queue 类似 waiting list 
+Queue 类似 waiting list
 
   模拟现实的队列
-  实现 Breadth-First Search BFS 
-  控制访问共享资源 CPU Disk 
+  实现 Breadth-First Search BFS
+  控制访问共享资源 CPU Disk
 
 在 Ruby 实现 队列
 
-array 
+array
 
   unshift (prepend)
-  pop 
+  pop
 
 Ruby 的 Queue 类实现 thread-safe, blocking 的队列
 
-queue 空时，调用 queue.pop 会 block 
+queue 空时，调用 queue.pop 会 block
 
 用 queue.pop(true) 避免 block， 抛出 ThreadError: queue empty 错误
 
@@ -1829,7 +1829,7 @@ queue = SizedQueue.new(5)
 
 
 
-Pattern Design 
+Pattern Design
 
 https://refactoring.guru/design-patterns
 
@@ -1837,7 +1837,7 @@ Refactoring
 
 https://refactoring.guru/refactoring/technical-debt
 
-Test 
+Test
 
 ch9. Gem Rake Rack
 
@@ -1846,11 +1846,11 @@ Ruby 花活
   Fiber.yield (1..count).inject(:*)
   Array.new(5) { factorial.resume }
 
-irb 
+irb
   defined? a
   => "local-variable"
 
-Gem, Bundler 
+Gem, Bundler
   Bundler: The best way to manage a Ruby application's gems
   https://www.rubyguides.com/2018/09/ruby-gems-gemfiles-bundler/
 
