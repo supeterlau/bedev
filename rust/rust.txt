@@ -1037,13 +1037,139 @@ Structs 中可以保存 references 但是要求使用 lifetimes 会在 Chapter 1
 
 5.2 使用 Struct 例子
 
+理解 struct 使用场景
+
+先使用分散的参数
+
+area 中的参数是有关联的，可以用 tuple 来打包参数
+
+tuple 没有给元素命名，会让使用者迷惑元素代表的意思。
+
+struct 赋予变量更多信息
+
+fn area(rect: &Rectangle) -> u32 {}
+
+使用 immutable borrow
+
+struct 定义不需要末尾分号
+
+1. 通过 Derived Traits 给 struct 增加功能
+
+println! 宏显示实现了 std::fmt::Display 的类型
+
+注释 #[derive(Debug)] 提供打印 debug 信息的功能
+
+{:?} 告诉 println! 我们需要 Debug 格式的输出
+
+{:#?} 提供更格式化的形式
+
+Rust 已经提供了很多 traits 通过 derive 注解提供功能
+
+下一章，将 area 转为绑定到 struct 的方法。
+
 5.3 方法语法
 
+类似 函数，也用 fn method_name 定义，有参数和返回值
+
+不同在于方法定义在 struct 上下文中 （也可以是 enum 或 trait 对象的上下文
+
+  第一个参数总是 self (&self)，代表调用方法的 struct 实例
+
+1. 定义方法
+
+impl Rect {
+  fn area(&self) -> u32 {
+    self.width * self.height
+  }
+}
+
+调用 rect.area() 可以有其他参数
+
+impl 中 area 第一个参数可以 borrow self immutably &self 或 mutably
+
+如果需要修改 struct 第一个参数为 &mut self
+
+使用方法的好处是，将与 struct 有关的方法集合在一起
+
+Rust 没有类似 C, C++ 的 ->。在这两种语言中
+
+if object is a pointer, object->something() is similar to (*object).something()
+
+Rust 使用 automatic referenciing 和 dereferencing
+
+即调用 object.something() 时，自动添加爱 & &mut 或 * 让 object 能够匹配方法签名
+
+  p1.distance(&p2)
+  (&p1).distance(&p2)
+
+  两者一样
+
+2. 带参数的 struct 方法
+
+第二参数为其他 Rect
 
 
+impl Rect {
+  fn can_hold(&self, other: &Rect) -> bool {
+    self.width > other.width && self.height > other.height
+  }
+}
 
+调用方法
 
+let rect2 = Rect {width: 40, height: 50};
+println!(
+  "Can rect2 hold rect1? {}", rect1.can_hold(&rect2)
+);
 
+3. impl 内的关联函数
+
+允许在 impl 中定义不以 self 为参数的函数
+
+是函数不是方法，例如 String::from
+
+(类似 类方法)
+
+impl Rect {
+  fn square(size: u32) -> Rect {
+    Rect {
+      width: size,
+      height: size
+    }
+  }
+
+  fn new(width: u32, height: u32) -> Rect {
+    Rect {
+      width, height
+    }
+  }
+}
+
+调用用 :: 寻址 寻找模块函数等
+
+Rect::square(40);
+
+4. 多 impl 代码块
+
+struct 可以有多个 impl blocks。一般没必要这么做，在定义 generic types 和 traits 时会用到。
+
+Summary
+
+struct 为数据增加意义。
+保持数据关联性，让代码更清晰。
+methods 为与 struct 相关的方法创建命名空间。
+
+Ch6 Enums 和 Pattern Matching
+
+Ch7 项目管理: Packages Crates Modules
+
+Ch8 Common Collections 常见集合
+
+Ch9 错误处理 Error Handing
+
+Ch10 泛型，Traits 和 Lifetimes
+
+Ch11 自动化测试 Automated Tests
 
 local document
   https://stackoverflow.com/questions/42607736/how-can-i-read-the-rust-documentation-offline
