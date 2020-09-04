@@ -1,5 +1,6 @@
 fn main() {
     // let x = 5;
+
     let mut x = 15;
     println!("The value of x is: {}", x);
     x = 6;
@@ -8,6 +9,7 @@ fn main() {
     // functions
 
     println!("Hello, Functions");
+
     another_function();
 
     with_parameter(30);
