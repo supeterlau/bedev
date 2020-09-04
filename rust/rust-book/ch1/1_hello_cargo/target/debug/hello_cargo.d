@@ -1,1 +1,0 @@
-/Users/liuxiangyu/Workplace/Dororis/languages/review/rust/rust-book/ch1/1_hello_cargo/target/debug/hello_cargo.dSYM: /Users/liuxiangyu/Workplace/Dororis/languages/review/rust/rust-book/ch1/1_hello_cargo/src/main.rs
