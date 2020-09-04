@@ -1,0 +1,1083 @@
+WIP: 760
+
+rustc 03.rs -o 03.out && ./03.out
+
+rustbyexample.com
+
+clojure @chomado
+
+https://github.com/danistefanovic/build-your-own-x
+
+Rust Book (The Book)
+
+https://doc.rust-lang.org/book/
+
+1. Getting Started 开始学
+
+rustup
+
+升级到最新版 rust
+
+> rustup update
+
+卸载 rustup self uninstall
+
+本地文档 rustup doc
+
+> rustc --version
+
+fn main() {
+    println!("Hello, world!");
+}
+
+> rustc main.rs
+./main
+
+rust
+  4 个空格而非 tab
+  println! 调用 rust macro，函数形如 println 没有 !
+  字符串作为宏参数
+  以 semicolon 表示行结束
+
+必须要 rustc main.rs 来编译 rust 代码，输出二进制可执行文件
+
+windows 平台可执行文件 main.exs 并多出一个 debug 文件 .pdb
+
+Rust is an ahead-of-time compiled language，意思是可以将代码编译后给其他没有装 rust 的人来运行。而 dynamic language 必须要求别人装对应的实现。
+
+dynamic language 可以一个命令完成代码的编译和执行
+
+Everything is a trade-off in language design
+
+Cargo 是 Rust 的构建工具和包管理工具。大部分 Rust 开发者 Rustaceans 用它来管理项目。
+  build project
+  download libraries
+  compile libraries
+
+> cargo --version
+
+用 cargo 创建项目
+
+> cargo new hello_cargo
+
+新建项目同时初始化 git 仓库
+
+> cargo new --help
+
+编译执行项目
+
+> cargo build
+
+> cargo run
+
+> cargo check 查看是否通过编译，不产生可执行文件
+
+编译发布版本
+
+> cargo build --release
+
+产生文件位于 target/release 而不是 target/debug
+
+debug 版本编译快，优化差；
+
+release 发布版编译慢，优化好。
+
+2. Guessing game tutorial
+
+cargo new 生成项目
+
+获取用户输入和以及进行输出
+use std::io;
+
+默认在 prelude scope 中只引入少量类型，不在 prelude 中的需要用 use 语句引入
+
+fn main() {}
+
+fn 声明新函数
+println! 是宏 打印出信息
+
+let 创建变量 let foo = bar; 创建变量 foor 将值 bar 绑定到 foo
+
+Rust 变量默认是 immutable 需要用 mut 将变量标记为 mutable
+
+let mut bar = 5;
+
+// 表示注释
+
+/* */
+
+String::new() 返回 String 的一个实例
+  creates a new, empty string
+
+String 是标准库中的类型 growable UTF-8 编码的文本
+
+::new 表示 new 方法是与 String 类型关联的
+
+因此 new 是 类型方法(静态方法)而非实例方法
+
+use std::io; 引入标准库的输入输出功能 input/output functionality
+
+如果不用 use 需要写做 std::io::stdin
+
+stdin() 返回 std::io::Stdin 实例， 终端标准输入标识符实例
+
+standard input handle 的 read_line 方法，获取用户输入
+
+.read_line(&mut guess)
+
+调用 read_line 方法，使用 standard input handle ( io::stdin() ) 获取用户输入。需要传入参数 &mut guess 接收输入。
+
+read_line 将用户通过终端输入的内容，放入字符串中，因此需要传入 mutable string 的 reference。reference 作用是让代码可以访问同一个数据而不需要多次copy 到内存。Rust 的一大优势就是安全简单地使用 references。引用默认是不可变的，需要用 &mut guess 来让它可以被修改。
+
+- Result 类型处理可能的错误 Potential Failure
+
+read_line 会返回值，这里返回 io::Result。Rust 标准库有很多叫 Result 的类型。
+
+Result 类型是 enumerations 即 enums。它们有固定数量的值，即枚举值(变体)。
+
+Result 的变体为 Ok Err。Ok 表示操作成功，Err 表示操作失败。Err还有 how why 失败的信息。
+Result 类型用来编码 error-handling 信息。Resut类型的值有自己的方法，io::Result 实例有 expect 方法。如果这个实例是 Err，expect 方法会导致程序 crash 并显示你传递给 expect 的信息。如果 io::Result 是 Ok，那么 expect 会仅返回 Ok 中你会用到的值。
+
+如果不添加 expect，程序可以编译，但会有警告。
+
+- println! 占位符打印值
+
+let x = 5;
+let y = 10;
+println!("x = {} and y = {}", x, y);
+
+2. 生成随机数
+
+标准库中未提供生成随机数功能，需要用 rand crate
+
+- 使用 crate
+
+crate 是 Rust source code files 的集合。我们在做的项目是一个 binary crate，可以执行的。rand 是 library crate 用于在其他程序中使用。
+
+Cargo's use of external crates is where it really shines.
+
+修改 Cargo.toml 引入 rand 作为 dependency
+
+版本规则 Semantic Versioning - SemVer
+
+0.5.5 是 ^0.5.5 简写。即和版本 0.5.5 public API 兼容的任何版本。
+
+升级 dependencies
+
+cargo update
+
+注意 当出现新版本 v0.5.6 v0.6.0 时，这一命令只能升级到 v0.5.6
+
+必须修改 Cargo.toml 为 "0.6.0" 并运行 cargo build 才能升级到 v0.6.0
+
+- 生成随机数字
+
+use rand::Rng
+
+Rng 是一个 trait 定义实现方法，trait 只有在作用域中才能使用它的方法。
+
+rand::thread_rng 是当前线程中的随机数生成函数
+
+gen_range 包含最小值，不包含最大值，因此需要设置区间为 1 - 101
+
+note: 通过 cargo doc --open 查看 local trait 提供的文档。
+
+- 比较 Guess 和 Secret Number
+
+use 引入新 type std::cmp::Ordering
+
+类似 Result 也是一个 enum
+
+成员值为 Less Greater Equal 即比较大小时可能出现的三种情况
+
+guess.cmp 为 Ordering 类型的 cmp 方法，参数为要比较值的 reference 引用，返回值为 Ordering 一个成员值
+
+使用 match 表达式决定根据返回值执行下一步操作
+
+match 由多条模式分支组成。一个分支 arm 由一种模式和当结果与模式匹配时将执行的代码组成。
+
+Rust 依次检查传入 match 的值和分支中的模式是否匹配
+
+cmp 返回值类似 Ordering::Greater
+
+运行代码，编译出错。比较值的类型不一致。
+
+guess 是 String
+
+secrete_number 是 number 默认类型为 i32
+
+通过 guess.trim().parse() 转为 u32 类型
+
+let guess: u32 = ...; 这里还可以用 guess 变量
+
+Rust 允许shadow 之前的变量，这一特性常用于类型转换
+
+调用 parse 有可能出错，无法转为 number。我们需要使用 expect 方法处理。
+
+- Looping 允许猜多次
+
+loop 关键字创建一个无限循环
+
+loop {
+    ...
+}
+
+退出这个无限循环可以通过 Ctrl-C 或者输入无法解析为数字的字符
+
+- 猜对时退出
+
+添加 break; 语句
+
+- 处理无效输入
+
+为了在用户输入“非法”字符时不让程序崩溃，我们需要处理用户输入非数字字符的情况。
+
+将 parse 输入的地方，由 except 改为 match
+
+parse 成功会返回 Ok(num) num 即解析结果
+
+返回错误返回 Err(_) _ 作为占位变量名，表示不在意其中内容，catch all value 匹配任意返回值
+
+Ch 3: Common Programming Concepts
+
+3.1 变量和可变性 variables and Mutability
+
+变量默认不可变  immutable
+
+能利用 Rust 提供的 safety and easy concurrency
+
+Rust 编译器保证声明变量不变，这个变量就会被改变。
+
+不需要追踪值在哪里如何被改变。 Your code is thus easier to reason through.
+
+但有时需要可变变量。 当使用 large data structures，in place 修改实例值比复制值然后返回要更快。
+
+smaller data structures，创建新值并以更 functional programming style 会让代码更容易理解，因此 lower performance might be a worthwhile penalty for gaining that clarity。
+
+- 变量和 Constants 区别
+
+1. constants 不是默认不可变，而是永远不可变的。不能用 mut 修饰。
+
+声明 constants 用 const 而不是 let，并且必须写明类型
+
+2. constants 能在任意作用域里声明，常用于保存需要在多处使用的值。
+
+只能被赋值为 constant expression 不能是函数结果或其他 runtime 计算出的值。
+
+const MAX_POINTS: u32 = 100_000;
+
+constants 大写+下划线 数字中下划线增加可读性 improve readability)
+
+constants 在 scope 内都有效。用作全局可访问的值。
+
+- shadowing
+
+shadowing 和 mut 不同，shadowing 必须使用 let 。否则会报 compile-time error 。
+
+test: let mut 不能用于 shadowing
+
+3.2 Data Types
+
+介绍两种 data type subsets
+
+scalar compound
+
+Rust 是 statically typed language，在编译期就必须知道全部变量类型
+
+3.2.1 Scalar Types
+
+ 表示一个值的类型
+
+integer
+floating-point number
+Boolean
+character
+
+- Integer
+
+unsigned
+
+  u8 u16 u32 u64 u128
+  usize
+
+signed
+
+  i8 i16 i32 i64 i128
+  isize
+
+  usize isize 与底层架构有关。64-bit 上是 64 32-bit 上是 32
+
+取值范围
+  signed -2^(n-1) ~ 2^(n-1)
+  unsigned 0 ~ 2^n -1
+
+所有的 number literals
+  支持类型作为后缀 57u8
+  支持 _ 作为视觉分隔符
+
+Deciaml     98_222
+Hex         0xff
+Octal       0o77
+Binary      0b111_0000
+Byte(u8)    b'A'
+
+默认整数类型 i32
+
+note: 溢出处理
+
+debug mode 会检查，溢出会导致 panic
+
+以 --release 编译 release mode。不检查溢出，出现溢出时，进行 two's complement wrapping，补码替换。即 u8 中保存 257 会变为 1，程序不会 panic
+
+- Floating-Point
+
+两种 f32 f64 默认类型 f64
+
+let x = 2.0;
+
+let y: f32 = 3.0;
+
+- 数值操作符 + - * / %
+
+- Boolean
+
+true false: 大小为 one byte 类型为 bool
+
+let f: bool = false;
+
+- Character
+
+类型 char  大小 4 bytes 表示 Unicode Scalar Value
+
+let c = 'z';
+
+3.2.2 Compound Types
+
+基础数据类型 tuples arrays
+
+- tuple
+
+存储多种类型，固定长度，大小不能改变
+
+let tup: (i32, f64, u8) = (500, 6.4, 1);
+
+从 tuple 中取值
+
+  pattern matching
+  let (x, y, z) = tup;
+
+  period 访问
+  let x = tup.0; 从 0 开始
+
+- array
+
+存储相同类型的值 固定长度
+
+let arr = [1,2,3,4];
+
+当你想在 stack 上分配内存时，array 有用。或者你想确保有固定数量的元素。
+
+array 和 vector 不同。vector 是标准库提供类似 array 的结构，大小可变。
+
+大多情况下用 vector。
+
+存储变化不多的数据多用 array
+
+带类型的 array
+
+let a: [i32; 5] = [1,2,3,4,5];
+
+       类型; 元素数
+
+let a: [3, 5];
+
+初始化为 五个元素值为 3 的数组
+
+获取数组元素 a[0] a[4]
+
+根据无效索引获取元素
+
+  编译不产生错误，运行时出错，didn't exit succesfully
+
+3.3 Functions
+
+Function 在 Rust 中随处可见。最重要的 function
+
+main function 是每个程序的入口。
+
+声明新函数使用 fn 关键字
+
+Rust 用 snake_case 作为函数和变量命名规则
+
+- 函数参数
+
+variables in a function's definition 叫做 形参 parameters
+
+concrete values 叫做 实参 arguments
+
+必须写明每个形参的类型
+
+fn function(x: i32, y: i32) {
+    ...;
+}
+
+- 函数体
+
+statements 组成，可以 ending with expression
+
+Rust 是 expression-based language
+
+statement 执行一些动作，没有返回值
+
+  let y = 6;
+
+  函数声明也是 statement
+
+expression 会进行求值
+
+  5 + 6
+
+  函数调用
+
+  calling macro 调用宏
+
+  {} 创建 block 也是 expression
+
+  > Expressions do not include ending semicolons
+
+    表达式没有结尾的分号，加上分号就变为 statement
+
+let x = (let y = 6); 错误，因为 第一个 = 右侧不返回值。
+
+不像 Ruby 中 x = y = 6 是合法代码
+
+- 函数返回值
+
+用 -> 声明返回值
+
+fn five() -> i32 {
+    5
+}
+
+结合带参数
+
+fn plus_one(x: i32) -> i32 {
+    x + 1
+}
+
+x+1 如果结尾加上 ; 变为 statement 没有返回值。
+
+没有返回值被表示为 empty tuple () 与声明的返回值类型 i32 不同
+
+导致 编译期 mismatched types error
+
+3.4 Comments
+
+单行 // hello, world
+
+多行
+
+// hello
+// world
+
+常用形式 写在目标代码的上方
+
+fn main() {
+    // say something
+    let lucky_number = 7;
+}
+
+另一种 comment: documentation comments (ch14)
+
+3.4 Control Flow
+
+判断 if
+
+循环 loop while for
+    break;
+    break 100;
+
+- if expression
+
+同 if 关联的代码叫做 arm 类似 match 里的 arm
+
+可以提供 else expression 分支
+
+注意 condition 必须是 bool 类型，不会进行类型转换
+
+多分支 else if  expression
+
+只运行第一个条件为 true 的 arm
+
+多分支可用 match
+
+-- 在 let 语句中使用 if
+
+let number = if condition { 5 } else { 6 };
+
+注意 if  else 分支返回值类型需要一致
+
+- 循环
+
+loop while for
+
+1. loop
+
+fn main() {
+  loop {
+    println!("run next loop");
+  }
+}
+
+在 break 后可以返回值
+
+break 是 expression
+
+可以单独用
+
+break;
+
+也可以返回值
+
+break some_value;
+
+let result = loop {
+  counter += 1;
+  if counter == 10 {
+    break counter *2;
+  }
+}
+
+2. whlie
+
+有时需要在循环中判断条件，满足条件运行代码，不满足则停止循环。
+
+可以通过 loop if else break 实现。但 Rust 内置这种控制结构 while
+
+while number != 0 {
+  number -= 1;
+}
+
+使用 while 使代码更简单
+
+3. 用 for loop throught 集合
+
+可以用 while 基于索引判断遍历
+
+while index < 5 {
+  // do something
+  index +=1;
+}
+
+基于索引很容易出错，同时慢。编译器增加 runtime code 来进行每次的判断。
+
+更好的选择是 for
+
+for element in arr.iter() {
+  println!("The value is: {}", element);
+}
+
+Ch 4: Understanding Ownership
+
+Ownership 是 Rust 最独特的功能，它能够不使用 garbage collector 保证 memory safety. (make memory safety guarantees)
+
+理解 Rust ownership 如何工作很重要。
+
+Ownership
+
+  borrowing
+
+  slices
+
+  how Rust lays data out in memory
+
+4.1 What is Ownership
+
+Rust 的核心特性 ownership。解释起来很直接，但对语言其他特性有很深刻的影响。
+
+每个程序运行时都必须管理使用电脑内存的方式。有些语言使用 garbage collection，垃圾回收，在运行中持续寻找不再使用的内存；一些语言中，程序员必须明确分配释放内存。Rust 采用第三种方法: 内存通过 ownership 系统的一些规则管理，编译器在编译期检查这些规则。ownership 的特性不会减慢你的程序。
+
+越理解 ownership，你越能写出安全高效的代码。
+
+当你理解了 ownership，你就理解了使 Rust 独特的特性。本章将通过对 strings 数据结构展示 ownership 如何工作。
+
+Note: The Stack and the Heap
+
+stack 栈，存放 known fixed size 数据。编译期 unknown size 或者 size 可能改变的数据必须存放在 heap 堆上。堆上的数据是 less organized 的。程序请求一块内存空间，memory allocator 找到足够大的空间，返回 pointer。这一过程就是 allocating。在栈上 Push 数据不认为是 allocating。
+
+push 到栈比 allocating 到推要快，因为在栈上不需要找空间。
+
+读取推上的数据更慢，因为你需要通过 pointer 找到数据。需要 Jump 较多的内存。处理器处理内存地址接近的数据更快。在堆上分配大量空间也消耗时间。
+
+当调用函数时，传递给函数的参数和函数局部变量被 push 到栈上。当函数返回时，这些值被 pop 出栈。
+
+追踪哪部分代码使用哪个部分的堆上数据，最小化堆上重复数据，清理堆上不使用的数据，是 ownership 要解决的一些问题。
+
+1. Ownership Rules
+
+Rust 中的每个值有一个变量叫做 owner
+
+每个时刻只能有一个 owner
+
+当 owner 在作用域外时，值被 drop 掉 (free)
+
+2. 变量作用域
+
+let s = "hello";
+
+{
+  // 形成作用域
+}
+
+3. The String Type
+
+Chapter 3 中介绍的数据类型都是在 栈上存储的，在作用域外会被从栈上 pop 掉。需要存储在堆上的数据类型来研究 Ownership。
+
+因此引入 String 类型，与 ownership 相关的部分也适用于其他复杂数据类型，不管是标准库提供的类型还是自己定义的类型，都能适用。
+
+String literals 不适用与一些场景的原因在于，它是 immutable，另外不是所有的字符串在写代码时都能知道其中内容的。Rust 有第二种 string 类型, String。
+
+https://doc.rust-lang.org/std/primitive.str.html
+The str type, also called a 'string slice', is the most primitive string type. It is usually seen in its borrowed form, &str. It is also the type of string literals, &'static str.
+
+分配在堆上，因此能够存储编译期未知大小的字符串。
+
+String::from("Hello"); 可以从 string literal 创建 String 类型数据。
+
+双冒号 :: double colon 表示 from 函数来自 String 类型中。
+
+为何 String 可变而 string literal 不可变？
+
+问题在于这两种类型如何与分配内存。
+
+4. Memory and Allocation
+
+对于字符串字面量，它的内容在编译期是已知的，内容被直接硬编译到最后的可执行文件中。所以字符串字面量快而高效。这得益于它的不可变性。immutability。但是我们无法为在编译期大小未知，或大小会随着运行变化的字符串分配内存。
+
+通过 String 类型，为了支持可变可增长字符串，我们需要在堆上分配内存，在编译期未知，来存储内容。这意味着:
+
+内存必须在运行时从 memory allocator 申请
+
+我们需要在使用完 String 数据后返回内存给 allocator
+
+第一部分是我们完成的，通过调用 String::from，它实现来按我们需求申请内存。在大部分编程语言中都类似。
+但是第二部分不一样了。在有 GC 的内存中，GC 追踪并清理不再使用的内存，我们不需要考虑内存问题。没有 GC 的话，我们需要识别哪些内存不再使用，并明确地释放内存。正确地完成内存释放，长久以来都是一个困难的编程问题。
+
+如果我们忘记释放内存，我们就会浪费内存；如果过早释放，我们会得到无效变量；如果释放了两次内存，我们就会遇到 bug。我们必须让一个 allocate 对应一个 free。
+
+Rust 采用不同的方式: 内存在变量超出作用域后自动释放内存。
+
+当变量超出自己所在作用域，Rust 为我们调用一个特殊函数 drop，在 drop 中可以返回内存。（如大括号构成的 block 结束位置
+
+（在 C++ 中，这种释放资源的方式称作 Resource Acquisition Is Initialization (RAII)
+
+这种模式极大影响了 Rust 代码编写方式。
+
+4.1 变量和数据交互 Move
+
+let x = 5;
+let y = x;
+
+现在我们有两个变量 x y 都等于 5。都分配在栈上。
+
+let s1 = String::from("Good");
+let s2 = s1;
+
+这看起来和前边很像。第二个会复制第一个的值，并绑定到 s2。
+
+String 由三个部分组成: 指向 string 内容的指针，length， capacity
+
+这些部分存储在栈上，string 内容存储在堆上。
+
+length 是 String 内容占用了多少 bytes，capacity 是 String 从 memory allocator 接收到的内存大小。
+
+let s2 = s1; 时，我们复制了 String 数据，即指针，length，capacity 而没有复制堆上数据。意味着两个变量指向同一个内存。
+
+如果复制堆上数据，会很消耗运行时资源。
+
+我们之前说超出作用域，变量会被 drop，并清理变量对应的堆空间。但两个变量指向同一个内存时，这个规则就出现问题了。
+
+s2 s1 都超出作用域时，都会试图释放同一块内存。这就是 double free error。
+
+Freeing memory twice can lead to memory corruption, which can potentially lead to security vulnerabilities.
+
+为了保证内存安全，Rust 不复制分配的内存，而是将 s1 看作不再有效的变量，因此 s1 超出作用域时，Rust 不需要释放任何内存
+
+其他语言中有 shallow copy 和 deep copy 概念。复制指针，length，capacity 而不复制数据听起来像 shallow copy。但是因为 Rust 将原先变量当作无效变量，这不能被叫 shallow copy 而是被叫做 move。
+
+即 s1 被 moved 到 s2.
+
+此处有一个设计选择: Rust 永远不会自动 deep 复制数据。因此，自动复制都可以被假定为高效的。(inexpensive)
+
+4.2 变量和数据交互方式 clone
+
+如果我们确实想进行 deeply copy 堆上数据，不只是栈上数据。可以使用通用方法 clone
+
+let s2 = s1.clone(); // code may be expensive
+
+4.3 Stack-only Data: Copy
+
+let y = x;
+
+不需要调用 clone，x 依然有效，没有进行 move
+
+因为 integer 有确定大小，并且存储在栈上。deep 和 shallow copy 没有区别。
+
+Rust 有 Copy trait，可以用于任何类似 integers 这种存储在栈上的数据。如果一个类型有 Copy trait，那么在复制后旧变量还可以使用。
+
+Rust 不会允许将一个类型，或类型某个部分实现 Drop trait 的类型标注为 Copy。
+
+simple scalar 值都是Copy，不需要内存分配或任何资源的都是 Copy。
+
+- 全部整数类型 u32
+- 布尔类型 true false
+- 浮点数 f64
+- 字符类型 char
+- 元组 各部分都是 Copy 的类型
+
+5. Ownership and Functions
+
+函数参数传递机制和赋值类似。
+
+会进行 move 或 copy
+
+6. Return Values and Scope
+
+函数返回值也会 transfer ownership
+
+s -> 表达式 有返回值
+
+s; -> statement 无返回值 ()
+
+对变量复制，会将原变量 move 到新变量。
+
+当含有 heap 数据的变量超出作用域，值会被 drop 清理，除非数据已经被 move 到另一个变量。
+
+在每个函数中都 take ownership 再 return ownership 会很麻烦。
+
+如何让函数使用值而不 take ownership 呢？
+
+传递值给函数再传出来以再次使用某个值会很 annoying。
+
+例如可以通过 tuple 返回多个值
+
+fn call(s:String) -> (String, usize) {
+  (s, length)
+}
+
+下一章有更好的办法
+
+ch 4.2 References and Borrowing
+
+使用对对象的引用而非 take ownership of value 来作为参数
+
+fn calculate_length(s: &String) -> usize {
+  s.len()
+}
+
+& 是 references 引用，允许 refer to 一些值，但不 taking ownership of it。
+
+对应操作是 dereferencing，dereference 操作符 *
+
+&s1 创建指向 s1 的 reference。因为函数形参 s 并不 own s1 的值，因此在函数作用域外，不影响指向的值。
+
+因此不需要返回 s 来交回 ownership。这种将引用作为参数的方式叫做 borrowing。
+
+通过引用修改传入参数
+
+  `s` is a `&` reference, so the data it refers to cannot be borrowed as mutable
+
+1. 可变引用
+
+变量默认是不可变的，引用默认也是不可变的。需要声明为可变引用
+
+可变引用要求变量也是可变的
+
+let mut s1 = String::from("")
+
+change(&mut s1);
+
+fn change(s: &mut String) {
+
+}
+
+修改三处
+
+注意，你一个作用域内，只能有一个 mutable 引用
+
+保证编译期的 data races
+
+data races 产生于
+
+  两个或多个指针同时访问同样数据
+
+  至少有一个指针用于写入数据
+
+  访问数据时没有同步机制
+
+Rust 在编译期组织 data races
+
+当然可以用 {} 创建新的作用域，不同作用域可以有多个可变引用
+
+同一作用域内，当有不可变引用时，不能创建可变引用。但可以有多个不可变引用。
+
+2. Dangling References
+
+指向被分配给其他指针的数据的指针
+
+In languages with pointers, it’s easy to erroneously create a dangling pointer, a pointer that references a location in memory that may have been given to someone else, by freeing some memory while preserving a pointer to that memory.
+
+Rust 编译期保证 references 不会是 dangling references
+
+数据不会在指针超出作用域前被清除。
+
+Rules of References
+  一个作用域内，either 一个可变引用或任意不可变引用
+  引用总是 valid
+
+ch 4.3 Slice Type
+
+slice 是另外一个没有 ownership 的数据结构。Slice 可以引用一个集合中的连续元素而不是整个集合。
+
+如下一个返回字符串中第一个单词的程序，如果找不到，则整个字符串是单词，返回它。如果找到了返回什么？
+
+- 返回单词尾部的索引
+
+fn first_word(s: &String) -> usize {}
+
+s.as_bytes() String 转为 byte 数组
+
+bytes.iter() 基于数组创建 iterator
+
+.enumerater() 将每个元素的 reference 和对应索引装入 tuple 返回
+
+  {index, ref} {i, &item}
+
+问题在于 返回的索引，与传入的字符串无关，无法保持同步。至少在字符串内容改变时，通知索引无效，要重新生成。
+
+1. String Slices
+
+string slice 是对 String 一部分的引用
+
+let hello = &s[0..5]; 前闭后开
+
+支持多种形式 &s[0..5]; &s[..5]; &s[3..]; &s[..];
+
+slice 内部保存起始位置和长度（ending_index - starting_index）
+
+  从第 starting_index+1 byte 开始
+
+让 first_word 返回 slice
+
+fn first_word(s: &String) -> &str {}
+
+String::from("Some String");
+
+first_word 中 &String 是 immutable reference
+
+外部的 s.clear(); 需要 mutable reference
+
+如果修改 first_word 中为 &mut String，就出现两个 mut reference
+
+Rust 编译器阻止这两种行为
+
+- 1.1 String 字面量是 slices
+
+let s = "Hello"; 类型是 &str; 一个指向 binary 特定位置的 slice
+
+因此 string 字面量是 immuable 的 &str 是 immutable reference
+
+- 1.2 String slice 用作参数
+
+fn first_word(s: &String) -> &str {}
+
+改为
+
+fn first_word(s: &str) -> &str {}
+
+first_word(&some_string);
+
+改为
+
+first_word(&some_string[..]);
+
+或 first_word("some_string_literal");
+
+2. 其他 slices
+
+collections 中有更通用的 slice type。例如数组
+
+let a = [1,2,3,4];
+
+let slice = &a[1..3]; 类型 &[i32]
+
+  和 string slice 一样，保存 starting_index 和 length
+
+The concepts of ownership, borrowing, and slices ensure memory safety in Rust programs at compile time.
+
+在 Rust 里可以和其他系统编程语言一样控制内存使用，同时提供在超出作用域时自动清理数据的功能。
+
+Ch 5 Structs (Using Structs to Structure Related Data)
+
+自定义数据类型，将多个关联值打包。类似 object-oriented language 的 object。
+
+对比 tuples 和 structs，如何使用 struct，如何定义 struct 方法，associated functions to specify behavior associated with a struct's data。
+
+structs 与 enums 是创建新类型的基础，都能充分利用 Rust 编译期类型检查。
+
+5.1 定义和初始化 Structs
+
+structs 类似 tuples.
+
+structs 不同部分可以是不同类型。不同是，需要给不同部分数据命名。
+
+由于可以命名，structs 比 tuples 更加灵活，不用依赖于数据存储的顺序。
+
+使用 struct 定义
+
+struct User {
+  username: String,
+  email: String,
+  sign_in_count: u64,
+  active: bool
+}
+
+需要创建 struct 的 instance 来使用 struct
+
+  let user1 = User {
+    email: String::from("user1@example.com"),
+    username: String::from("user1"),
+    active: true,
+    sign_in_count: 1,
+  };
+
+顺序可以任意
+
+默认需要提供所有 field 的值
+
+获取特定 field : user1.username
+
+如果 instance 是 mut 的，可以用 user.username = "some_value"; 修改 field 值。
+
+无法声明部分 fields 为 mutable。一旦声明为 mut，整体都是 mutable。
+
+返回 User 的函数
+
+fn build_user_tedious(email: String, username: String) -> User {
+  User {
+    email: email,
+    username: username,
+    active: true,
+    sign_in_count: 1,
+  }
+}
+
+1. 简化初始化
+
+fn build_user(email: String, username: String) -> User {
+  User {
+    email,
+    username,
+    active: true,
+    sign_in_count: 1,
+  }
+}
+
+变量名和 field 相同时可以用简化语法
+
+2. Struct update
+
+从其他 instance 创建新 instance
+
+struct update syntax
+
+let user2 = User {
+    email: String::from("another@example.com"),
+    username: String::from("anotherusername567"),
+    active: user1.active,
+    sign_in_count: user1.sign_in_count,
+};
+
+简化形式用 ..user1
+
+let user2 = User {
+    email: String::from("another@example.com"),
+    username: String::from("anotherusername567"),
+    ..user1
+};
+
+3. tuple structs
+
+类似 tuple 的 struct
+
+是 struct 但 field 没有和名字关联，field 只有类型
+
+当想把 tuple 作为区别其他 tuple 的类型时可以用 tuple structs。
+
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+
+两个不同类型
+
+定义的每个 struct 都有自己的类型
+
+tuple structs 的行为和 tuple 一样
+
+4. Unit-like Structs
+
+没有 field 的 structs 行为类似 Unit () unit type
+
+当你要为一些类型实现 trait 时用的上。
+
+5. Struct data 的 ownership
+
+以上都使用的 owned String type 而不是 &str
+
+Structs 中可以保存 references 但是要求使用 lifetimes 会在 Chapter 10 学习。
+
+5.2 使用 Struct 例子
+
+5.3 方法语法
+
+
+
+
+
+
+
+local document
+  https://stackoverflow.com/questions/42607736/how-can-i-read-the-rust-documentation-offline
+  rustup component add rust-docs
+  rustup doc
+
+https://rustwasm.github.io/
+
+https://learning.oreilly.com/library/view/rust-programming-by/
+
+https://intellij-rust.github.io/
+
+https://rustacean-station.org/ Rustacean Station
+
+https://rustcc.cn/ Rust语言中文社区-首页
+
+https://stackoverflow.com/questions/39219961/how-to-get-assembly-output-from-building-with-cargo
+
+  Rust 获得汇编代码
+
+  rustc file.rs --emit asm
+
+Rustup 镜像内测
+  https://rustcc.cn/article?id=bf2894da-ed0f-46ee-b212-ab3f37615ec3
+
+https://doc.rust-lang.org/reference/introduction.html
+
+cargo 运行单个文件
+
+https://www.reddit.com/r/rust/comments/7hog3u/how_do_i_tell_cargo_to_run_some_other_file_not/
+
+http://blog.joncairns.com/2015/10/a-single-command-to-compile-and-run-rust-programs/
+
+#!/bin/bash
+name=$(basename $1 .rs)
+rustc $@ && ./$name && rm $name
+
