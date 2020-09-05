@@ -1161,7 +1161,315 @@ methods 为与 struct 相关的方法创建命名空间。
 
 Ch6 Enums 和 Pattern Matching
 
+枚举类型 enumerations 也并叫做 enums。
+
+Enums 让我们可以定义一个类型的多个变体 variants
+
+用途增加数据的含义，
+
+学习枚举类型 Option 值为 something 或 nothing
+
+模式匹配
+
+学习 if let 结构如何方便地处理 enums
+
+Rust 的 enums 类似函数式语言中的 algebraic data types。
+
+6.1 定义 Enum
+
+假设表示 IP addresses， version four 和 version six
+
+任意 IP 地址，只能是两个版本的一个，无法同时存在两种。
+
+enum 的值只能是它变体的其中一种。
+
+不同变体的类型相同
+
+自定义类型
+
+enum IpAddrKind {
+  V4,
+  V6,
+}
+
+1. Enum 的值
+
+赋值
+
+  let four = IpAddrKind::V4;
+
+  let six = IpAddrKind::V6;
+
+V4 V6 处于 IpAddrKind 命名空间之下
+
+fn route(ip_kind: IpAddrKind) {
+
+}
+
+可以类似 route(four); 来使用 enum
+
+使用 enums 有更多好处。
+
+假设我们使用 struct 存放实际 ip 地址
+
+struct IpAddr {
+  kind: IpAddrKind,
+  address: String,
+}
+
+定义 ip 地址如下
+
+let home = IpAddr {
+  kind: IpAddrKind::V6,
+  address: String::from("127.0.0.1"),
+};
+
+但我们可以只用 enum 来简化
+
+enum IpAddrKind {
+  V4(String),
+  V6(String),
+}
+
+let home = IpAddr::V4(String::from("127.0.0.1"));
+
+使用 enum 而不是 struct 的另一个好处
+
+每个变体可以使用不同的类型
+
+enum IpAddrKind {
+  V4(u8, u8, u8, u8),
+  V6(String),
+}
+
+let home = IpAddr::V4(127.0.0.1);
+let loopback = IpAddr::V6(String::from("::1"));
+
+标准库提供保存 IP 地址的库
+
+struct Ipv4Addr {
+
+}
+
+struct Ipv6Addr {
+
+}
+
+enum IpAddr {
+  V4(Ipv4Addr),
+  V6(Ipv6Addr)
+}
+
+即可以把任意类型放在 enum 变体中
+
+标准库类型一般不像你想象的那么复杂。
+
+enum 与 struct
+
+enum Message {
+  Quit,
+  Move {x:i32, y:i32},
+  Write(String),
+  ChangeColor(i32, i32,i32),
+}
+
+类似 struct 是
+
+struct QuitMessage; unit struct / unit type
+struct MoveMessage {
+  x: i32,
+  y: i32
+}
+struct WriteMessage(String); tuple struct
+struct ChangeColorMessage(i32,i32,i32); tuple struct
+
+问题在于每个 struct 类型都是不同的，无法简单定义一个函数来处理任意 messages，而 enum 变体共享一种类型 Message
+
+enum 类似 struct 可以定义方法
+
+impl Message {
+  fn call(&self) {
+
+  }
+}
+
+2. Option Enum 与 Null Values
+
+IpAddr 枚举类型可以利用 Rust 的 type system 比纯数据编码更多信息到程序。
+
+现在学习 Option，标准库定义的另一个枚举类型。
+
+Option 类型用途广泛，它编码了值可能存在或不存在的情况。
+
+使用这一概念，编译器可以检查你是否处理了全部 cases，从而阻止其他语言里的常见错误。
+
+编程语言设计往往从包含的特性考虑，但不包含的特性也很重要。
+
+Rust 没有 null 的功能，即其他语言里表示 no value 的值。在有 null 的语言里，值只能是两种状态之一 null 或 not-null。
+
+“Null References: The Billion Dollar Mistake,” Tony Hoare, the inventor of null
+
+null 的问题在于当你想把它当作 not-null 值使用时会出错。
+
+null 的价值在于它表示值当前不可用或出错。
+
+Rust 用 Option 类型来编码这种情况
+
+enum Option<T> {
+  Some(T),
+  None,
+}
+
+Option 是预加载到 prelude 的类型
+
+另外可以直接使用 Some 和 None 而不用 ::
+
+<T> 是泛型类型，表示 Option 可以表示任意类型
+
+  let some_number  = Some(5);
+  let some_string = Some("just a string");
+  let absent_number: Option<i32> = None;
+
+使用 None 是需要提供类型，因为编译器无法推断类型。
+
+Option 类型优于 null 在于，Option<T> 和 T 不是一种类型
+
+编译器会阻止 i8 赋值给 Option<i8>
+
+编译器保证 i8 类型永远有一个 valid value，不需要检查是否为 null。
+
+对于 Option<T> 来说，必须先转为 T 才能执行与 T 有关的操作
+
+Option<T> 有很多转为 T 的方法 std::option
+
+match 模式匹配可以根据枚举值执行对应逻辑，对应代码可以使用匹配的值。
+
+6.2 模式匹配 match
+
+match 是强大的流程控制操作符
+
+允许比较值与一系列模式，根据匹配的模式执行对应代码。
+
+模式可以是 字面量，变量名，通配符等
+
+18 章有全部的模式。
+
+match 的强大在于模式的表现力和编译器保证所有情况都被处理。
+
+类似硬币分类机器。
+
+硬币枚举值和对应面值
+
+enum Coin {
+  Penny,
+  Nickel,
+  Dime,
+  Quarter,
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+  match coin {
+    Coin::Penny => 1,
+    Coin::Nickel => 5,
+    Coin::Dime => 10,
+    Coin::Quarter => 25,
+  }
+}
+
+match 值 {
+  // march arms
+  模式1 => 代码,
+  模式2 => 代码,
+  模式3 => 代码,
+}
+
+match 表达式执行时，按顺序匹配模式。
+
+匹配时执行对应的代码，arm 中代码返回值就是整个 match 的返回值
+
+arm 中代码为一行时不需要大括号 curyly brackets
+
+多行可以用大括号，arm 末尾逗号可以省略
+
+1. 绑定到值的模式
+
+match arm 可以绑定到匹配模式的值，这样就可以从 enum 变体中提取值。
+
+2. 匹配 Option<T>
+
+匹配后可以在 match arm code 内部读取到 Some<T> 的值
+
+fn plus_one(x: Option<i32>) -> Option<i32> {
+  match x {
+    None => None,
+    Some(i) => Some(i + 1),
+  }
+}
+
+Some(i) => Some(i+1),
+
+3. match 是面面具到的
+
+如果有未处理的可能情况，Rust 编译器会报错
+
+4. _ 占位匹配
+
+为不需要特殊处理的情况设置默认代码
+
+match some_u8_value {
+  1 => println!("one"),
+  2 => println!("two"),
+  _ => (),
+}
+
+可见，当只想处理一种特定情况时，match 太麻烦。可以用 if let 替代
+
+6.3 if let 简化条件控制
+
+只希望处理特定模式
+
+if let Some(3) = some_u8 {
+  println!("three");
+}
+
+if let 工作方式与 match 一样
+
+可以认为是 match 仅处理一种情况的语法糖
+
+if let 可以有 else 分支
+
+Rust modules 为了更好组织代码，只向用户提供需要 API
+
 Ch7 项目管理: Packages Crates Modules
+
+编写大型程序，代码组织很重要。
+
+通过将代码分割到多个 modules 多个文件组织代码。
+
+一个 package 可以有多个 binary crates 和一个可选的 library crate。
+
+package 可以提出到其他 crates 作为外部依赖。
+
+对于更大的项目，cargo 提供 workspaces。会在 14 章讨论
+
+写代码是可以定义哪部分是 public，而哪部分是 private 实现
+
+module system
+
+  Packages: cargo 特性，可以 build test share crates
+  Crates: modules 树，产生 library 或 executable
+  Modules 和 use: 控制路径的组织，作用域和 privacy 可见性
+  Paths: 对 struct function 或 module 的命名方式
+
+7.1 Packages 和 Crates
+
+7.2 定义模块控制作用域和可见性 scope and privacy
+
+7.3 在 Module Tree 中指向某个对象的 Paths
+
+7.4 用 use keyword 将 Paths 引入作用域
+
+7.5 分割模块到多个文件
 
 Ch8 Common Collections 常见集合
 
@@ -1170,6 +1478,24 @@ Ch9 错误处理 Error Handing
 Ch10 泛型，Traits 和 Lifetimes
 
 Ch11 自动化测试 Automated Tests
+
+Ch12 An I/O Project: 写个命令行程序
+
+Ch13 函数式语言特性: Iterators 和 Closures
+
+Ch14 Cargo 和 Crates.io
+
+Ch15 智能指针 smart pointers
+
+Ch16 并发 Fearles Concurrency
+
+Ch17 Rust 面向对象特性
+
+Ch18 模式和匹配
+
+Ch19 高级特性
+
+Ch20 多线程网页服务器
 
 local document
   https://stackoverflow.com/questions/42607736/how-can-i-read-the-rust-documentation-offline
