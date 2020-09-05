@@ -1463,13 +1463,265 @@ module system
 
 7.1 Packages 和 Crates
 
+crate 是 binary 或 library。
+
+crate root 是 Rust 编译器启动并设置为 crate root module 的源文件
+
+package 是一个或多个 crates，提供一组功能。
+
+package 有 Cargo.toml 描述如何编译这些 crates.
+
+package 必须包含 0 或 1 个 library crates。可以包含任意多 binary crates。
+
+至少有一个 crate (library or binary)。
+
+创建 package
+
+cargo new my-project
+
+cargo 默认 src/main.rs 是 binary crate 的 root
+
+如果 src 中有 lib.rs 那 package 就包含 library crate，且与 package 同名，src/lib.rs 为 crate root.
+
+Cargo 将 crate root 文件传给 rustc 编译 library 或 binary。
+
+同时有 src/main.rs 和 src/lib.rs。package 有两个 crates, 名字都与 package name 一样
+
+有多个 binary crates 的 package 可以将文件放在 src/bin，每个文件是单独的一个 crate。
+
+crate 将相关功能集合到一个作用域内，方便在多个项目中分享。提供的功能可以在引入后通过 crate name 获取
+
+保持 crate 的功能在自己 scope 保证不会与我们 crate 中的名字冲突，这些功能都被 namespaced 在自己的 scope。
+
 7.2 定义模块控制作用域和可见性 scope and privacy
+
+用 paths 来命名 items 模块元素
+
+关键字 use 将 path 引入当前 scope
+
+关键字 pub 将一个元素变为 public
+
+as 关键字
+
+外部 packages
+
+glob 操作符
+
+在 crate 中 Module 组织代码，使代码可读，易于复用，控制内部元素的可见性 privacy。
+
+创建 library crate 来学习 module
+
+cargo new --lib restaurant
+
+restaurant 中分为 front of house 和 back of house，分别是前厅和后厨。
+
+- 用 mod 定义模块
+
+mod module_name {
+  fn name () {}
+}
+
+模块中可以有其他元素 structs enums constants traits functions
+
+src/lib.rs src/main.rs 被成为 crate root 是因为它们在 crate module 结构 module tree 中形成一个模块被叫做 crate
+
+crate 这个 path 就代指 src/lib.rs 或 src/main.rs
+
+现在的 module tree 如下
+
+crate -> src/lib.rs
+  front_of_house
+    hosting
+      add_to_waitlist
+      seat_at_table
+    serving
+      take_order
+      serve_order
+      take_payment
+
+如果一个模块在另一个模块中，则称其为另一个模块的子模块
+
+整个模块树的 root 是约定名为 crate 的模块
 
 7.3 在 Module Tree 中指向某个对象的 Paths
 
+类似文件系统，在 Rust 模块中用 path 找到元素
+
+可以有两种形式
+
+  绝对 path，起于 crate
+  相对 path，起于当前模块，在当前模块中可使用 self super 或 identifier
+
+path 由被 :: 分隔的 identifier 组成
+
+
+pub fn eat_at_restaurant() {
+  // 绝对路径
+  crate::front_of_house::hosting::add_to_waitlist();
+
+  // 相对路径
+  front_of_house::hosting::add_to_waitlist();
+}
+
+使用哪种路径要看项目具体情况。
+
+建议使用 绝对路径，因为代码定义和实现多数情况下是分离的。
+
+编译项目
+
+cargo buld
+
+默认模块中元素是 private
+
+父模块无法使用子模块的元素，但子模块可以用父模块元素
+
+因为子模块可以访问父模块的 context
+
+这样默认隐藏内部实现
+
+1. 用 pub 关键字暴露 Path
+
+找不到 自定义模块，原因 #[cfg(test)]
+
+The #[cfg(test)] annotation on the tests module tells Rust to compile and run the test code only when you run cargo test, not when you run cargo build.
+
+
+path  crate::front_of_house::hosting::add_to_waitlist(); 中
+
+hosting 需要是 pub 模块，add_to_waitlist 需要是 pub 函数
+
+使用同一模块内的元素，如 front_of_house 不需要 pub
+
+2. 在相对路径中使用 super
+
+类似文件系统的 .. 代指当前所在模块的上一级模块
+
+3. 使 structs 和 enums Public
+
+还是用 pub，但有些额外的细节。如 struct，即使用 pub struct Name {}
+
+struct 的 field 还是 private
+
+可以单独设定 field 为 public
+
+与此相反，如果设置 enum 为 public，它所有的变体都是 public
+
 7.4 用 use keyword 将 Paths 引入作用域
 
+用 use 简化 crate::front_of_house::hosting::add_to_waitlist();
+
+use 可以用绝对路径或相对路径 self::
+
+use crate::front_of_house::hosting;
+
+use self::front_of_house::serving;
+
+1. 习惯用法
+
+use 只到模块名而非函数名是 符合习惯 的做法；idiomatic way
+
+  这可以说明该函数是从其他模块引入的
+
+另外当使用 structs enums 或其他元素时，使用 full path，而非只到模块名
+
+use std::collections::HashMap;
+
+一个例外是如果引入的两个元素名字冲突，需要分别加上它们父模块来区分。
+
+use std::fmt;
+use std::io;
+
+fn function1() -> fmt::Result {
+
+}
+
+fn function2() -> io::Result {
+
+}
+
+2. 用 as 关键字提供新名字
+
+解决名字冲突的另一种方案
+
+use std::fmt::Result;
+use std::io:Result as IoResult;
+
+3. 用 pub use 重新导出模块
+
+pub use crate::front_of_house::hosting;
+
+外部的模块也能使用
+
+hosting::add_to_waitlist();
+
+4. 使用外部 packages
+
+编辑 Cargo.toml
+
+[dependencies]
+rand = "0.5.5"
+
+这会让 Cargo 下载 rand package 和它的依赖，并让 rand 对项目可用
+
+引入 rand::Rng Rng 是一个 trait，其中定义 rand::thread_rng 函数
+
+use rand::Rng;
+
+fn main() {
+  let secret_number = rand::thread_rng().gen_range(1, 101);
+}
+
+使用 标准库 std 不需要修改 Cargo.toml
+
+只需要引入即可
+
+use std::Collections::HashMap;
+
+5. 用 嵌套 Paths 清除 Large use List
+
+从同一模块导入的模块元素
+
+use std::cmp::Ordering;
+use std::io;
+
+可以合并为
+
+use std::{cmp::Ordering, io};
+
+use std::io;
+use std::io::Write;
+
+合并为
+
+use std::{self, Write};
+
+6. glob 操作符
+
+引入全部公开模块元素
+
+use std::Collections::*;
+
+小心使用，会不容易分清从哪里引入的 items，多用于测试时。
+
 7.5 分割模块到多个文件
+
+改善之前的多个模块混在一起的情况。
+
+将 front_of_house 模块挪到单个文件 src/front_of_house.rs
+
+在 src/lib.rs 中引入模块 front_of_house.rs
+
+mod front_of_house;
+
+使用这种形式而非 block，会告诉 Rust 从另一个同名文件中载入模块
+
+而 front_of_house.rs 中不需要 mod front_of_house {}
+
+hosting 模块也可以挪到自己的文件中
+
+对应文件是 front_of_house/hosting.rs
+
+Rust 中 package 可以分为多个 crates，而 crate 可以分为多个 modules。
 
 Ch8 Common Collections 常见集合
 
@@ -1496,6 +1748,20 @@ Ch18 模式和匹配
 Ch19 高级特性
 
 Ch20 多线程网页服务器
+
+Refs:
+  https://stackoverflow.com/questions/58652318/what-does-cfgtest-do-when-placed-at-the-top-of-lib-rs rust - What does #[cfg(test)] do when placed at the top of lib.rs? - Stack Overflow
+  https://doc.rust-lang.org/book/ch11-03-test-organization.html Test Organization - The Rust Programming Language
+  https://doc.rust-lang.org/cargo/guide/creating-a-new-project.html Creating a New Package - The Cargo Book
+  https://levelup.gitconnected.com/rust-adventures-rust-projects-management-understanding-packages-crates-and-modules-b3bcde2eb1c Rust Adventures: Rust projects management, understanding packages, Crates and modules | by Floriano Victor Peixoto | Level Up Coding
+  https://stackoverflow.com/questions/56853059/use-of-undeclared-type-or-module-when-using-diesels-belongs-to-attribute rust - "use of undeclared type or module" when using Diesel's `belongs_to` attribute - Stack Overflow
+  https://blog.guillaume-gomez.fr/articles/2020-03-12+Guide+on+how+to+write+documentation+for+a+Rust+crate Guide on how to write documentation for a Rust crate
+  https://doc.rust-lang.org/rust-by-example/crates/lib.html Library - Rust By Example
+  https://kornel.ski/rust-sys-crate Using C libraries in Rust: make a sys crate
+  https://dev.to/luzero/building-crates-so-they-look-like-c-abi-libraries-1ibn Building crates so they look like C(ABI) Libraries - DEV Community
+  https://opensource.com/article/20/3/rust-cargo Getting started with the Rust package manager, Cargo | Opensource.com
+  https://learning-rust.github.io/docs/a4.cargo,crates_and_basic_project_structure.html Cargo, Crates and Basic Project Structure | Learning Rust
+  https://learning-rust.github.io/ Learning Rust
 
 local document
   https://stackoverflow.com/questions/42607736/how-can-i-read-the-rust-documentation-offline
