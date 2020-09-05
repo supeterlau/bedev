@@ -1,0 +1,20 @@
+awk
+
+添加一列到 csv
+
+  awk -v random=$RANDOM -F, '{$2=rand","$2}1' OFS=, input.csv
+
+sed
+
+- Bash Shell Find Out If a Variable Is Empty Or Not
+
+  https://www.cyberciti.biz/faq/unix-linux-bash-script-check-if-variable-is-empty/
+
+- How to Check if a File or Directory Exists in Bash
+
+  https://linuxize.com/post/bash-check-if-file-exists/
+
+FILE=/etc/resolv.conf
+if [ -f "$FILE" ]; then
+    echo "$FILE exists."
+fi
