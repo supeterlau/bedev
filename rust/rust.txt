@@ -1725,9 +1725,427 @@ Rust 中 package 可以分为多个 crates，而 crate 可以分为多个 module
 
 Ch8 Common Collections 常见集合
 
+Rust 标准库中很有用的数据结构，collections。其他数据结构表示一种特定值，但 collections 可以存储很多值。
+
+与内置 arry tuple 不同，collections 数据存储在 heap，这意味着在编译期不需要知道这些数据的大小，数据大小可以随程序运行而变化 grow or shrink。
+
+每种 collection 有不同的能力和代价，你会慢慢掌握为特定场景选择适当数据类型的能力。
+
+学习三种 collections
+
+  vector: 类似 array
+
+  string: 字符集合
+
+  hash map: key 和 value 的关联，是对更通用结构 map 的特殊实现
+
+8.1 Vector 存储数据
+
+Vec<T> 即 vector
+
+只能保存相同类型数据
+
+1. 创建 Vector
+
+  let v: Vec<i32> = Vec::new();
+
+只声明而不初始化时，无法推断类型，需要加类型信息 type annotation
+
+通常创建有初始值的 vector，Rust 提供 macro vec 来简化步骤。
+
+let v = vec![1,2,3];
+
+2. 更新 Vector
+
+添加新元素 pus
+
+
+  let mut v = Vec::new();
+
+  v.push(12);
+  v.push(13);
+  v.push(15);
+
+3. Vector 元素随着 Vector 一起被清除
+
+{
+  let v = vec![1,2,3]
+}
+
+当 vector 中有引用时会变得复杂
+
+4. 读取 vector 元素
+
+- indexing syntax
+
+  let third = &v[2];
+
+索引从 0 开始，使用 &vector_name[index];
+
+返回 reference
+
+- get 方法
+
+  match v.get(3) {
+    Some(four) => println!("The forth element of v : {}", four),
+    None => println!("No forth element"),
+  }
+
+返回 Option<&T>
+
+访问不存在的索引时，
+
+如果想让程序 crash，使用 &v[100];
+
+如果访问超出返回的元素是预料之内的行为，使用 v.get(100);
+
+  返回 Some(&element) 或 None
+
+vector 中 ownership 会保证引用有效。
+
+当有 immutable 引用时，无法修改 vector
+
+  let mut v4 = vec![4,5,6];
+  let v4_first = &v4[0];
+  // v4.push(7);
+  println!("First of v5: {}", v4_first);
+
+为什么对第一个元素引用，影响尾部插入数据？
+
+这和 vector 工作方式有关。尾部新加元素可能导致内存重新分配，复制旧数据到新位置。这种情况下，指向旧数据第一个元素的引用就无效了。
+
+borrowing rules 防止这种情况出现。
+
+5. 遍历 vector 数据
+
+逐个读取元素
+
+
+  let v5 = vec![100,200,300];
+  for i in &v5 {
+    println!("v5: {}", i);
+  }
+
+  let mut v5_mut = vec![100,200,300];
+  for i in &mut v5_mut {
+    *i *= 5;
+    println!("v5: {}", i);
+  }
+
+修改 mutable vector 要用 dereference 操作符 * 获取 i 中的值
+
+6. 用 Enum 保存不同类型
+
+Enum 变体可以是不同类型，而 Enum 是一种类型。Great
+
+spreadsheet 不同类型的行
+
+enum SpreadsheetCell {
+  Int(i32),
+  Float(f64),
+  Text(String),
+}
+
+如果不知道程序中的全部类型，不能使用 enum，需要用 trait object
+
+vector API: push pop
+
+pop 必须是 mutable vector
+
+8.2 Strings 存储 UTF-8 编码文字
+
+新 Rustaceans 经常在 strings 里遇到困难
+  -
+  - strings 比其他语言里的复杂
+  - UTF-8
+
+在 collections 中讨论 strings，strings 是作为 bytes 集合实现的，
+
+当 bytes 解析为 text 时提供很多功能。
+
+creating updating reading
+
+讨论和其他 collections 区别
+
+1. 什么是 String
+
+- str / &str
+
+在 core language 中只有一种 string type: string slices, str
+
+常见它的 borrowed form : &str
+
+string slices, 是一些 UTF-8 编码的 string data 的引用。
+
+String literals 存储在程序 binary，是 string slices
+
+- String
+
+String 类型是 Rust 标准库提供的。
+
+长度可变 mutable owned UTF-8 编码
+
+通常说 string 指的是这两种，都是 UTF-8 编码
+
+标准库还有 OsString OsStr CString CStr
+
+String 结尾表示 owned
+
+Str 表示 borrowed variants
+
+2. 创建 String
+
+很多 Vec<T> 可用的操作在 String 中可用
+  let mut s = String::new();
+创建 empty string
+
+从 string literal 转为 String
+
+  let data = "real content";
+  let s_data = data.to_string();
+
+  let s_data = "Word".to_string():
+
+还可以用 String::from();
+
+  let s_from = String::from("耗时");
+
+3. 更新 String
+
+添加数据可以用 push_str, +, 或 format! 宏
+
+- push_str push
+
+push_str 不获取参数的 ownership
+
+push 添加单个字符 'a' 到 String
+
+- + 或 format! 宏
+
+  let s_3_2 = String::from("of");
+  let s_3_3 = s_3 + &s_3_2;
+
++ 操作后 s_3 不再可用，这与 + 的实现有关。
+
++ 签名（使用确定类型而非泛型
+
+fn add(self, s: &str) -> String {}
+
+s_3_2 的类型是 &String 而非 &str 但 编译器会 coerce &String 为 &str
+
+调用是 编译器使用 derefcoercion 将 &s_3_2 变为 &s_3_2[...]
+
+self 没有用 & 表示它的 ownership 移入 add，self 的实参不再 valid
+
+所以看起来 + 复制两个字符串到新字符串，但实际上它获取第一个的 ownership，将第二个复制追加到第一个参数，返回结果。实际没有很多复制，这个实现比复制高效。
+
+多个字符串追加可以用 format! 宏，工作方式类似 println! 但不打印结果
+
+4. Strings 索引
+
+很多语言里可以通过索引获取字符串单个字符
+
+Rust 不支持使用索引获取单个字符
+
+- 字符串内部形式
+
+String 是对 Vec<u8> 的封装。
+
+  let s_4 = String::from("Hola");
+
+对于 每个字符占 1 byte 的字符串来说，字符串存储大小为 4 bytes
+
+而对于使用多个 bytes 保存的字符来说
+
+  let hello = String::from("Здравствуйте");
+
+byte 存储大小不是显示字符个数 12 而是 24
+
+hello 第一个字符需要两个 bytes 208 和 151
+
+&hello[0] 返回值 对应第一个 byte 的话需要返回 208
+
+但用户期待返回字符。208 本身不是 valid character
+
+为了避免返回非预期值，Rust 不编译这样的使用索引的代码
+
+- Bytes, Scalar Values, Grapheme Clusters
+
+从 Rust 角度有三种对待 strings 的方式
+
+  as bytes
+  as scalar values
+  grapheme clusters (这个最接近期待返回的 字母)
+
+对于 Hindi word नमस्ते
+
+电脑需要 18 bytes 存储
+
+按照 Unicode scalar values，即 Rust char 类型，有 6 个值
+
+用 Grapheme cluster 看是 4 个字母
+
+Rust 提供不同方式解析 raw string，可以选择需要的方式。
+
+另外不使用索引是因为，一般索引是 O(1) 操作。但在 String 中无法保证性能。
+
+Rust 必须遍历到索引位置才能决定有多少有效字符。
+
+5. 字符串 slicing
+
+字符串索引并不清楚返回的是什么，byte value，character，还是 grapheme cluster，或者 string slice。
+
+用 [] 和 range 创建 string slice
+
+  let s_4_1 = String::from("Здравствуйте");
+  println!("string slice {}", &s_4_1[0..4]);
+
+原字符串是 2 bytes 表示一个字符，如果用[0..1] 程序会 panic
+
+用 range 获取 string slices 也需要小心。
+
+6. 遍历 strings
+
+遍历字符串 Unicode scalar values，可以用 chars 方法
+
+  for c in "नमस्ते".chars() {
+    println!("=>_{} ", c);
+  }
+
+获取 bytes 使用 bytes 方法
+
+  for b in "नमस्ते".bytes() {
+    println!("=>_{} ", b);
+  }
+
+得到 grapheme cluster 更复杂，需要外部 crates。
+
+8.3 Hash Map 存储 key value
+
+HashMap<K, V> 通过 hashing function 决定如何存储 keys 和 values。
+
+不用索引而是通过任意类型的 key 获取 value
+
+其他语言里叫 hash,map,object,hash table,dictionary,associative array 等
+
+1. 创建 Hash Map
+
+HashMap 没有被自动加载到 prelude
+
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Yellow"), 50);
+println!("Display scores: {:?}", scores);
+
+keys 类型必须一致
+
+values 类型必须一致
+
+另一种创建方法是调用 vector of tuples 的 collect 方法
+
+collect 方法收集数据到数据结构中，包括 HashMap
+
+  let teams = vec![String::from("Blue"), String::from("Yello")];
+  let initial_scores = vec![30, 60];
+
+  let mut iter_scores: HashMap<_, _> =
+    teams.into_iter().zip(initial_scores.into_iter()).collect();
+
+zip 方法创建 vector of tuples
+
+2. Hash Maps 与 Ownership
+
+对于实现 Copy trait 的类型，value 复制到 hash map;
+对于 owned values 如 String，value 被移到 hash map，hash map 拥有这些值，原来的值不可用。
+
+map.insert(field_name, field_value);
+
+3. 获取 values
+
+- get 方法
+
+let team_name = String::from("Blue");
+println!("Score of Blue: {}", scores.get(&team_name));
+
+get 方法返回 Option<&V>
+
+可以用第六章的方法之一读取 &V
+
+  std::option 的方法
+    例如 unwrap_or(self, default: T) -> T
+  或 模式匹配
+
+- 遍历读取 value
+
+  for(key, value) in &scores {
+    println!("{}: {}", key, value);
+  }
+
+4. 更新 Hash Map
+
+key 同一时刻只能有一个关联值
+
+当你想改变 Hash Map 值时，要决定如何处理那个 key 已经有关联值的情况。
+
+  用新值替换旧值，完全不管旧值
+
+  或者不改变已经有的 key，只增加新的 key
+
+  或者可以合并新旧值
+
+- 覆盖旧值
+
+insert 两次，默认覆盖旧值
+
+  println!("Display scores: {:?}", scores);
+  scores.insert(String::from("Blue"), 900);
+  println!("Display scores: {:?}", scores);
+
+- 只添加不存在的 key
+
+常用逻辑是 检查 key 是否存在，如果不存在才增加 key/value
+
+Hash Map 有 entry API 检查给定 key 是否存在。
+
+entry 方法返回值为 enum Entry，代表值存在或不存在
+
+Entry 有方法 or_insert(param)
+
+  如果 key 存在，返回对应值的 mutable reference
+  如果 key  不存在，插入参数，返回对应值的 mutable reference
+
+  scores.entry(String::from("Blue")).or_insert(0);
+
+- 基于旧值更新
+
+  for lang in text.split_whitespace() {
+    let count = lang_map.entry(lang).or_insert(0);
+    *count += 1;
+  }
+
+  通过 *count 获取旧值
+
+5. Hashing Functions
+
+默认，HashMap 使用 cryptographically strong 密码学强度 hashing function 抵御 Denial of Service 攻击。拒绝服务攻击。
+
+不是最快的 hashing algorithm 但是能平衡性能和安全性。
+
+如果你觉得太慢，可以指定不同点的 hasher: BuildHasher 类型
+
 Ch9 错误处理 Error Handing
+9.1 无法恢复的错误 panic!
+9.2 Result 处理可以恢复的错误
+9.3 是否使用 panic!
 
 Ch10 泛型，Traits 和 Lifetimes
+10.1 通用数据类型
+10.2 Traits: 定义共享的行为 shared behavior
+10.3 用 lifetimes 检查 References
+
 
 Ch11 自动化测试 Automated Tests
 
