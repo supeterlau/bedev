@@ -1,0 +1,35 @@
+Document:
+
+  https://downloads.haskell.org/~ghc/8.10.2/docs/
+
+Mirror:
+  https://mirrors.tuna.tsinghua.edu.cn/help/hackage/ hackage | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror
+  https://mirrors.tuna.tsinghua.edu.cn/help/stackage/ stackage | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror
+
+Install:
+
+  asdf + proxy
+
+GHCi Usage:
+  - multiple lines
+    https://stackoverflow.com/questions/2846050/how-to-define-a-function-in-ghci-across-multiple-lines haskell - How to define a function in ghci across multiple lines? - Stack Overflow
+    https://stackoverflow.com/questions/8443035/multi-line-commands-in-ghci/8443096 haskell - Multi-line commands in GHCi - Stack Overflow
+      let {...;...;}
+      Prelude>:set +m
+
+Tour:
+
+Learn You a Haskell for Great Good!
+
+  http://learnyouahaskell.com/
+
+运行 Haskll 文件
+
+  runhaskell file.hs
+  ghci --make file.hs && ./file
+
+  ghci
+  Prelude>:load /path/to/file.hs
+  Prelude>:q (exit)
+
+Real World Haskell
