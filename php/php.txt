@@ -1,0 +1,40 @@
+Use docker container with docker-compose
+
+APP=./app docker-compose up
+
+INDEX index.php
+
+https://www.php.net/manual/en/langref.php PHP: Language Reference - Manual
+
+
+
+
+HTTP request info:
+
+
+Laravel Docker Development
+
+Build a MVC:
+
+  router: Match Path
+
+  controller:
+
+  view: PHP 
+
+  DB: ORM
+
+
+https://www.php.net/manual/en/install.fpm.php PHP: FastCGI Process Manager (FPM) - Manual
+
+https://stackoverflow.com/questions/3136253/how-to-print-all-information-from-an-http-request-to-the-screen-in-php How to print all information from an HTTP request to the screen, in PHP - Stack Overflow
+
+https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-nginx.html webdevops/php-nginx — Dockerfile Documentation documentation
+
+https://www.howtoforge.com/tutorial/ubuntu-caddy-web-server-installation/ How to Install and Configure Caddy Web Server with PHP and MariaDB on Ubuntu 20.04
+https://github.com/webdevops/Dockerfile webdevops/Dockerfile: Dockerfiles from WebDevOps for PHP, Apache and Nginx (with PHP5 and PHP7)
+https://dockerfile.readthedocs.io/en/latest/index.html Overview — Dockerfile Documentation documentation
+https://microbadger.com/images/webdevops/php-apache:alpine-php7 MicroBadger - webdevops/php-apache:alpine-php7
+https://stackoverflow.com/questions/49293967/how-to-pass-environment-variable-to-docker-compose-up How to pass environment variable to docker-compose up - Stack Overflow
+https://docs.docker.com/compose/environment-variables/ Environment variables in Compose | Docker Documentation
+https://docs.docker.com/compose/reference/overview/ Overview of docker-compose CLI | Docker Documentation

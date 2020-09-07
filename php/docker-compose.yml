@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  app:
+    image: webdevops/php-nginx:7.4-alpine
+    volumes:
+    - ${APP}:/app:ro
+    ports:
+    - "9080:80"
