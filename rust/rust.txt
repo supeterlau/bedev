@@ -1795,9 +1795,9 @@ let v = vec![1,2,3];
 
 访问不存在的索引时，
 
-如果想让程序 crash，使用 &v[100];
+-1. 如果想让程序 crash，使用 &v[100];
 
-如果访问超出返回的元素是预料之内的行为，使用 v.get(100);
+-2. 如果访问超出返回的元素是预料之内的行为，使用 v.get(100);
 
   返回 Some(&element) 或 None
 
@@ -2137,9 +2137,210 @@ Entry 有方法 or_insert(param)
 如果你觉得太慢，可以指定不同点的 hasher: BuildHasher 类型
 
 Ch9 错误处理 Error Handing
+
+Rust 帮助你在部署到生产环境前发现错误。
+
+主要分为两类。recoverable 和 unrecoverable 错误。
+
+第一类，例如 文件不存在，可以恢复之后继续执行。
+
+第二类，如访问数组越界，成为 bug。
+
+Rust 没有 exception。对于 recoverable，提供 Result<T,E>
+
+对于 unrecoverable，先调用 panic! 再处理返回的 Result<T,E>
+
 9.1 无法恢复的错误 panic!
+
+当遇到无法处理的错误时，Rust 提供 panic! 宏。
+
+panic! 执行时，打印 failure message，unwind 并清理 stack，然后 quit。
+
+默认情况，panic 发生时，程序先 unwind:
+
+  Rust 遍历 stack，清除每个函数中遇到的数据。
+
+  这个工作量可能很大。可以选择立即 abort，退出程序而不清理。占用的内存留给操作系统清理。
+
+当希望编译出的 binary 尽可能小，可以将 unwind 改外 abort
+
+在 Cargo.toml 中
+
+[profile.release]
+panic = 'abort'
+
+backtrace 可以找出我们哪部分代码导致 panic
+
+1. 使用 panic! backtrace
+
+RUST_BACKTRACE=1 cargo run
+
+backtrace 是到错误发生位置前，调用的函数列表。
+
+前提必须开启 debug
+
+在不用 --release 运行 cargo run; cargo build 时是开启 debug 的
+
+RUST_BACKTRACE=1
+
+RUST_BACKTRACE=full
+
+提到用户代码文件的那行的上一行，是你的代码调用的代码，下一行是调用你的代码的地方。
+
 9.2 Result 处理可以恢复的错误
+
+大部分错误不需要程序完全停止。
+
+对于可以处理的错误使用 Result 枚举类型
+
+enum Result<T, E> {
+  Ok(T),
+  Err(E),
+}
+
+T E 是泛型类型参数。
+
+T 表示成功情况返回的类型，
+E 表示失败时返回的类型
+
+use std::fs::File;
+
+fn main() {
+  let f = File::open("hello.txt");
+}
+
+如何知道一个函数返回 Result 类型呢？
+
+  看文档
+
+  或者通过给变量一个错误的类型
+
+    编译器会告诉返回值类型
+
+Result enum 也是默认载入到 prelude
+
+2. 匹配不同类型的错误
+
+上一个 match 不管打开失败的原因，
+
+但如果希望在文件不存在时，创建文件而非 panic，就要匹配不同的错误类型
+
+error.kind() 获取错误类型
+
+  io.ErrorKind
+
+unwrap_or_else 在 13 章学习
+
+3. Panic 简写形式 unwrap 和 expect
+
+Result 的一些 helper method
+
+unwrap
+  如果 Result 返回值 Ok 变体，返回 Ok 里的值；
+  否则调用 panic! 宏
+
+except 类似 unwrap
+  但可以选择 panic! 错误信息
+
+  let f = File::open("hello1.txt").expect("Fail to open hello1.txt");
+
+4. 错误抛出传播
+
+fn read_username_from_file() -> Result<String, io::Error> {}
+
+调用 read_username_from_file 的函数，处理 Ok(v) 或者 Err(err)
+
+由于不知道外部调用程序会如何处理，这里的错误仅仅被传递出来。
+
+- 4.1 Propagating Errors Shortcut : ? 操作符
+
+  f.read_to_string(&mut s)?;
+
+? 和 match 工作过程大致一样
+
+  不同在于出现错误时， ? 调用 from 函数将错误类型转为当前你函数指定的错误类型。
+
+  from 来自 From trait，每个错误类型都实现了 From trait
+
+  define how to convert itself to the returned error type
+
+? 可以减少很多 boilerplate 代码。
+
+甚至可以将多个 ? 连接起来使用
+
+  File::open("hello.txt")?.read_to_string(&mut s)?;
+
+more ergonomic way.
+
+读取文件到字符串是常见流程，Rust 提供简单的
+
+fs::read_to_string 函数，完成 打开文件，创建字符串，读取文件内容到字符串，并返回。
+
+fs::read_to_string("hello.txt")
+
+- 4.2 ? 可以用在返回 Result 的函数中
+
+例如 main 函数
+
+修复问题可以用
+  - 改变 main 返回类型为 Result<T,E>
+  - 使用 match 或 Result 方法来处理
+
+main 的返回值类型有限制，可以是 () 或 Result<T, E>
+
+Box<dyn Error> 是 trait object。代表 任意类型错误
+
 9.3 是否使用 panic!
+
+使用 panic! 后就无法恢复程序，用于 no way to recover 时。
+
+很少要使用 panic! 的。
+
+1. 样例，原型函数，测试
+
+在决定如何处理错误前，使用 unwrap 和 expect
+
+在测试中，如果测试出错，多数情况希望整个测试停止
+  使用 unwrap expect 去调用 panic!
+
+2. 当你知道的信息比 Compiler 多时
+
+当你肯定错误不会出现时，使用 unwrap/expect
+
+例如
+
+use std::net::IpAddr;
+
+let home: IpAddr = "127.0.0.1".parse().unwrap();
+
+3. 错误处理指南
+
+让你代码 crash，当
+
+  bad state 不常发生
+  后续代码不依赖 bad state
+  没有好方法编码这种信息
+
+例如别人传入错误参数时，panic! 并提醒用户修正参数
+
+当使用外部代码，超出你控制，返回 invalid state 且为无法修复时，用 panic!
+
+操作数据前，先验证数据是否有效。这个过程可以通过类型系统简化。
+
+例如将传入参数设为 Somme(T) 而非 Option(T)
+
+4. 创建自定义类型用于验证 validation (真实例子)
+
+使用 Rust Type system 确保有有效值
+
+在猜数字时，只验证值是 正数。
+现在要验证数字是在 1 到 100
+
+用户可能输入字母，解决方法之一是解析为数字
+
+另外可以创建新年类型，将验证方法放入类型创建方法中。
+
+Guess Type
 
 Ch10 泛型，Traits 和 Lifetimes
 10.1 通用数据类型
