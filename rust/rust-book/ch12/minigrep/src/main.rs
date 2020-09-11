@@ -8,7 +8,9 @@ fn main() {
 
   // let (query, filename) = parse_config(&args);
 
-  let config = parse_config(&args);
+  // let config = parse_config(&args);
+
+  let config = Config::new(&args);
 
   println!("Searching for: {}", config.query);
   println!("In file: {}", config.filename);
@@ -27,12 +29,21 @@ struct Config {
   filename: String,
 }
 
+impl Config {
+  fn new(args: &[String]) -> Config {
+    let query = args[1].clone();
+    let filename = args[2].clone();
+    Config {query, filename}
+  }
+}
+
 // fn parse_config(args: &[String]) -> (&str, &str) {
-fn parse_config(args: &[String]) -> Config {
+// fn parse_config(args: &[String]) -> Config {
   // let query = args[1];
   // let filename = args[2];
-  let query = args[1].clone();
-  let filename = args[2].clone();
+  
+  // let query = args[1].clone();
+  // let filename = args[2].clone();
 
-  Config {query, filename}
-}
+  // Config {query, filename}
+// }
