@@ -3290,6 +3290,50 @@ borrow 规则来 owned String。
 
 parse_config 唯一作用是产生一个 Config struct 实例
 
+2. 添加错误处理
+
+当命令行参数不足 2 个时，会访问 Vec 越界导致 panic
+
+- 改进错误信息
+
+在 Config new 方法中增加参数长度判断
+
+args.len()
+
+如果 args 元素不足 3 个，就调用 panic!
+
+不过 panic! 通常用于处理程序错误，而非用户使用错误。
+
+更好的方法是使用 Result<T, E>
+
+- 使用 Result 作为 new 方法返回值而不是调用 panic!
+
+返回值中错误信息的 lifetime 用 &'static 是因为字符串字面的 lifetime 就是 static
+
+现在返回 Err 值，允许 main 函数来处理错误，当错误发生时更干净地退出进程。
+
+- 调用 Config::new 处理错误
+
+main 函数处理 Result
+
+出现错误是 exit 信号为 nonzero: process::exit(1);
+
+use std::process;
+
+Result 的 unwrap_or_else 方法。
+
+当返回值为Ok() 时，返回 Ok 中的值
+
+当返回值为 Err() 时，将 Err 中的值传入闭包中。
+
+现在就不会有调用 panic! 时出现的额外输出了。
+
+  额外输出: thread 'main' ... / note: run ...
+
+3. 从 main 提取逻辑到 lib.rs
+
+4.
+
 12.4 用 TDD 开发 Library 功能
 12.5 处理环境变量
 12.6 输出错误信息到标准错误 stderr
