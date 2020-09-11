@@ -3155,9 +3155,109 @@ Summary
 
 Ch12 An I/O Project: 写个命令行程序
 
+复习已学内容，学习一些标准库的特性
+
+- 如何让命令行工具拥有其他命令行工具的特性
+- 读取环境变量，让用户能配置命令
+- 打印错误信息到标准错误，这样在重定向输出时还可以看到错误信息
+
+会简单介绍 closures iterators 和 trait objects
+
 12.1 读取命令行参数
+
+cargo new minigrep
+
+预期命令如下 cargo run search_string example_filename.txt
+
+接下来不使用 crates 自己实现读取命令行参数
+
+1. 读取参数值
+
+使用函数 std::env::args
+
+返回 命令行参数组成的 iterator
+
+iterator 会产生一系列值，需要用 .collect 方法转为 collection
+
+在这个过程中要提供结果的类型，Rust 无法自己推断出来结果类型，因为 collect 方法可以产生很多种  collection
+
+如果参数中有 invalid unicode 需要用 std::env::args_os 函数，这个函数返回 OsString 而非 String
+
+写代码时，引入部分为
+
+use std::env; 而不是 use std::env::args;
+
+使用时带上最后的模块名，避免多个模块的函数名冲突
+
+env::args()
+
+测试代码
+
+cargo run search_string example_filename
+
+命令行参数第一项为二进制文件，这和 C 参数列表的行为一样。方便知道调用的文件是哪个。
+
+当要输出信息或根据命令名改变行为时会用上，现在可以先忽略。
+
+2. 保存命令行测试到变量
+
+保存第二个参数的引用
+
+  let query = &args[1];
+  let filename = &args[2];
+
 12.2 读取文件
+
+String.as_str()
+
+读取文件
+
+  let contents = fs::read_to_string(filename)
+    .expect(format!("Something went wrong reading the file: {}", *filename).as_str());
+
+cargo run the poem.txt
+
+需要改进
+  - main 中逻辑太多 has multiple responsibilities
+    如果每个函数都只负责一件事，会让代码更清晰，更容易维护
+
+  - 缺少错误处理
+
+在代码量少的时候重构比大到难以清理时重构好。
+
+It’s good practice to begin refactoring early on when developing a program, because it’s much easier to refactor smaller amounts of code. We’ll do that next.
+
 12.3 重构为模块化，增加错误处理
+
+修复四个问题
+
+  - main 函数任务太多，每个任务拆分为单个函数
+
+  - 类似 query filename 这样的配置变量会越来越多，最好用 struct 将相关变量组织起来
+
+  - expect 抛出的错误信息太笼统；没有具体信息
+
+  - expect 会被使用多次，最好将错误处理代码放在一起
+
+1. 分离可执行项目的关注点
+
+Rust 社区形成一种分离关注点的指导步骤 separate concerns
+
+ - 将代码分解为 main.rs lib.rs，将程序逻辑移到 lib.rs
+ - 如果命令行参数解析逻辑足够小，可以保留在 main.rs
+ - 当解析逻辑变复杂时，也糯到 lib.rs
+
+能保留在 main.rs 的职责有:
+
+  - 调用参数解析逻辑
+  - 设置其他配置
+  - 调用 lib.rs 的 run 函数
+  - 处理 run 函数的错误
+
+1.1 提取参数解析逻辑
+
+
+
 12.4 用 TDD 开发 Library 功能
 12.5 处理环境变量
 12.6 输出错误信息到标准错误 stderr
