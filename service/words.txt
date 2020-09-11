@@ -1,0 +1,9 @@
+SLB
+  https://developer.aliyun.com/article/80055 负载均衡（SLB）使用最佳实践-阿里云开发者社区
+  负载均衡（Server Load Balancer，下文简称 SLB）的引入，可以降低单台云服务器 ECS（下文简称 ECS）出现异常时对业务的冲击，提升业务的可用性。同时，结合弹性伸缩服务，通过动态调整后端服务器，可以快速对业务进行弹性调整（扩容或缩容），以快速应对业务的发展。
+
+HA 高可用 High Avaliable
+  https://www.jianshu.com/p/2a565f121191 配置HA - 简书
+
+HAProxy
+  https://www.cnblogs.com/2567xl/p/11640991.html Haproxy 简介及配置文件详解 - 玉树临风的猪 - 博客园

@@ -2343,18 +2343,839 @@ let home: IpAddr = "127.0.0.1".parse().unwrap();
 Guess Type
 
 Ch10 泛型，Traits 和 Lifetimes
+
+每个编程语言都能高效处理重复代码。
+
+Rust 中一个减少代码重复的工具就是 generics
+
+写代码时，可以用泛型描述确切类型的行为，以及与其他泛型的关系，而不需要知道具体类型。
+
+类似函数可以有不知道值的形参，并在函数体内使用。函数也可以将泛型作为参数，而非确切类型。
+
+已经见过的泛型 Option<T> Vec<T> HashMap<K, V> Result<T, E>
+
+先学习如何减少代码量
+
+然后从两个处理不同类型的函数中提取泛型函数
+
+学习如何在 struct 和 enum 中使用泛型
+
+还要用 trait 来定义泛型的行为 behavior
+
+trait 结合泛型，限制泛型中的类型。只允许使用有特定行为的类型
+
+最后讨论 lifetimes，多种泛型，提供给编译器 references 引用关系。
+
+Lifetime 让我们可以用多种方式 borrow values，同时启用编译器检查引用有效。
+
+1. 提取函数，移除重复
+
+不引入泛型，减少重复代码
+
+对于重复动作，可以提取为函数
+
+  - 确认重复代码
+  - 提取重复的代码到函数体，指定输入返回值类型
+  - 调用函数
+
+同样的流程可以用于泛型
+  找到 slice of i32 或 slice of char 中最大项，该如何做
+
 10.1 通用数据类型
+
+泛型定义 function struct enum
+
+1. 函数定义
+
+fn largest<T>(list: &[T]) -> &T {
+
+}
+
+添加泛型后，编译，发现 &T 类型无法使用 < 符号
+
+这意思是，必须约束 T 的范围才行。
+
+2. 定义 struct
+
+struct Point<T> {
+  x: T,
+  y: T,
+}
+
+上边这个 Point 中元素类型必须一样
+
+可以使用多个类型
+
+struct Point<T, U> {
+  x: T,
+  y: U,
+}
+
+注意如果你需要很多泛型类型时，要考虑重构为更短的代码。
+
+3. 定义枚举
+
+类似 struct
+
+当多个 struct enum，只有类型不同时，考虑使用 generic types
+
+4. 定义方法
+
+impl<T> Point<T> {
+  fn x(&self) -> &T {
+    &self.x
+  }
+}
+
+impl 后也要有类型 表示实现的方法是针对 Point<T>
+
+针对特定类型
+
+impl Point<f32> {
+
+}
+
+方法体中的类型参数，可以不是 struct 方法参数的类型
+
+方法体中的类型参数，仅和方法有关，与关联的 struct 或 enum 无关
+
+5. generic 的性能
+
+Rust 实现泛型的方式保证没有 runtime cost。
+
+通过在编译期对代码执行 monomorphization 达到这个目的。
+
+monomorphization 就是在编译期，将用到的泛型代码转为确定类型
+
+编译期做与我们相反的事情。
+
+let integer = Some(5); 会被转为 Option_i32::Some(5);
+
 10.2 Traits: 定义共享的行为 shared behavior
+
+trait 告诉 Rust 编译器特定类型拥有的功能，并能和其他类型分享。
+（限制类型必须满足某些条件）
+
+类似 interface。
+
+1. 定义 Trait
+
+类型的行为包含类型可以有的方法。
+
+如果我们可以在多个类型里使用同样的方法，那么这些类型共享相同的行为。
+
+
+
+类型的行为包含类型可以有的方法。
+
+如果我们可以在多个类型里使用同样的方法，那么这些类型共享相同的行为。
+
+1. 定义 Trait
+
+假定做一个聚合应用，来源有 NewsArticle 和 Tweet
+
+Tweet 有 内容，以及 metadata 记录这个 tweet 是 new_tweet, retweet, 还是 reply_to_tweet
+
+我们希望对传入的源调用 summarize 方法获取 summary
+
+可以定义叫 Summary 的 trait
+
+用 trait 关键字
+
+pub traiit Summary {
+  fn summarize(&self) -> String
+}
+
+只有方法函数签名
+
+trait 多个方法，都以 semicolon 结尾 ;
+
+2. 在 type 上实现 trait
+
+在具体类型上实现 Summary trait
+
+只需要在 impl 后加上 Summary for 即可
+
+使用类似 use aggregator::Summary; 引入 Summary trait
+
+只能实现作用域内的 trait，也只能为作用域内的类型实现 trait
+
+可以为 Vec<T> 实现 Summary
+
+可以为 Tweet 实现 Display
+
+但无法为 Vec<T> 实现 Display
+
+这一限制被称为程序的 coherence 或 orphan rule。
+
+保证其他人的代码无法干扰你的代码，vice versa。
+
+3. 默认实现
+
+trait 方法可以有默认实现，（如非必需实现的方法）
+
+在 trait 方法体中添加代码即可
+
+// 使用默认方法
+impl Summary for NewsArticle {}
+
+默认方法可以调用其他在 trait 中的方法。被调用方法可以没有默认实现
+
+这样实现者只需要实现部分方法，即被调用的方法
+
+(没有默认实现的方法，必须要实现?)
+
+4. 将 Traits 作为参数
+
+定义函数，参数实现某个 trait 的类型
+
+pub fn notify(item: &impl Summary) {
+  println!("Breaking news! {}", item.summarize())
+}
+
+不需要指定确切类型
+
+- Trait Bound Syntax
+
+impl 是完整 trait bound 语法的语法糖
+
+完整写法为
+
+pub fn notify<T: Summary>(item: &T) {
+  println!("Breaking news! {}", item.summarize())
+}
+
+在一些场景中，trait bound 语法可以描述更复杂情况
+
+如 两个实现 Summary Trait 的参数可以用 impl 写法
+
+pub fn notify(item_one: &impl Summary, item_two: &impl Summary)
+
+两个实现不同 trait 的参数，也可以用 impl
+
+但如果是两个实现相同 trait 的同类型参数，就需要用 trait bound 语法
+
+pub fn notify<T: Summary>(item_one: &T, item_two: &T) {}
+
+- 指定多个 Trait 绑定的语法
+
+指定多个 trait: Display Summary
+
+用 impl 形式
+
+  pub fn notify(item: &(impl Summary + Display)) {}
+
+用 trait bound
+
+  pub fn notify<T: Summary + Display>(item: &T) {}
+
+- 用 where 让 trait 绑定更清晰
+
+用 trait bound 描述过多 trait 有一些不足，会使代码难读。
+
+为了明确 trait bound，可以采用 where 语句
+
+pub fn notify<T, U>(t: &T, u: &U) -> i32
+  where T: Display + Clone,
+        U: Clone + Debug
+{
+
+}
+
+5. 限制返回值实现某个 trait
+
+impl Trait 可以用来限制返回值
+
+fn return_summarizable() -> impl Summary {
+
+}
+
+意为必须返回实现 Summary 的类型，
+
+这在 closure 和 iterator 中很有用
+
+注意，一个函数不能返回两种实现 trait 的类型。
+
+后边会学习如何返回不同类型的值。
+
+6. 用 trait 限制修复 largest 函数
+
+先限制类型必须实现 PartialOrd
+
+std::cmp::PartialOrd 已经在 prelude 中
+
+运行后出现 move out of type [T], a non-copy slice 错误
+
+错误原因是，只有 i32 char 这种大小预先知道，分配在 stack 的数据类型
+
+在 for &item in list {} 中才能完成 copy
+
+方案1
+
+只处理实现 Copy trait 的类型
+
+方案2
+
+指定 T 实现 Clone trait。有些类型会需要分配 heap 数据。
+
+数据量大时会变慢。
+
+方案3
+
+函数返回 T 即指向 slice 的 reference。
+
+这样不需要 Clone 或 Copy trait 限制
+
+7. 用 trait 限制根据条件实现方法
+
+即只有当传入参数是实现某个 trait 的类型时，才能使用对应的方法。
+
+例如 Pari<T> 实现的 cmp_display 方法，只有 T 实现 PartialOrd 才能使用
+
+可以为 任意类型实现 trait，要求符合条件的类型满足其他 trait
+
+例如:
+
+impl<T: Display> ToString for T {
+
+}
+
+这在标准库中常见，叫 blanket implementations
+
+ToString 定义的 to_string 方法，实现了 Display trait
+
+let s = 3.to_string();
+
+Blanket implementations 出现在文档的 Implementors 小节
+
+编译器可以利用 traint bound 检查代码提供的确定类型是否满足限制。
+
+在动态语言的运行时才能得到错误，而 Rust 将这些错误提醒移到编译期。
+
+提高性能而不需要失去泛型的灵活性。
+
+还有一种泛型叫做 lifetime。
+
+与用来保证类型有特定行为不同， lifetimes 用来保证引用在需要的时候有效。
+
+impl 针对泛型时不需要 for keyword ???
+
 10.3 用 lifetimes 检查 References
 
+Rust 的每个引用都有 lifetime，在这个作用域内，reference 是有效的。
+
+大部分时候，lifetime 是隐式和可推断的，就像类型一样。
+
+但在部分时候需要注解 lifetime。
+
+1. 用 Lifetimes 阻止 Dangling Reference
+
+lifetimes 主要用途是防止出现错误引用，引导指向的不是应该指向的数据。
+
+let r; 没有初始值，但如果想在对 r 赋值前使用，会出现编译期错误。
+
+这也说明 Rust 没有 null values
+
+  let r;
+
+  {
+    let x = 5;
+    r = &x;
+  }
+
+  println!("r: {}", r);
+
+在使用 r 时，r 指向的数据已经超出自己的 scope 而被清除
+
+r 比它指向的数据 lives longer
+
+Rust 使用 borrow checker 来判断代码是否 valid
+
+2. Borrow Checker
+
+borrow checker 比较 scopes 来决定 borrows 是否有效。
+
+记录 r 的 lifetime 为 'a
+
+x 的 lifetime 为 'b
+
+显然 b 小于 a
+
+数据没有引用的 lifetime 大时，代码无效
+
+3. 函数中泛型 lifetimes
+
+写一个函数返回更长的 string slices。
+
+参数为两个 string slices，返回一个 string slices
+
+参数需要是 string slices，因为这是引用 String 转 &str S.as_str()
+
+  使用引用 函数无法 take ownership of its parameters
+
+fn longest(x: &str, y: &str) -> &str {
+  if x.len() > y.len() {
+    x
+  } else {
+    y
+  }
+}
+
+代码无法编译。因为编译器不知道返回的引用是哪个的。
+
+开发者也不知道，因为 if 部分的存在，无法知道返回哪个。
+
+因此需要添加泛型 lifetime 参数，来决定引用之间的关系，让 borrow checker 可以执行分析。
+
+4. lifetime 注解语法
+
+lifetime 注解不会给数据续命。
+
+lifetime 注解仅仅描述多个引用 lifetime 的关系而不影响它们。
+
+lifetime 以单个单引号开始，小写字母，通常很短。
+
+常用名是 a。 放在引用符号 & 后边: &'a
+
+&i32
+&'a i32
+&'a mut i32
+
+如果两个参数 liftetime 注解相同，就表示它们与这个泛型 lifetime 存在时间一样久。
+
+5. 在函数签名中使用 lifetime 注解
+
+首先要在函数名后标注 lifetime 类似泛型函数中的类型
+
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {}
+
+这首先声明一个 lifetime 'a，后续的标注说明
+
+返回值的 lifetime 至少与输入引用的 lifetime 一样。
+
+这不仅帮 borrow checker 执行分析，也让 borrow checker 阻止不满足这个限制的变量传入。
+
+函数的 lifetime 标注，只出现在函数签名，而不是在函数体。
+
+lifetime 标注可以帮助函数阻止接收 lifetime 不满足的参数
+
+开发者知道函数返回引用时，引用指向的值还有效；但编译器不知道，
+
+因此编译器拒绝这段代码通过编译。
+
+6. 用 lifetime 思考
+
+当函数确定返回某个输入的值时，不需要标注 lifetime。
+
+因为函数的其他参数与结果无关。
+
+返回值的 lifetime 需要和输入参数匹配，否则就是引用函数内部的值，
+
+会出现 dangling reference，无法通过编译。
+
+  此时的解决方案是返回 owned data 而非 reference
+
+7. Struct 定义中的 lifetime
+
+struct 可能存储引用
+
+但需要对定义内的每个引用，添加 lifetime 标注
+
+引用的数据不会在引用失效前失效。
+
+8. lifetime elision
+
+历史遗留问题。早期所有用到引用的函数签名都要加 lifetime
+
+后来 Rust 团队将一些可以预测的情况写入编译器。
+
+在这些情况下，不写 lifetime，编译器也能推断出来。
+
+或许更多的 deterministic 模式可以合并进编译器。
+
+被写入 Rust 引用分析的模式叫 lifetime elision 规则。
+
+不是开发者要遵守的规则，是编译器要考虑的。如果你的代码符合这个模式，就不需要添加 lifetime 标注。
+
+但 elision 不提供完整的推断
+
+函数或方法参数的 lifetime 被称为 input lifetimes
+
+返回值的叫 output lifetimes
+
+第一条规则针对 input lifetimes
+
+二三条针对 output lifetimes
+
+如果三条检查过后还有无法确定 lifetime 的引用，就会抛出错误。
+
+这对 fn 定义和 impl 代码块有效。
+
+第一条规则，每个参数有自己的 lifetime 参数，即多个参数的函数有多个 lifetime 参数
+
+第二条规则，如果只有一个 input lifetime 参数，那么这个参数应用与所有的 output lifetime 参数
+
+第三条规则是，如果多个参数有 &self 或 &mut self，那么 self 的 lifetime 是全部 output lifetime 参数。这让代码更简洁。
+
+例子
+
+fn first_word(s: &str) -> &str {}
+
+根据规则一，编译器将代码看作
+
+fn first_word<'a>(s: &'a str) -> &str {}
+
+根据规则二，代码被看作
+
+fn first_word<'a>(s: &'a str) -> &'a str {}
+
+现在，所有参数和返回值都有 lifetime 参数，编译器可以继续分析下去。
+
+9. 标注方法 lifetime
+
+impl 后增加 lifetime 参数
+
+impl <'a> ImportantExcerpt<'a> {
+  fn level(&self) -> i32 {
+    3
+  }
+}
+
+一个满足 elision 规则三的例子
+
+impl<'a> ImportantExcerpt<'a> {
+  fn rule3(&self, text: &str) -> &str {
+    println!("Attension please: {}", text);
+    self.part
+  }
+}
+
+10. 静态 lifetime
+
+声明变量 lifetime 和整个程序一致
+
+'static
+
+let s: &'static str = "static lifetime";
+
+字符串内容保存在程序 二进制文件中
+
+所有 string literals 的 lifetime 都是 'static
+
+需要注意，修复 lifetime 的方法是解决问题，而不是用 'static
+
+11. Plus 复习 Generic Type Parameters, Trait Bounds, Lifetimes
+
+Summary
+
+Generic type parameters 让你写出适用于多种类型的代码
+
+Traits 和 trait bound 确保类型有需要的行为
+
+lifetime 保证不出现 dangling reference
+
+后边会讨论 trait object，另一种使用 trait 的方法。
 
 Ch11 自动化测试 Automated Tests
 
+1972 年， Edsger W. Dijkstra 的论文  The Humble Programmer. 谦逊的程序员 说，程序测试是很有效地找出 bug 的方法，但缺无法充分保证 bug 不存在。
+
+程序正确性，指的是代码做我们想让它做的事情。
+
+类型系统承担了大量负担，但无法捕获全部类型的错误。
+
+因而 Rust 支持写自动化测试。
+
+比如我们有一个 add_two 的函数，给传入的任何数字加 2。
+
+类型系统能够保证输入和输出类型是数字，但无法检查结果确实增加了 2。
+
+测试是一种复杂的技能。
+
+接下来会介绍在测试中会用到的 annotations 和 macros
+
+测试默认的 behavior 和 options
+
+以及如何科学组织 unit tests 和 integration tests
+
+11.1 如何写测试
+
+测试是验证非测试代码按照预期运行的 Rust 函数
+
+测试函数体执行三个操作
+
+  - 设置需要的数据或状态
+  - 执行测试代码
+  - 断言期待的结果
+
+1. 剖析测试函数
+
+Rust 测试是用 test 属性标注的函数
+
+属性是 Rust 代码的元数据
+
+将函数转为测试函数就在函数前添加 #[test]
+
+用 cargo 生成项目时，自动创建测试模板，可以添加任意多测试函数和测试模块。
+
+先创建个项目
+
+cargo new adder --lib
+
+src/lib.rs 中 it_works 函数被标记为测试
+
+运行测试:
+
+cargo test
+
+可以看到测试过程
+
+  Compiling
+  Finished
+  Running
+
+结果显示 1 passed 0 failed 0 ignored 0 measured 0 filtered out
+
+意思没有 ignore, measure, filter out 的测试
+
+measure 是统计 benchmark tests，测试性能
+
+Doc-tests 是针对 documentation tests，保持文档和代码同步
+
+添加一个失败测试
+
+2. 测试中用到的宏
+
+- panic! 让测试失败
+
+- assert! 宏
+
+  参数是 boolean 值。如果传入为 false，assert!会调用 panic!
+
+由于 tests 是一个 inner module，要使用外部模块需要用
+
+use super::*; 引入
+
+当有 bug 时，会触发 paniced at 'assertion failed'
+
+3. 用 assert_eq! assert_ne! 测试相等性
+
+这两个宏比较两个参数的相等性，并会在在失败时显示比较的两个值
+
+而 assert! 不会显示值
+
+有些语言将断言里的两个值叫做 expected 和 actual
+
+Rust 称为 left right，即与顺序无关
+
+assert_ne! 用于无法预知结果，但能知道如果代码运行正常时，一定不会出现的结果
+
+这两个宏的实现使用 == != 打印值使用 debug formatting
+
+因此传入的参数要实现了 PartialEq 和 Debug
+
+所有基本类型和大部分标准库类型满足这个要求。
+
+对于自定义的类型或枚举，需要确保实现这两个 trait。通常最简单的办法是标注为 #[derive(PartialEq, Debug)]
+
+即使用两个 trait 的默认实现。
+
+4. 增加自定义错误信息
+
+5. 断言 panic
+
+测试也需要可以断言代码在某些情况下 panic。
+
+添加标注 叠加标注
+
+#[test]
+#[should_panic]
+
+这个标注不够精确，因为它只判断出现 panic，但不知道原因
+
+为增加准确性，可以加一个标签 expected 参数
+
+这个参数确保 失败信息 failure message 包含 expected 内容
+
+6. 在测试中使用 Result<T, E>
+
+也可以写使用 Result<T, E> 的测试。
+
+让原本 panic! 的测试，返回 Result 类型
+
+  这样在测试函数体内，原本用 assert_eq 的地方返回 Ok(())，测试失败的时候返回 Err() ，其中有 test message
+
+此时的测试函数不能用 #[should_panic] 标注
+
+11.2 控制测试如何运行
+
+cargo run 编译代码后运行二进制结果
+
+cargo test 在 test 模式编译代码，运行测试二进制
+
+可以通过指定参数改变 cargo test 默认行为
+
+一些参数传给 cargo test 一些参数传给输出的二进制测试文件
+
+cargo test --help
+
+cargo test -- --help 针对测试二进制
+
+1. 并行或连续执行测试
+
+运行多个测试时，默认用 threads 并行。
+
+需要确保测试不互相依赖，或共享状态，修改同一个环境变量
+
+让测试连续执行
+
+  cargo test -- --test-threads=1
+
+测试执行慢，但不会互相干扰
+
+2. 显示函数输出
+
+默认当测试通过时，Rust test 库捕获所有的标准输出。
+
+即在测试中用 println!() 默认不会显示
+
+测试失败时才能看到标准输出
+
+如果想总是看到 println! 输出，要用参数
+
+cargo test -- --show-output
+
+3. 根据测试名执行部分测试
+
+当想执行部分测试时
+
+- 执行一个测试
+
+cargo test test_function_name
+
+- 执行多个测试
+
+cargo test shared_part
+
+4. 除特定条件外忽略部分测试
+
+当想在常规测试时忽略一些耗时的测试
+
+对测试标注为
+
+#[test]
+#[ignore]
+fn expensive_test() {}
+
+当仅执行 ignored 测试时
+
+cargo test -- --ignored
+
+11.3 组织测试
+
+Rust 社区主要有两种测试策略
+
+  Unit tests 单元测试，小而每次集中于单个模块的测试。
+
+    可以测试私有接口
+
+  Integration tets 继承测试，完全在 library 外部进行测试
+
+    只使用公开接口，可以对多个模块进行测试
+
+1. Unit Tests
+
+Rust 项目中，每个模块的单元测试和这个模块在一个文件内
+
+测试模块用 #[cfg(test)] 标注
+
+- 测试模块和 #[cfg(test)]
+
+这个标注告诉 Rust 编译器仅当执行 cargo test 时才执行测试代码
+
+节约编译时间，节省生成的二进制文件大小
+
+集成测试不需要这个标注
+
+cfg 属性代表 configuration
+
+- 测试私有函数
+
+私有函数没有标记为 pub
+
+但是由于测试和私有函数在同一个文件，可以被引入到 测试模块 scope 中
+
+2. 集成测试
+
+集成测试独立于 library。像其他代码一样使用 library。只能调用公开 api。
+
+目的为了测试多个部分是否能一起工作
+
+- tests 文件夹
+
+cargo 知道在 tests 文件夹中寻找 集成测试代码
+
+cargo 会将每个测试文件编译为单独的 crate
+
+不用标注为 #[cfg(test)]
+
+单独执行一个集成测试
+
+cargo test --test integration_test 文件名
+
+- 集成测试子模块
+
+当集成测试文件需要共享代码时。如都要调用 setup
+
+需要将它抽提到 tests/common.rs
+
+还有一个问题是，cargo tests 时也会编译这个文件为 crate
+
+要修复这一点，需要改为 tests/common/mod.rs
+
+因为在 tests 的子目录中的文件不会被编译为独立 crate。
+
+使用 mod.rs 时在 tests/integration_test.rs 中写
+
+mod common; -> 会通过 common/mod.rs 获得 common 模块的实现
+
+- binary crates 的集成测试
+
+如果只有 src/main.rs 没有 src/lib.rs 就无法创建集成测试
+
+只有 library crates 才能暴露函数让其他 crates 使用。
+
+通常是提供一个简单的 src/main.rs 文件，调用 src/lib.rs 中的逻辑
+
+这样就可以继续进行集成测试
+
+Summary
+
+尽管 Rust 的类型系统和 ownership 帮助减少一些类型 bugs，但测试还是减少逻辑 bugs 的重要方法。
+
 Ch12 An I/O Project: 写个命令行程序
+
+12.1 读取命令行参数
+12.2 读取文件
+12.3 重构为模块化，增加错误处理
+12.4 用 TDD 开发 Library 功能
+12.5 处理环境变量
+12.6 输出错误信息到标准错误 stderr
 
 Ch13 函数式语言特性: Iterators 和 Closures
 
+13.1 闭包 Closure: 能够捕获环境的匿名函数
+13.2 用 Iterator 处理一系列元素
+13.3 改进 I/O 项目
+13.4 对比性能: Loops vs Iterators
+
 Ch14 Cargo 和 Crates.io
+
+14.1 用 Release Profiles 定制编译
+14.2 发布 crate 到 crates.io
+14.3 Cargo 工作空间
+14.4 用 cargo install 从 crates.io 安装二进制文件
+14.5 自定义命令扩展 cargo
 
 Ch15 智能指针 smart pointers
 
@@ -2367,6 +3188,10 @@ Ch18 模式和匹配
 Ch19 高级特性
 
 Ch20 多线程网页服务器
+
+Review:
+  https://doc.rust-lang.org/book/ch10-02-traits.html#fixing-the-largest-function-with-trait-bounds
+  Clone 版本 ch10/01.rs
 
 Refs:
   https://stackoverflow.com/questions/58652318/what-does-cfgtest-do-when-placed-at-the-top-of-lib-rs rust - What does #[cfg(test)] do when placed at the top of lib.rs? - Stack Overflow
