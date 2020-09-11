@@ -3256,7 +3256,7 @@ Rust 社区形成一种分离关注点的指导步骤 separate concerns
 
 1.1 提取参数解析逻辑
 
-
+将参数解析放到一个函数中，准备移出到 src/lib.rs
 
 12.4 用 TDD 开发 Library 功能
 12.5 处理环境变量
