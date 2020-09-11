@@ -1,6 +1,7 @@
 use std::env;
 use std::fs;
 use std::process;
+use std::error::Error;
 
 fn main() {
   let args: Vec<String> = env::args().collect();
@@ -20,6 +21,14 @@ fn main() {
 
   println!("Searching for: {}", config.query);
   println!("In file: {}", config.filename);
+
+  // run(config);
+
+  if let Err(e) = run(config) {
+    println!("Application error: {}", e);
+
+    process::exit(1);
+  }
 
   // let hello = String::from("Hello");
   // println!("{}", format!("- {}", hello.as_str()));
@@ -47,6 +56,26 @@ impl Config {
     let filename = args[2].clone();
     Ok(Config {query, filename})
   }
+}
+
+// fn run(config: Config) {
+
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+  // let contents = fs::read_to_string(config.filename)
+  //   .expect("Something went wrong reading the file");
+
+  let contents = fs::read_to_string(config.filename)?;
+
+  println!("With text:\n{}", contents);
+
+  // () Unit Type: 表示调用这个函数只产生 side effects
+  Ok(())
+}
+
+fn _run_plus(config: &Config) {
+  let contents = fs::read_to_string(config.filename.as_str())
+    .expect(format!("Something went wrong reading the file: {}", config.filename).as_str());
+  println!("With text:\n{}", contents);
 }
 
 // fn parse_config(args: &[String]) -> (&str, &str) {

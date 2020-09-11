@@ -3332,6 +3332,26 @@ Result 的 unwrap_or_else 方法。
 
 3. 从 main 提取逻辑到 lib.rs
 
+fn run() {}
+
+- run 函数返回 error
+
+用 Result 替换 expect
+
+Result 中 Err 值类型为 Box<dyn Error> Error <- std::error::Error
+
+这是 trait object，表示返回一个实现了 Error trait 的类型，而需要指定具体类型 dyn 关键字是 dynamic 的缩写
+
+- 在 main 中处理 run 的返回值错误
+
+编译后有 warning 提示没有在 main 中处理 run 可能返回的 error
+
+用 if let 结构
+
+不用 unwrap_or_else 是因为这里只需要处理错误情况，没有需要处理的返回值
+
+如果有 Err(e) 就调用 process::exit(1);
+
 4.
 
 12.4 用 TDD 开发 Library 功能
