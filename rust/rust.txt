@@ -3254,9 +3254,41 @@ Rust 社区形成一种分离关注点的指导步骤 separate concerns
   - 调用 lib.rs 的 run 函数
   - 处理 run 函数的错误
 
-1.1 提取参数解析逻辑
+- 提取参数解析逻辑
 
 将参数解析放到一个函数中，准备移出到 src/lib.rs
+
+- 用 struct 而非 tuple 组织配置项
+
+在适合用复杂类型的时候坚持用基本类型，是某种 primitive obsession
+
+struct 可以提供有名字的 field 让维护者更了解变量含义
+
+定义 struct Config {}
+
+field 为 owned String，但是 args 参数是参数值的 owner。
+
+args 只允许 parse_config borrow 这些值，因此 Config 无法违反
+
+borrow 规则来 owned String。
+
+解决方法很多，最简单的是不高效的一种，使用 clone()
+
+生成值的 full copy
+
+这确实会消耗更多时间和空间，但代码更直接，避免自己管理 Lifetime
+
+付出性能获得简单是 worthwhile trade-off。
+
+很多 Rustaceans 会避免使用 clone() 将在 13 章学习如何更高效处理这种问题。
+
+但只复制一次也可以，query 和 filename 占用都很小。
+
+初学时，不够高效的版本比过度优化更好。
+
+- 给 Config 添加构造方法
+
+parse_config 唯一作用是产生一个 Config struct 实例
 
 12.4 用 TDD 开发 Library 功能
 12.5 处理环境变量
