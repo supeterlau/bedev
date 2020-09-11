@@ -1,7 +1,8 @@
 use std::env;
-use std::fs;
 use std::process;
-use std::error::Error;
+
+use minigrep::Config;  // -> src/lib.rs :: Config
+// 调用 run -> minigrep::run
 
 fn main() {
   let args: Vec<String> = env::args().collect();
@@ -24,7 +25,9 @@ fn main() {
 
   // run(config);
 
-  if let Err(e) = run(config) {
+  // if let Err(e) = run(config) {
+
+  if let Err(e) = minigrep::run(config) {
     println!("Application error: {}", e);
 
     process::exit(1);
@@ -39,44 +42,25 @@ fn main() {
   // println!("With text:\n{}", contents);
 }
 
-struct Config {
-  query: String,
-  filename: String,
-}
-
-impl Config {
-  // fn new(args: &[String]) -> Config {
-  fn new(args: &[String]) -> Result<Config, &'static str> {
-    if args.len() < 3 {
-      // panic!("not enough arguments.");
-      return Err("not enough arguments.");
-    }
-
-    let query = args[1].clone();
-    let filename = args[2].clone();
-    Ok(Config {query, filename})
-  }
-}
-
 // fn run(config: Config) {
 
-fn run(config: Config) -> Result<(), Box<dyn Error>> {
+// fn run(config: Config) -> Result<(), Box<dyn Error>> {
   // let contents = fs::read_to_string(config.filename)
   //   .expect("Something went wrong reading the file");
 
-  let contents = fs::read_to_string(config.filename)?;
+//  let contents = fs::read_to_string(config.filename)?;
 
-  println!("With text:\n{}", contents);
+//  println!("With text:\n{}", contents);
 
   // () Unit Type: 表示调用这个函数只产生 side effects
-  Ok(())
-}
+//  Ok(())
+// }
 
-fn _run_plus(config: &Config) {
-  let contents = fs::read_to_string(config.filename.as_str())
-    .expect(format!("Something went wrong reading the file: {}", config.filename).as_str());
-  println!("With text:\n{}", contents);
-}
+// fn _run_plus(config: &Config) {
+//   let contents = fs::read_to_string(config.filename.as_str())
+//     .expect(format!("Something went wrong reading the file: {}", config.filename).as_str());
+//   println!("With text:\n{}", contents);
+// }
 
 // fn parse_config(args: &[String]) -> (&str, &str) {
 // fn parse_config(args: &[String]) -> Config {
