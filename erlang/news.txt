@@ -1,0 +1,26 @@
+
+### 2020-09-11
+
+https://dzone.com/articles/adventures-in-jit-compilation-part-1-an-interptete Adventures in JIT Compilation, Part I: An Interpreter - DZone Performance
+
+https://github.com/wdv4758h/awesome-jit wdv4758h/awesome-jit: A curated list of awesome JIT frameworks, libraries, software and resources
+
+http://bitwalker.org/posts/2016-08-04-clustering-in-kubernetes/ Elixir/Erlang Clustering in Kubernetes · Bitwalker
+
+https://github.com/erlang/otp/pull/2745 Implement BeamAsm - a JIT for Erlang/OTP by garazdawi · Pull Request #2745 · erlang/otp
+
+https://github.com/asmjit/asmjit asmjit/asmjit: Machine code generation for C++
+
+https://github.com/davisp/jiffy davisp/jiffy: JSON NIFs for Erlang
+
+https://github.com/klarna-incubator?q=&type=&language=erlang Klarna Incubator
+
+https://github.com/klarna-incubator/kflow klarna-incubator/kflow
+
+https://2020.elixirconf.com/ ElixirConf US 2020
+
+https://getlumen.org/ Welcome to Lumen | Lumen
+
+The Erlang VM is getting a JIT, the project was just presented at the #CodeBEAMV and they said it’s production ready https://t.co/B8Z28m1Dvw
+
+— ecamacho (@ecamacho) September 11, 2020
