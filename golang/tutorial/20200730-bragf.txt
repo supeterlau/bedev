@@ -1,0 +1,7 @@
+https://tutorialedge.net/golang/basic-rest-api-go-fiber/
+
+> go mod init github.com/tutorialedge/go-fiber-tutorial
+
+go env
+
+go mod init example.com/peterlau/go-fiber-tutorial
