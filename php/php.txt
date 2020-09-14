@@ -6,13 +6,225 @@ INDEX index.php
 
 https://www.php.net/manual/en/langref.php PHP: Language Reference - Manual
 
+1. 基本语法
 
+1.1 PHP tags 
+
+<?php 
+...
+?>
+
+或只有 php 代码时
+
+<?php 
+...
+
+1.2 Escaping from HTML
+
+allows PHP to be embedded in HTML documents
+
+用多个闭合 php 标签或 条件语句，好过用 echo print 输出
+
+1.3 代码终止
+
+PHP 要求用分号终止，除非是最后一行并且有闭合标签 ?>
+
+1.4 注释
+
+支持 C-Style 和 Perl-Style 
+
+//
+
+/* ... */
+
+#
+
+2. 类型
+
+检查表达式类型和值使用 var_dump() 函数
+
+查看人类可读形式类型 gettype()
+
+查看确定类型用 is_<type> 系列函数 is_int is_string
+
+- scalar types
+
+Booleans
+
+  字面值为常量 TRUE FALSE 都是大小写不敏感的
+
+  显式转换 
+    ((bool) "") ((boolean) "")
+
+  隐式转换为 FALSE 
+    FALSE 
+    0 / -0
+    0.0 / -0.0
+    空字符 "" 和 "0"
+    0 元素数组
+    NULL 表示未赋值
+    空标签创建的 SimpleXML 对象
+
+  优先级 || 赋值 OR 
+
+Integers
+  decimal (base 10)
+  hexadecimal (base 16) 0x 0X 
+  octal (base 8) 0
+  binary (base 2) 0b 0B
+
+  支持下划线增加可读性 （> 7.4)
+
+  值溢出转为 float 
+
+  转为整数 (int)1.01 (integer)1.01
+
+  FALSE NULL NaN and Infinity 转为 0
+
+  float (rounded towards zer) 如果溢出的，转为 undefined
+
+  没有整数除法，需要用 intdiv()
+
+Floating point numbers
+
+  "floats", "doubles", or "real numbers"
+
+  1.234； 1.2e3; 7E-10; 1_23.5
+
+  有限精度，不直接比较浮点数大小 (可以用 GMP Functions)
+
+字符串 Strings
+
+  一系列字符串，每个字符是 1 byte，原生仅支持 256-character set，不提供原生 Unicode 支持。
+
+  '' 仅转义 \' \\ 其他转义字符会直接输出，变量不求值
+
+  "" 支持常见转义字符，支持转义 octal hexadecimal unicode，变量求值
+
+  heredoc
+    结束标识符不能缩进；标识符是非数字字符或下划线 （contain only alphanumeric characters and underscores,） 
+      <<<"FOOBAR"
+      FOOBAR; 只能有一个 ;
+    5.3 之后，含变量的 heredoc 不能初始化 heredoc 
+    行为和 "" 一样
+    可以直接用作参数
+
+  nowdoc
+    行为和 '' 一样，用于大块不需要求值的内容
+    必须用单引号 enclosed in single quotes
+    <<<'EOD'
+    EOD;
+
+  字符串内变量求值，简单形式 $bar, 复杂形式 ${expression}
+
+  字符串连结 '.' 或者 String 函数，不使用 '+'
+
+  转为 string (string)val, strval(value)。在需要字符串类型时，会自动转换
+
+    TRUE 转为 '1' FALSE/NULL 转为 '' 空字符
+
+    Array 转为 'array' 
+
+    object 调用魔术方法 __toString()
+
+    用 print_r() var_dump() 查看复杂结构信息
+
+    大部分可以通过序列化转为字符串 serialize()
+
+  字符串转数字
+    不含 . e E，且数值范围在整数内，转为整数；其他转为浮点数
+
+  Details of the String Type
+
+- compound types
+
+Arrays
+
+  是 ordered Map 
+
+  可以作为 array, list, hash table, dictionary, collection, stack, queue 等使用
+
+  创建
+
+  $array = array(
+    "foo" => "bar",
+    "bar" => "foo",
+  );
+
+  5.4+
+
+  $array = [
+    "foo" => "bar",
+    "bar" => "foo",
+  ];
+
+  key 为 integer 或 string 
+    为有效 decimal 的字符串转为整数，其他的保持为字符串
+    Floats 转为整数，截取整数部分
+    Bools 转为整数
+    Null 转为 ""
+    Arrays,Objects 不能做为 key 
+    同样的 key 只保留最后一个
+
+  value 为 any type 
+
+  $array = array("foo", "bar", "hello", "world");
+
+  如果有一个 key 为数字，且不和前边的 key 重复，后续的会根据这个 + 1。 类似枚举值
+
+  获取值用 $array[]; 值不存在返回 NULL 
+
+  修改值 $array[key] = val;
+
+  删除值 unset($array[key])
+
+  array_values()
+  array_diff()
+
+Iterables 
+  任意 array 和实现 Traversable 接口的 object 
+  这种数据类型可以用 foreach 迭代或在 generator 中使用 yield from 
+
+  : iterable 作为返回值类型
+
+  function getIter(): iterable {
+    return [1,2,3]
+  }
+
+  function gen(): iterable {
+    yield 1;
+    yield 2;
+    yield 3;
+  }
+
+Objects 
+
+  new 语句初始化 class 
+
+- special types 
+
+Resources 
+
+NULL 
+
+Callbacks / Callables 
+
+Pseudo-types 和文档中变量
+
+类型 Jugging
 
 
 HTTP request info:
 
+一个字节占8bit，一个IPV4占用4字节，一个IPV6占用16字节。
+
 
 Laravel Docker Development
+  https://laravel.com/docs/7.x Installation - Laravel - The PHP Framework For Web Artisans
+
+swoole
+  Coroutine based Async PHP programming framework
+  https://www.swoole.com/ Swoole - PHP 协程框架
 
 Build a MVC:
 
@@ -24,17 +236,45 @@ Build a MVC:
 
   DB: ORM
 
-
-https://www.php.net/manual/en/install.fpm.php PHP: FastCGI Process Manager (FPM) - Manual
+# Tip:
 
 https://stackoverflow.com/questions/3136253/how-to-print-all-information-from-an-http-request-to-the-screen-in-php How to print all information from an HTTP request to the screen, in PHP - Stack Overflow
 
-https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-nginx.html webdevops/php-nginx — Dockerfile Documentation documentation
+# Learn:
+
+https://laradock.io/
+git clone https://github.com/laradock/laradock.git
+
+https://awesomeopensource.com/project/todayqq/PHPerInterviewGuide Phperinterviewguide PHPer 面试指南
+
+https://www.php.cn/php-weizijiaocheng-445704.html 2020年最新的PHP面试题（附答案）-php教程-PHP中文网
+
+https://www.php.cn/php-weizijiaocheng-445648.html php垃圾回收机制实例介绍-php教程-PHP中文网
+
+https://odan.github.io/learn-php/ Learn modern PHP | PHP is cool
+
+https://designpatternsphp.readthedocs.io/en/latest/README.html DesignPatternsPHP — DesignPatternsPHP 1.0 documentation
+
+https://deviq.com/yagni/ YAGNI - You Ain't Gonna Need It | DevIQ
+
+https://phpdelusions.net/pdo (The only proper) PDO tutorial - Treating PHP Delusions
+
+# Setup
+
+https://www.php.net/manual/en/install.fpm.php PHP: FastCGI Process Manager (FPM) - Manual
 
 https://www.howtoforge.com/tutorial/ubuntu-caddy-web-server-installation/ How to Install and Configure Caddy Web Server with PHP and MariaDB on Ubuntu 20.04
+
+https://dockerfile.readthedocs.io/en/latest/content/DockerImages/dockerfiles/php-nginx.html webdevops/php-nginx — Dockerfile Documentation documentation
+
 https://github.com/webdevops/Dockerfile webdevops/Dockerfile: Dockerfiles from WebDevOps for PHP, Apache and Nginx (with PHP5 and PHP7)
+
 https://dockerfile.readthedocs.io/en/latest/index.html Overview — Dockerfile Documentation documentation
+
 https://microbadger.com/images/webdevops/php-apache:alpine-php7 MicroBadger - webdevops/php-apache:alpine-php7
+
 https://stackoverflow.com/questions/49293967/how-to-pass-environment-variable-to-docker-compose-up How to pass environment variable to docker-compose up - Stack Overflow
+
 https://docs.docker.com/compose/environment-variables/ Environment variables in Compose | Docker Documentation
+
 https://docs.docker.com/compose/reference/overview/ Overview of docker-compose CLI | Docker Documentation
