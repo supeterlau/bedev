@@ -3352,11 +3352,99 @@ Result 中 Err 值类型为 Box<dyn Error> Error <- std::error::Error
 
 如果有 Err(e) 就调用 process::exit(1);
 
-4.
+4. 将代码拆分到 library crate
 
 12.4 用 TDD 开发 Library 功能
+
+代码拆分好处之一是，可以不通过调用 main.rs 就可以测试各个函数
+
+下边添加 search 功能到 minigrep，将使用 TDD 流程开发。
+
+  1. 写失败的测试，让测试按照预期的结果失败
+  2. 写代码让测试通过
+  3. 重构代码，保证测试依旧能通过
+  4. 重复步骤 1
+
+1. 写失败的测试
+
+现在不需要 println! ，先从代码中移除
+
+src/lib.rs 里添加 tests 模块
+
+测试函数将接收 query 和 text 返回包含 query 的行
+
+同时添加 search 函数，先返回空 vec! 否则测试无法编译
+
+2. 编写代码，通过测试
+
+- 用 lines 方法遍历各行
+
+contents.lines()
+
+lines() 返回 iterator，能通过 for in 结构遍历
+
+- 用 query 在每行中搜索
+
+line.contains(query)
+
+- 保存满足条件的 line
+
+用 mutable vector，push 方法
+
+- 在 run 函数中调用 search 函数
+
+下一节学习如何处理环境变量，及如何输出错误到标准错误
+
 12.5 处理环境变量
+
+给 minigrep 增加一个功能，忽略大小写
+
+通过环境变量控制是否开启这个功能
+
+1. 写 failing test
+
+实现函数 search_case_insensitive
+
+2. 开始实现函数
+
+将 query 转为小写
+
+将 contents 每行转为小写
+
+再进行 contains 测试
+
+在 Config struct 中增加 case_sensitive 记录是否开启 忽略大小写
+
+  然后在创建 config 时，根据环境变量决定是否使用 忽略大小写
+
+env::var("CASE") 返回 Result 类型
+
+这里主要关心 CASE 是 set 还是 unset。
+
+Result.is_err() 用于检查 Result 值是否为 Err 类型
+
+如果设置了环境变量，Result 返回 Ok(value)
+如果没设置，就返回 Err()
+
+设置环境变量 CASE_INSENSITIVE=1 cargo run to poem.txt
+
 12.6 输出错误信息到标准错误 stderr
+
+现在所有的输出都通过 println! 宏输出到标准输出
+
+大部分终端提供两种输出 stdout stderr
+
+1. 检查错误写到哪里
+
+cargo run > output.txt
+
+可以看到文件中包含错误信息
+
+2. 打印错误到 stderr
+
+所有输出错误的代码在 main.rs
+
+标准库提供 eprintln! 打印错误到 standard error stream
 
 Ch13 函数式语言特性: Iterators 和 Closures
 
@@ -3384,6 +3472,9 @@ Ch18 模式和匹配
 Ch19 高级特性
 
 Ch20 多线程网页服务器
+
+Book:
+  https://github.com/rust-lang/async-book Asynchronous Programming in Rust
 
 Review:
   https://doc.rust-lang.org/book/ch10-02-traits.html#fixing-the-largest-function-with-trait-bounds
