@@ -7,24 +7,33 @@ fn main() {
   // 用 rand crate 生成
   let simulated_random_number = 7;
 
+
   generate_workout(simulated_user_specified_value, simulated_random_number);
 }
 
 fn simulated_expensive_calculation(intensity: u32) -> u32 {
-  println("Calculating slowly...");
+  println!("Calculating slowly...");
   thread::sleep(Duration::from_secs(2));
   intensity
 }
 
 fn generate_workout(intensity: u32, randome_number: u32) {
+  // let expensive_result = simulated_expensive_calculation(intensity);
+
+  let expensive_closure = |num| {
+    println!("Calculating slowly ...");
+    thread::sleep(Duration::from_secs(2));
+    num
+  };
+
   if intensity < 25 {
     println!(
       "Today, do {} pushups!",
-      simulated_expensive_calculation(intensity)
+      expensive_closure(intensity)
     );
     println!(
       "Next, do {} situps!",
-      simulated_expensive_calculation(intensity)
+      expensive_closure(intensity)
     );
   } else {
     if randome_number == 3 {
@@ -32,7 +41,7 @@ fn generate_workout(intensity: u32, randome_number: u32) {
     } else {
       println!(
         "Today, run for {} minutes!",
-        simulated_expensive_calculation(intensity)
+        expensive_closure(intensity)
       );
     }
   }
