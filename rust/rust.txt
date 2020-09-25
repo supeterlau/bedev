@@ -3448,7 +3448,116 @@ cargo run > output.txt
 
 Ch13 函数式语言特性: Iterators 和 Closures
 
+Rust 深受函数式编程影响
+
+函数式风格
+  将函数作为参数值使用
+  函数作为返回值使用
+  将函数赋值给变量，用于后边的执行
+
+Closures 类似函数的结构，可以保存到变量中
+
+Iterators 处理一系列元素的方法
+
+用这两个特性改进 I/O 项目
+
+这两个特性的性能
+
+closures iterators 有助于写出 idiomatic fast Rust code。
+
 13.1 闭包 Closure: 能够捕获环境的匿名函数
+
+Rust 的闭包是可以保存在变量或作为参数传递的匿名函数。可以在一个地方创建函数，然后在不同上下文环境中执行。
+
+与函数不同，闭包可以从定义处的作用域中捕获值。
+
+闭包的特性，允许复用的代码及定制化行为。
+
+1. 用闭包创建行为抽象
+
+举一个需要保存闭包，稍后执行的例子
+
+会介绍 closures 语法，type inference，和 traits
+
+假定要生成用户训练计划。后端用 Rust 写，生成计划的算法要考虑很多因素，生成过程需要 a few seconds。
+
+这个算法只在需要是调用，并且只调用一次。
+
+假设这个算法函数名为 simulated_expensive_calculation
+
+主函数中需要的输入
+
+  请求 workout 是指定的 intensity number
+  用于生成多种计划的随机数字
+
+- 重构函数调用
+
+提前计算出 expensive_result，然后问题在于有些条件下不需要这个结果，浪费了计算结果。
+
+- 用 closure 重构
+
+将 simulated_expensive_calculation 改为 closure 形式
+
+closure 语法
+
+let a_closure = |param1, param2| {
+
+};
+
+如果闭包体只有一行，可以省略 {}
+
+let 语句意味着赋值，而不是将闭包结果保存在 expensive_closure
+
+2. 闭包中的类型推断和注解
+
+在闭包中不需要像函数中一样标注参数类型，因为闭包都是短小的代码
+
+let add_one_v1 = |x: u32| -> u32 {x + 1};
+let add_one_v4 = |x| x + 1;
+
+同一个闭包无法传入不同类型的参数
+
+3. 使用泛型参数和 Fn traits 存储闭包
+
+每个闭包实例有自己独特的匿名类型。为了在 struct enum 函数参数中使用 闭包，需要使用泛型和 trait 约束
+
+闭包至少实现 Fn FnMut FnOnce 之一
+
+value: Option<u32> 因为未执行闭包前 value 为 Option::None
+
+4. Cacher 实现的限制
+
+第一个问题是 Cacher 实例假定传入的 arg 值不变
+
+第一次调用 c.value 后结果保存在 self.value 中，修改为 hash map 可以解决这个问题
+
+第二个问题是只能接受 u32 -> u32 的闭包。需要用泛型参数解决这个问题
+
+5. 闭包捕获环境
+
+函数不具备的特性
+
+闭包捕获环境有三种方式，对应三种函数参数 ownership 处理方法
+
+  - FnOnce 获取变量 ownership 并且只获取一次
+  - FnMut 可以改变环境参数 mutably borrows values
+  - Fn immutably borrows values
+
+All closures implement FnOnce because they can all be called at least once.
+
+Closures that don’t move the captured variables also implement FnMut, and closures that don’t need mutable access to the captured variables also implement Fn.
+
+强制闭包获取变量 ownership 需要用 move 关键字
+
+This technique is mostly useful when passing a closure to a new thread to move the data so it’s owned by the new thread.
+
+move 到闭包内，外部无法继续使用这个变量
+
+let equal_to_x = move |z| z == x;
+
+一般从 Fn 开始，编译器会告知需要用 FnOnce 还是 FnMut
+
+
 13.2 用 Iterator 处理一系列元素
 13.3 改进 I/O 项目
 13.4 对比性能: Loops vs Iterators
