@@ -1,0 +1,15 @@
+https://en.wikipedia.org/wiki/Comparison_of_application_virtualization_software Comparison of application virtualization software - Wikipedia
+
+JVM: Java
+
+GraalVM: Java
+
+CLR: C#
+
+LLVM: Rust/Swift
+
+  https://www.infoworld.com/article/3247799/what-is-llvm-the-power-behind-swift-rust-clang-and-more.html What is LLVM? The power behind Swift, Rust, Clang, and more | InfoWorld
+
+V8: JavaScript
+
+BEAM: Erlang
