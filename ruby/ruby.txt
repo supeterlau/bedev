@@ -1839,7 +1839,7 @@ https://refactoring.guru/refactoring/technical-debt
 
 Test
 
-ch9. Gem Rake Rack
+Gem Rake Rack
 
 Ruby 花活
   threads.each(&:join)
