@@ -1,0 +1,15 @@
+
+- 需要 migration
+
+Rails
+
+Laravel 
+  需要手动添加 migration change (add columns)
+
+- 需要 migration 和 model 
+
+NodeJS Sequlize
+  需要手动添加 migration change (add columns)
+
+Elixir Ecto
+  需要手动添加 migration change (add columns)
