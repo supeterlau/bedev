@@ -1,0 +1,950 @@
+https://tour.golang.org/list
+
+https://blog.golang.org/index
+
+https://golang.org/doc/code.html#Workspaces
+
+A Tour of Golang
+
+0. Welcome
+
+离线版本
+
+> go get golang.org/x/tour
+
+在你的 Workspace bin/ 中生成 tour 二进制文件
+  https://golang.org/doc/code.html#Workspaces
+
+tour 基于 Go Playground https://play.golang.org/
+
+1. Basics
+
+1.1 Pacages
+
+每个程序由 packages 组成。从 main package 开始执行
+
+package main
+
+使用到的 packages 用 import 导入
+
+import (
+    "fmt"
+    "math/rand"
+)
+
+程序中的使用时的包名，就是导入路径的最后一个元素值。如 rand
+
+因为运行环境是确定的，rand.Intn 结果不变。如果要随机结果，需要用 rand.Seed playground 中的 Time 是常量，需要用其他要素作为 seed。
+
+1.2 import
+
+import (
+    "fmt"
+    "math"
+)
+
+这种写法较好 "factored" import 语句。
+
+1.3 导出项
+
+大写开头的标识符会被导出 math.Pi
+
+1.4 Functions
+
+形参类型在形参名后 x int
+
+1.5 函数+
+
+x int, y int 简写为 x, y int
+
+1.6 返回多个变量 Multiple results
+
+return y, x
+
+1.7 命名返回值
+
+返回值可以指定名称
+
+return 语句后无参数
+
+func split(sum int) (x, y int) {
+    x = 1
+    y = 1
+    return
+}
+
+会损害可读性
+
+1.8 变量
+
+var a, a1, a2 bool (可声明多个变量
+
+var 可以用于 pakcage 和 function 级别
+
+1.9 变量初始化
+
+var i, j int = 1, 2
+
+有初始值的变量可以省略 类型
+
+1.10 短声明
+
+函数内可以使用 := 替代 var
+
+1.11 基本类型
+
+bool
+
+string
+
+int int8 int16 int32 int64 1-4 bytes
+uint uint8 uint16 uint32 uint64 uintptr
+
+byte == uint8 类型别名 alias
+
+rune == int32 表示 Unicode code point 码点
+
+float32 float64
+
+complex64 complex128
+
+集中声明比较好
+
+var (
+    ToBe bool = false
+    MaxInt uint64 = 1<<64 - 1
+)
+
+int uint uintptr
+在 32 bits 上是 32 bits
+在 64 bits 上是 64 bits
+
+常用 int 表整数
+
+1.12 Zero values
+
+数值类型 0
+布尔值 false
+"" 空字符串
+
+1.13 类型转换
+
+T(v) 将 v 转为类型 T
+
+var f float64
+
+uint(f)
+
+Go 不同类型赋值需要 显式 类型转换
+
+1.14 Type inference 类型推断
+
+var i int
+j := i j 有确定类型 int
+
+i := 42 (untyped numeric constant)
+
+基于常量的精度判断类型
+
+1.15 常量
+
+const Pi = 3.14
+
+不能用 := 声明
+
+1.16 数值常量
+
+high-precision 值
+
+untyped 常量通常根据内容选择 type
+
+尝试打印 needInt(Big)
+
+2. Flow Control
+
+2.1 For
+
+唯一循环结构 for
+
+semicolon 分隔的三部分
+
+init statement
+
+  通常是简化声明 i := 0
+
+  只在循环中可用
+
+condition expression
+
+  求值为 false 时终止循环
+
+post statement
+
+不使用 () 包裹三部分，必须有 {  } unlike C Java JavaScript
+
+2.2 For (2)
+2.3
+2.4
+
+2.5 if
+
+类似 for 条件没有 () 条件体有 {}
+
+2.6 if : short statement
+
+类似 for 可以在条件前有可执行语句，声明变量并初始化。这个变量作用域仅限 if 内部
+
+2.7 if else
+
+if short statement 中声明的变量，可以在 else 块中使用
+
+if short-statement;condition {
+
+} else {
+
+}
+
+2.8
+
+2.9 Switch
+
+if ... else 多分支的替代写法
+
+switch condition {
+    condition 无括号
+case :
+    // 不需要写 break
+default:
+}
+
+与 C C++ Java JavaScript PHP 区别，自动添加 break 语句。只会执行符合条件的分支
+
+switch case 不能是 constants，值不能是 integers
+
+2.10 Switch 求值顺序
+
+top to bottom，遇到第一个匹配分支就停止
+
+2.11 switch no condition
+
+没有条件语句的 switch
+
+switch {
+
+}
+
+2.12 Defer
+
+推迟代码执行到最近的 return 前。代码中的参数会立即计算，但代码会延迟执行。
+
+2.13 Stacking defers
+
+defer 函数会被加入到 stack 中按照 last-in-first-out 顺序执行
+
+3. 更多类型 more types
+
+3.1 指针 Pointer
+
+指针 保存值的内存地址
+
+类型 *T 表示指向 T 的指针的类型
+
+零值为 nil
+
+& 操作符生成操作值的指针
+
+Go 没有指针运算 (no pointer arithmetic)
+
+3.2 结构体 Struct
+
+type Name struct {
+    X int
+    Y int
+}
+
+初始化 Name{1, 2}
+
+3.3 结构体 fields
+
+v := Vertex{1,2}
+v.X => 1
+
+3.4 pointers to structs
+
+结构体的 field 可以通过它的指针获取到
+
+(*p).X 简写为 p.X 不需要 explicit dereference
+
+3.5 struct literal
+
+结构体字面量: 列出 fields 的值
+
+Vertex{11, 12}
+
+如果不写值
+
+Vertex{} 表示为 零值
+
+单独给一个 field 赋值 {Name: value} 可以乱序。field 大写?
+
+3.6 Arrays
+
+类型 [n]T 是数组
+
+声明
+
+var a [10]int
+
+数组长度是类型的一部分，因而无法改变大小 cannot be resized
+
+3.7 Slices
+
+数组是固定长度。而 slice 是动态长度的。
+
+slice 类型 []T
+
+var s []int = primes[1:4] low and hight bound, low colon hight
+
+[low:hight] 前开后闭 包含 array[low] 不包含 array[hight]
+
+3.8 Slices are references to arrays
+
+slice 不存储数据，仅表示描述底层数组的一部分
+
+修改 slice 的元素，会改变底层数组元素的值
+
+同一个数组的多个 slice 会受其中一个 slice 值改变的影响
+
+3.9 Slice literals
+
+类似数组，只是没有长度
+
+数组 [3]string{"aaa", "bbb", "ccc"}
+
+slice []bool{true, true, false}
+
+3.10 Slice 默认
+
+可以省略 bounds 来使用默认上下限
+
+low bound 默认 0
+
+hight bound 默认数组长度
+
+var a[10]int
+
+a[0:10] === a[:10] === a[0:] === a[:]
+
+3.11 Slice length capacity
+
+slice 同时有 length 和 capacity
+
+length 指 slice 中元素数量
+
+通过 len(s) 获得
+
+capacity 是底层数组数量，从 slice 第一个元素开始计算
+
+通过 cap(s) 获得
+
+可以通过 re-slicing 扩展 slice 长度
+
+3.12 Nil slices
+
+slice 的零值是 nil ，长度和容量都为 0
+
+3.13 使用 make 创建 slice
+
+内置函数 built-in function BIF make 创建
+
+这是创建动态数组的方法
+
+make 函数 allocates a zeroed array 并返回指向数组的 slice
+
+a := make([]int, 5)  // len(a) == 5
+
+第三个参数为容量
+
+b := make([]int, 0, 5)
+
+3.14 Slice 里的 Slice
+
+slice 元素可以是 slice
+
+3.15 Append to slice
+
+给 slice 添加元素 BIF append
+
+如果新增元素过多超过原slice，则会重新分配更大的空间。返回的 slice 指向新生成的数组 array
+
+3.16 Range
+
+range 形式的 for 循环，可以用于遍历 slice 或 map
+
+返回两个值 index copy_of_the_element
+
+for i, v := range SLICE/MAP {
+    ...
+}
+
+3.17 Range
+
+通过赋值给 _ 跳过 index 或 value
+
+for i, _ := range SLICE {}
+
+for _, v := range SLICE {}
+
+只想要 index 可以用
+
+for i := range SLICE {}
+
+3.18 Exercise
+
+3.19 Maps
+
+map 零值是 nil
+
+nil map 没有 keys 也不能添加 keys
+
+make 函数返回给定类型的 map，并初始化
+
+3.20 Map literals
+
+类似 struct 字面量，但需要有 keys
+
+var m = map[string]Vertex{
+    "key1": Vertex{},
+}
+
+3.21 Map literals
+
+value 中的 top-level type 如果是 type name，则可以省略
+
+Vertex{}, -> {},
+
+3.22 修改 Maps
+
+插入或更新元素 m[key] = elem
+
+读取元素 elem = m[key]
+
+删除元素 delete(m, key)
+
+测试 key 是否存在 elem, ok = m[key]
+
+    key 存在 ok 为 true
+    key 不存在 ok 为 false elem 为对应类型的零值
+
+    可以用 short declaration:
+
+      elem, ok := m[key]
+
+3.23 Exercise: Maps
+
+实现 WordCount
+
+return a map of the counts of each "word"
+
+3.24 Function values
+
+函数也值，可以被当作参数传入或作为结果返回。
+
+3.25 函数闭包 closure
+
+函数可以是闭包。
+
+A closure is a function value that references variables from outside its body.
+
+包含外部变量的函数。可以读取或对这个外部变量赋值。
+
+3.26 Exercise: closure
+
+fibonacci numbers
+
+4. Methods
+
+4.1 方法
+
+Go 没有 class。但是你可以给类型(type Vertex struct {})定义方法
+
+方法是一种特殊的函数，有一个 special receiver 参数
+
+receiver 写在 func 和 方法名之间
+
+func (v Vertex) Abs() float64 {
+
+}
+
+func
+
+(v Vertex)
+
+Abs
+
+float64 返回值类型
+
+4.2 方法是函数
+
+可以将方法改写为常规函数
+
+
+4.2 方法是函数
+
+可以将方法改写为常规函数
+
+
+
+
+
+4.2 方法是函数
+
+可以将方法改写为常规函数
+
+
+
+
+
+4.2 方法是函数
+
+可以将方法改写为常规函数
+
+
+
+
+
+4.2 方法是函数
+
+可以将方法改写为常规函数
+
+4.3 方法
+
+非 struct 类型也可以定义方法
+
+type SomeFloat float64
+
+func (s SomeFloat) Abs() float64 {
+
+}
+
+-math.Sqrt2
+
+注意，receiver argument 必须是同一个 package 中的类型
+
+4.4 指针型 receiver
+
+receiver type *T 其中 T 自己不能是指针 *int
+
+func (v *Vertex) Scale(f float64) {
+
+}
+
+这种方法可以修改指针指向的值
+
+pointer receivers 比 value receivers 更常用
+
+4.5 Pointers and functions
+
+4.6 methods pointer indirection
+
+以指针类型为参数的函数，必须传入指针类型
+
+而以指针类型为 receiver 的方法，可以用指针，也可以用值
+
+var v Vertex
+v.Scale(5)
+    因为 有一个以 *Vertex 为 receiver 的方法，Go interprets v.Scale(5) 为 (&v).Scale(5)
+p := &v
+p.Scale(5)
+
+4.7 methods pointer indirection 2
+
+反过来也一样
+
+p.Abs() 的调用被解释为 (*p).Abs()
+
+而函数不可以，函数的传入类型必须和声明的参数类型一致
+
+4.8 如何选择 value 和 pointer receiver
+
+pointer receiver
+
+方法可以修改 receiver 指向的值
+
+避免在每个方法里 copy 值，当 receiver 是一个大的 struct 时，能提高效率
+
+通常，一个给定的类型应当只有 valeu 或 pointer receiver 而不使用混合二者的方法。
+
+4.9 Interfaces
+
+interface 类型 定义 一组方法签名 method signatures
+
+interface 类型的值，可以是任意实现这些方法的值
+
+4.10 implicitly 实现 interfaces
+
+一个类型实现一个 interface，只需要实现它定义的方法， 不需要使用 implement 关键字
+
+decouple interface 的定义和实现
+
+4.11 interface values
+
+interface 值可以看作 tuple (value, type)
+
+interface 值是一个有 concrete 类型的值
+
+调用 interface value 的方法就是调用底层类型的同名方法
+
+4.12 underlying value 为 nil 的 interface value
+
+其他语言里的 nullpointer exception
+
+concrete value 为 nil 时。底层值为 nil 而 interface 值自己不为 nil (non-nil)
+
+4.13 Nil interafce values
+
+nil interface 值 不能是 value 或 concrete type
+
+调用这种值的 method 会出现 run-time error 因为它的 interface tuple 中没有 type，不知道要调用哪个 concrete method
+
+4.14 Empty interface
+
+没有方法定义的 interface
+
+类型就是 interface{}
+
+这种类型的值可以赋值为任意其他类型，或者说这个接口被任意类型实现了。
+
+用来处理未知类型，如 fmt.Print 参数为任意数量 type 为 interface{} 的值
+
+4.15 类型断言
+
+Type assertions
+
+提供获取接口类型底层数据值的方法
+
+t := i.(T)
+
+这个语句假定 interface value i 的 concrete 类型为 T，并将底层类型 T 的值赋值给 t
+
+如果 i 的底层类型不为 T，这个语句会触发 panic
+
+为了测试接口值底层数据类型是否为 T，type assertion 返回两个值: 底层数据值和 boolean value，boolean 值表示断言是否成功
+
+t, ok := i.(T)
+
+4.16 Type switches
+
+type switch 方便执行多种类型断言
+
+和普通 switch 一样。但判断条件是 类型而不是值
+
+断言语法 t := i.(T) 变为 t := i.(type)
+
+switch v := t.(type) {
+case T:
+case S:
+default:
+}
+
+4.17 Stringers
+
+一个无处不在 ubiquitous 的 interface: Stringer 由 fmt 包定义
+
+type Stringer interface {
+    String() string
+}
+
+4.18 exercise
+
+IPAddr 类型实现 fmt.Stringer
+
+IPAddr{1,2,3,4}
+=> "1.2.3.4"
+
+4.19 Errors
+
+用值 error 来表示错误。error 类型是内置 interface，类似 fmt.Stringer
+
+type error interface {
+    Error() string
+}
+
+函数通常返回 error 值。而调用者需要检查 error 是否为 nil 来判断是否出错。
+
+i, err := strconv.Atoi("42")
+if err != nil {
+    fmt.Printf("couldn't convert number: %v\n", i)
+    return
+    // return nil
+}
+
+fmt.Println("Converted integer:", i)
+
+nil error 值即 success
+
+non-nil 值即 failure
+
+4.20 Exercise: Errors
+
+modify Sqrt function to return an error value
+
+- Sqrt 参数为 negative 时应该报错
+
+- 创建新类型
+
+type ErrNegativeSqrt float64
+
+- 为这个类型实现 Error() string 方法
+
+调用样式 ErrNegativeSqrt(-2).Error()
+
+4.21 Readers
+
+io package 声明了 io.Reader interface,表示数据流读取完成
+
+io.Reader interface 有 Read 方法
+
+func (T) Read(b []byte) (n int, err error)
+
+Read 读取给定的 byte slice 返回读取的字节数，和 error value。流完成是返回 io.EOF
+
+4.22 Exercise: Readers
+
+实现产生 infinite stream of 'A' 的 Reader
+
+4.23 rot13 Reader
+
+借助 io.Reader
+
+4.24 Images
+
+image 包定义 Image interface
+
+package image
+
+type Image interface {
+    ColorModel() color.Model
+    Bounds() Rectangle
+    At(x, y int) color.Color
+}
+
+Rectangle 是 image 中的
+
+color 位于 image/color
+
+4.25 Exercise Images
+
+define your own Image type, implement 必要方法
+
+5. Concurrency
+
+5.1 Goroutines
+
+Go runtime 管理的 lightweight thread 叫 goroutine
+
+go f(x, y, z)
+
+启动
+
+f(x, y, z)
+
+f x y z 的求值发生在 current goroutine
+
+f 的执行发生在 new goroutine
+
+goroutine 运行在同一个 address space，因此对共享内存的访问必须是 synchoronized
+
+sync package 提供支持，但由于其他 primitives 存在，你可能不需要这个包
+
+5.2 Channels
+
+typed conduit 有类型的导管
+
+通过 channel 可以用 <- 发送接收值
+
+ch <- v
+
+v := <- ch 从 ch 接收值，赋值给 v
+
+channel 类似 slice map 使用前需要 make
+
+ch := make(chan int)
+
+类型 chan 值类型 int
+
+send 和 receive 会在 block 到另一边 ready，这就使得 goroutines 可以不使用 锁 lock 或 条件变量 condition variables 来同步
+
+5.3 Buffered Channel
+
+channel 可以有缓存，长度为 make 第二个参数
+
+buffedCh := make(chan int, 100)
+
+buffed channel 只有当 buffer 满时才 block 发送端
+
+buffer 为空，block 接收端
+
+超出 长度 或 从空buffer取数据: fatal error: all goroutines are asleep - deadlock!
+
+5.4 range 和 close
+
+发送端可以 close channel 表示不再发送数据
+
+接收端可以通过第二个返回值，测试 channel 是否关闭
+
+v, ok := <-ch
+
+ok 为 false 表示 channel 已经关闭
+
+for i := range ch 能够接收 channel 数据直到 channel 关闭
+
+* 只有发送端可以关闭 channel
+
+* channel 不像文件，通常不需要关闭。只有在要终止 range loop 时需要关闭。
+
+5.5 Select
+
+select 语句 让 goroutine 等待多个 communication operations
+
+select 会一直 block 到某个分支可以执行 can run
+
+如果多个 ready 会随机选择一个
+
+5.6 Default Selection
+
+defaut 分支会在其他条件不满足时执行
+
+select {
+case i:= <-c:
+default:
+}
+
+5.7/5.8 Exercise 检查二叉树是否等价
+
+不同的二叉树可以保存相同序列
+
+用 Go concurrency 和 channel 来写个简单版本
+
+使用 tree package
+
+type Tree struct {
+    Left *Tree
+    Value int
+    Right *Tree
+}
+
+实现 Walk 函数，测试 Walk
+
+tree.New(k) 生成随机结构的树，通常是排序的
+
+值为 k, 2k .. 10k
+
+5.9 sync.Mutex
+
+当不需要通讯时，如何确保只有一个 goroutine 访问某个变量？
+
+我们需要 mutual exclusion，简称 mutex
+
+标准库提供 sync.Mutex 和两个方法 Lock Unlock
+
+通过用 Lock 包裹某个 代码块
+
+defer 是在 return 后执行
+
+5.10 Exercise: Web Crawler
+
+parallelize : Web Crawler
+
+Crawl 函数
+
+爬取过的 url 可以放入 map 中，但 map not safe for concurrent use
+
+
+
+
+
+
+
+readFile 变量，函数 驼峰式 首字母大写的会被导出
+
+reading-files.go
+
+
+
+
+参考
+    https://juejin.im/post/5d346b046fb9a07f021a3c72
+
+Note:
+
+comment // /*...*/
+
+单行语句不需要 ; 结尾
+
+未使用的 package 会报错
+
+printf
+    %v value
+    %+v always show sign
+    %T type
+    %b binary
+    %d
+
+    https://yourbasic.org/golang/fmt-printf-reference-cheat-sheet/#sprintf-format-without-printing
+
+https://golangbyexample.com/character-in-go/
+    byte is alias to uint8
+    rune
+    string
+
+package
+    strings
+    image
+    sync
+
+https://yourbasic.org/golang/operators/ 操作符优先级
+https://gobyexample.com/goroutines
+
+Something to do
+
+https://www.digitalocean.com/community/tutorials/how-to-write-packages-in-go
+
+Writing Web Applications
+https://golang.org/doc/articles/wiki/
+https://astaxie.gitbooks.io/build-web-application-with-golang/zh/02.2.html
+
+https://itnext.io/how-to-create-your-own-cli-with-golang-3c50727ac608
+
+https://hackernoon.com/writing-a-reverse-proxy-in-just-one-line-with-go-c1edfa78c84b
+
+Writing An Interpreter In Go
+https://interpreterbook.com/
+
+Go: Design Patterns for Real-World Projects
+https://github.com/PacktPublishing/Go-Design-Patterns-for-Real-World-Projects
+https://www.packtpub.com/application-development/go-design-patterns
+
+Writing a Microservice in Golang Which Communicates Over gRPC
+https://dzone.com/articles/writing-a-microservice-in-golang-which-communicate
+
+Build Your First Rest API with GO
+https://dev.to/moficodes/build-your-first-rest-api-with-go-2gcj
+
+Writing Custom HTTP Router in Golang
+https://ednsquare.com/story/writing-custom-http-router-in-golang------CBHWYB
+
+https://www.infoq.com/articles/build-a-container-golang/
+
+Use Go for:
+    db
+    distributed system
+    web framework
+    proxy
+    middleware
+    system process manager
+    monitor
+    algorithm leetcode
+
+Build Your Own Distributed Database With Go
+https://www.youtube.com/watch?v=rxzcx4HaCQo
