@@ -1,0 +1,45 @@
+- 20210622
+
+https://www.codementor.io/@arpitbhayani/building-finite-state-machines-with-python-coroutines-15nk03eh9l State Machine
+
+FSM 必须在每个给定时间点，处于 one of the finite states
+并响应输入，转为另一个状态。
+
+Python Corotines
+
+- Generators
+
+resumable functions
+
+通过调用 next 函数，不停 yield 值。当没有值时抛出 StopIteration exception
+
+from app01 import *
+fgen = fib()
+[next(fgen) for _ in range(10)]
+
+memory-efficient
+
+- Coroutines
+
+resumable functions consume values on the fly
+
+coroutine 遇到 yield 时 pause
+
+可以用 send 发送值给 coroutine 并通过 yield 赋值给变量
+
+g = grep("users")
+next(g)
+g.send("Hello user")
+=> found user
+
+Finite State Machine
+
+最重要的是如何 model 并实现状态和转换函数
+
+状态 modeled as Python Coroutines，内部使用 infinite loop 
+
+根据接收的 input 决定 transition 并更新 current state 
+
+FSM Class 使用 class 完成封装
+
+https://github.com/arpitbbhayani/fsm
