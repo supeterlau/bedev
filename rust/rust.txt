@@ -3555,8 +3555,7 @@ move 到闭包内，外部无法继续使用这个变量
 
 let equal_to_x = move |z| z == x;
 
-一般从 Fn 开始，编译器会告知需要用 FnOnce 还是 FnMut
-
+一般从 Fn 开始使用，必要时编译器会告知要用 FnOnce 还是 FnMut
 
 13.2 用 Iterator 处理一系列元素
 13.3 改进 I/O 项目
