@@ -4097,6 +4097,15 @@ quoted expression 可视化
 
 =========
 
+Subjects:
+
+  TDD
+
+  BDD
+
+  DDD
+    CQRS/ES
+
 Misc:
 
 serve_ch8 是 defp 时无法使用
