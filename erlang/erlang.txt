@@ -704,6 +704,11 @@ https://erlang.org/doc/man/shell.html
 
 In the messenger example, no assumptions have been made about what the message being sent is. It can be any valid Erlang term.
 
+===
+
+io: http://erlang.org/doc/man/io.html Erlang -- io
+
+epmd: https://erlang.org/doc/man/epmd.html Erlang -- epmd
 
 LYSE: https://learnyousomeerlang.com/introduction#about-this-tutorial
 
@@ -734,7 +739,7 @@ io:format
   ~w
   ~n 换行
 
-Reference Manual
+Reference Manual:
 
 https://erlang.org/doc/reference_manual/expressions.html
 
