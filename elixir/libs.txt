@@ -1,0 +1,86 @@
+Erlang & Elixir & BEAM Langauges
+
+Coder:
+
+  https://github.com/bitwalker bitwalker (Paul Schoenfelder)
+
+Note:
+
+- plug
+
+- ecto
+
+- postgrex
+
+  PostgreSQL Driver
+
+
+# temprory
+https://codesync.global/media/announcing-broadway/ Announcing Broadway
+  broadway
+
+https://dashbit.co/ Dashbit - Boosting the Elixir ecosystem
+https://github.com/dashbitco Dashbit
+
+https://github.com/dashbitco/broadway dashbitco/broadway: Concurrent and multi-stage data ingestion and data processing with Elixir
+
+http://blog.plataformatec.com.br/category/english/ English « Plataformatec Blog
+
+# dev
+
+elixir-ls
+  https://github.com/elixir-lsp/elixir-ls elixir-lsp/elixir-ls: A frontend-independent IDE "smartness" server for Elixir. Implements the "Language Server Protocol" standard and provides debugger support via the "Debug Adapter Protocol"
+  https://github.com/elixir-lsp/vscode-elixir-ls elixir-lsp/vscode-elixir-ls: Elixir language support and debugger for VS Code, powered by ElixirLS.
+
+# service
+
+elixir_aws
+
+# web
+
+elixirscript
+  Workspace/peterlau/fedev/elixirscript/start
+  https://github.com/elixirscript/elixirscript elixirscript/elixirscript: Converts Elixir to JavaScript
+
+  write JavaScript in Elixir
+  taking the Elixir AST and converting it into JavaScript AST and then to JavaScript code. This is done using the Elixir-ESTree library
+
+  https://github.com/elixirscript/elixir-estree elixirscript/elixir-estree: The ESTree Nodes and JavaScript AST to JavaScript Code Generator in Elixir
+  https://github.com/estree/estree estree/estree: The ESTree Spec
+
+# NIF
+
+https://github.com/rusterlium/rustler rusterlium/rustler: Safe Rust bridge for creating Erlang NIF functions
+
+# grpc
+
+https://github.com/tony612/protobuf-elixir tony612/protobuf-elixir: A pure Elixir implementation of Google Protobuf
+
+https://github.com/bitwalker/exprotobuf bitwalker/exprotobuf: Protocol Buffers in Elixir made easy!
+
+https://github.com/azukiapp/elixir-protobuf azukiapp/elixir-protobuf: Google Protocol Buffer to Elixir
+
+https://github.com/rrrene/inch_ex
+
+  Inch for Elixir is a utility that suggests places in your codebase where documentation can be improved.
+
+
+https://github.com/ninenines/cowlib ninenines/cowlib: Support library for manipulating Web protocols.
+
+https://github.com/tony612/eqc_ex tony612/eqc_ex: QuickCheck for Elixir
+  http://www.quviq.com/ QuviQ | software quality
+
+# Compiler
+
+# BEAM
+
+## Run on BEAM
+
+gleam
+lfe
+halmer
+clojurl
+
+## BEAM implement
+
+lumen
