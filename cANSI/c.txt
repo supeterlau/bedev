@@ -289,9 +289,20 @@ int a[10];
 
 char b[10]; // aka. string
 
+int array[5] = {1,3,4,4,5};
+
 One dimensional array
 
+函数声明 int find(int[] , int, int);
+
+实现
+
+int find(int array[], int n, int x)
+{}
+
 Multi dimensional array
+
+  int arr2[2][2] = { 11,22,33,44 };
 
 15. string
 
