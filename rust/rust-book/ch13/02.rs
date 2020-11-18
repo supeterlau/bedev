@@ -5,6 +5,13 @@ fn main() {
   for val in v1_iter {
     println!("Got: {}", val);
   }
+
+  let v1 = vec![1,2,3];
+  let v1_iter = v1.iter();
+
+  // sum
+  let total : i32 = v1_iter.sum();
+  println!("Go total: {}", total);
 }
 
 #[test]
