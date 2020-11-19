@@ -3558,6 +3558,72 @@ let equal_to_x = move |z| z == x;
 一般从 Fn 开始使用，必要时编译器会告知要用 FnOnce 还是 FnMut
 
 13.2 用 Iterator 处理一系列元素
+
+iterator 模式允许逐个处理数据。
+
+iterator 用于负责遍历每个元素的逻辑，判断何时序列处理完毕。
+
+Rust 的 iterator 是 lazy 的，在调用处理 iterator 数据前不会产生任何结果。
+
+let v1 = vec![1,2,3];
+let v1_iter = v1.iter(); -> 不产生任何影响
+
+iterator 可以处理包括 vectors 在内的多种类型序列
+
+1. Iterator Trait 和 next 方法
+
+iteratos 都实现名为 Iterator 的 trait。(在标准库中定义)
+
+pub trait Iterator {
+  type Item;
+
+  fn next(&mut self) -> Option<Self::Item>;
+
+  // ...
+}
+
+新语法 type Item; 定义 associated type 关联类型（19 章介绍）
+
+Item 类型是 next 方法的返回值类型
+
+Iterator 只要求实现 next 方法。
+
+Option<Sehlf::Item> 有值时返回 Some() 当迭代结束时返回 None
+
+可以直接调用 next 方法
+
+  assert_eq!(v1_iter.next(), Some(&2));
+
+调用 next() 方法会修改 iterator 内部 用于保持序列当前位置的 状态
+
+即 next() 会消耗 consume 序列
+
+但在使用 for 时不需要让 v1_iter 变为 mutable，因为 loop 获得 v1_iter 的 ownership 并使其变为 mutable
+
+next 的返回值是原序列元素的 immutable references
+
+iter 的作用对象是 immutable 引用
+
+如果想要 take ownership 的 iterator, 要使用 into_iter 而不是 iter
+
+如果要 mutable references，使用 iter_mut
+
+2. 能 consume 迭代器的方法
+
+标准库提供很多不同方法的默认实现。其中一些方法定义里调用 next。因此 Iterator trait 要求必须提供 next 方法。
+
+调用 next 的方法被称为 consuming adaptors
+
+例如 sum 方法 会 take ownership of the iterator
+
+同样因为这个特性，调用 sum 后无法再使用这个迭代器
+
+3. 产生新迭代器的方法
+
+
+
+https://doc.rust-lang.org/rustc/command-line-arguments.html
+
 13.3 改进 I/O 项目
 13.4 对比性能: Loops vs Iterators
 
