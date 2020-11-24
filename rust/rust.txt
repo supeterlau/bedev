@@ -3620,7 +3620,7 @@ iter 的作用对象是 immutable 引用
 
 3. 产生新迭代器的方法
 
-
+对迭代器的操作可以串联成链式结构。
 
 https://doc.rust-lang.org/rustc/command-line-arguments.html
 
