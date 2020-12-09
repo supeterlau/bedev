@@ -1,0 +1,8 @@
+auth jwt:
+  pow
+
+graphql:
+  absinthe
+
+模仿架构
+  https://github.com/lukeautry/tsoa lukeautry/tsoa: Build OpenAPI-compliant REST APIs using TypeScript and Node
