@@ -88,11 +88,11 @@ high-level 是架构模式，可以在任何语言中实现，可以用于构建
 
 - Factory Method
 
-Intent
+1. Intent
 
 在父类中提供创建对象的接口，其中允许子类改变要所创建对象的类型。
 
-Problem
+2. Problem
 
 假设你在开发后勤管理系统。第一版只能处理 truck 运输的物品，你的代码都在 Truck 类中。
 
@@ -100,7 +100,7 @@ Problem
 
 之后，你需要写很多条件判断来根据运输类决定行为。
 
-Solution
+3. Solution
 
 Factory Method 建议替换掉直接创建对象的函数，代之以特殊的 工厂方法 factory method。对象依然通过 new 操作符创建，但是会从 factory method 中调用。
 
@@ -118,11 +118,9 @@ Also, the factory method in the base class should have its return type declared 
 
 使用方可以将返回的 products 都当作抽象 Transport 使用，都有 deliver 方法。
 
-Structure
+4. Structure
 
-
-
-Implements:
+5. Implements:
 
   Java:
     https://refactoring.guru/design-patterns/factory-method/java/example
