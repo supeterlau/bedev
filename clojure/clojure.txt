@@ -155,10 +155,16 @@ M-x paredit-mode toggle mode 开关
 
 M-( Wrapping 将光标下一个 expression 放入括号
 
-
 C-<left_arrow> 或 C-Shift-<left_arrow> Slurping 将右括号移到下一个 expression 右侧
 
 C-<right_arrow> 或 C-Shift-<right_arrow> Barfing, unslurp 需要在括号内部
+
+跳转导航
+
+C-M-f 到闭合括号
+
+C-M-b 到开始括号
+
 
 
 
