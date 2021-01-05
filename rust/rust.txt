@@ -3624,6 +3624,8 @@ iter 的作用对象是 immutable 引用
 
 https://doc.rust-lang.org/rustc/command-line-arguments.html
 
+产生新迭代器的方法
+
 13.3 改进 I/O 项目
 13.4 对比性能: Loops vs Iterators
 
