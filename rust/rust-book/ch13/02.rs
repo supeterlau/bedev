@@ -22,5 +22,6 @@ fn iterator_demostration() {
   assert_eq!(v1_iter.next(), Some(&1));
   assert_eq!(v1_iter.next(), Some(&2));
   assert_eq!(v1_iter.next(), Some(&3));
+  // assert_eq!(v1_iter.next(), Some(&1));
   assert_eq!(v1_iter.next(), None);
 }
