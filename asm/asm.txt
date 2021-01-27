@@ -1,0 +1,9 @@
+nasm on macOS:
+
+nasm -f macho64 taste.asm
+
+ld -macosx_version_min 10.14 -o taste -e _start taste.o -lSystem
+
+  https://blog.csdn.net/uuq/article/details/88079596
+
+https://www.tutorialspoint.com/assembly_programming/index.htm Assembly Programming Tutorial - Tutorialspoint
