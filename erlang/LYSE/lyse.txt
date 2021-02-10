@@ -1,0 +1,384 @@
+https://learnyousomeerlang.com/introduction#about-this-tutorial
+
+# Ch1. Introduction
+
+另一本入门书 Learn You a Haskell for great Good! (LYAH)
+
+making the language attractive and the learning experience friendly.
+
+its weaknesses and strengths.
+
+2. 什么是 Erlang
+
+首先是函数式语言 functional programming language.
+
+变量不可变
+
+a function with the same parameter should always return the same result. 被称作 referential transparency 引用透明
+
+但有时需要 break 引用透明。Erlang 采用自己很 pragmatic 实用性方式
+
+遵守 purest principles 但在出现现实问题时违反这一原则。
+
+Erlang 另一方面注重 concurrency 和 high reliability。
+
+使用 actor model，（类 actor model）。独立的 process，通过 mailbox 收发消息。
+
+可以让特定的函数执行特定的任务，这些函数甚至无法意识到其他函数的存在。
+
+process 之间的通信是 explicit，traceable 和 safe。
+
+Erlang 不只是语言层面的，它也是一个开发平台。代码被编译为 bytecode 在 virtual machine 里执行。
+
+标准 Erlang 发行版中有 开发工具 compiler debugger profiler test framework，the Open Telecom Platform(OTP)，服务器 web server，parser generator，和 mnesia 数据库，能够在多个服务器上备份的 key-value 系统。
+
+- 1. 你可以创建千万 process，不意味着你就要这么干。
+
+- 2. Erlang is no silver bullet and will be particularly bad at things like image and signal processing, operating system device drivers, etc. Erlang 不是银弹
+
+# Ch2. Starting Out
+
+1. The Shell
+
+erl 是一个 emulator
+
+执行脚本（编译+部署 compiled and deployed）
+
+2. Shell Commands
+
+到行首 Ctrl_A
+
+到行尾 Ctrl_E
+
+补全 tab
+
+help().
+
+退出 emulator q(). (shorthand for init:stop().)
+
+# Ch3. Starting Out (for real)
+
+http://erlang.org/doc/man/escript.html
+
+1. Numbers
+
+其他进制 Base#Value
+
+  2#101010.
+
+  8#0677.
+
+  16#AE.
+
+2. 不可变 变量
+
+变量 首字母大写 Uno One Uppercase Letter
+
+变量只能赋值一次
+
+= 操作符执行的是 Pattern Matching 操作
+
+— 代表的是无关心的值，无法从中读取变量值。
+
+_var 则是正常变量
+
+erl 中清除变量 f(Variable).
+
+清除全部 f().
+
+3. Atoms
+
+字面量，值就是名字，常量
+
+首字母小写的标识符
+
+atom = 'atom'.
+
+  即如果 atom 不是小写字母开头 或包含除字母数字 _ @ 之外的字符，就要用 '' 包起来
+
+  'P%Q'.
+
+如果你需要保存值的变量，可以看看 chapter4 Modules
+
+atoms 用来发送消息和表示常量时很好用。但也有需要考虑的。 一个 atom 与 atom table 关联，每个 atom 消耗 4 bytes 或 8 bytes。 atom table 无法被垃圾回收。因此，不应该动态生成 atom。
+
+部分 atom 是保留字，无法使用
+
+4. 布尔值和比较操作符
+
+布尔值 true false
+
+逻辑操作符
+
+  and or xor not
+
+    and or 会计算两边的操作数
+
+  short-circuit 操作符，只在需要时才计算 right-side
+
+    andalso orelse
+
+比较操作符
+
+严格相等 区分 float integer
+
+== 在 erlang 是 =:=
+
+!= 在 erlang 是 =/=
+
+不严格相等
+
+== /=
+
+大于 >
+小于 <
+大于等于 >=
+小于等于 =< (注意)
+
+最后注意 0 不是 false
+
+0 == false.
+
+比较中的每种类型顺序
+
+  number < atom < reference < fun < port < tuple < list < bit string
+
+1 < false.
+
+在 erlang 中，无法在任意类型中使用 + 但可以比较任意类型。
+
+To quote Joe Armstrong, one of the creators of Erlang: "The actual order is not important - but that a total ordering is well defined is important."
+
+5. Tuples
+
+一种组织很多 terms (代表 Erlang 任意数据类型)
+
+形如
+
+{Element1, Element2, Element3, ... ElementN}
+
+Point = {X, Y}.
+
+模式匹配提取其中的值
+
+{X, _} = Point.
+
+A tuple which contains an atom with one element following it is called a 'tagged tuple'.
+
+{point, {X, Y}}. 是一个 tagged tuple
+
+6. Lists
+
+Lists are the bread and butter of many functional languages.
+
+它们被用来解决各种问题，是 Erlang 最常用的数据结构。
+
+Lists 可以包含任意类型
+
+[Element1, Element2, ... ElementN]
+
+1> [97,98,99].
+"abc"
+
+打印出来是 strings。当至少有一个数字无法用字母表示时，Erlang 才打印按原样数字 list，否则会将数字转为字母打印。
+
+There is also a way to store strings as a binary data structure, making them really light and faster to work with. 但 string processing 还是不如 Perl 或 Python。
+
+glue lists 连接 list
+
+[1,2,3] ++ [4,5]
+
+3> [97,98,99] ++ [72,73,74].
+"abcHIJ"
+4> "abc" ++ "HIJ".
+"abcHIJ"
+
+-- 从第一个 list 中移除第二个 list 中元素
+
+++ -- 都是 right 右结合
+
+  多个 ++ -- 会自右向左执行
+
+  [1,2,3] -- [1,2] -- [3] => [3]
+
+list 中第一个元素叫 Head，除第一个元素外的其他元素叫 Tail。两个内置函数可以获取 Head Tail (built-in function BIF)
+
+hd(List).
+
+tl(List).
+
+BIF 通常用 C 实现，（以前是 Prolog）。如 length(List)
+
+模式匹配，分离 Head Tail
+
+[Head | Tail] = List.
+
+| 叫做 cons 操作符。任意 List 都可以用 cons 操作符和值构建
+
+[1 | []]
+
+8> [Head|Tail] = [1|2].
+[1|2]
+
+这可以在模式匹配中使用，但无法使用 list 标准函数，如 length，因为这种形式叫 improper list，不是以空 list 结尾
+
+[1 | [2]] 就是 proper list。
+
+[a, b, c, d]
+=>
+[a, b, c, d | []]
+=>
+[a | [b | [c | [d | [] ]]]]
+
+7. List Comprehensions
+
+列表解析 是 build or modify lists 的方法。基于 set notation 的思想
+
+square brackets []
+
+two pipes || 分隔 操作 和 原 list
+
+in (arrow) <-
+
+[2 * N || N <- [1,2,3,4].
+
+列表后可以用 , 添加限制条件 constraints
+
+  返回 boolean values
+
+NewList = [Expression || Pattern <- List, Condition1, Condition2, ... ConditionN].
+
+io:format("~w~n", [[ X*Y || X <- [2,5,10], Y <- [8,10,11], X*Y > 0]]).
+
+Pattern <- List 被称作 Generator expression，可以有多个
+
+Condition 默认是 and
+
+[X + Y || X <- [1,2], Y <- [2,3]].
+
+更通用形式
+
+NewList = [Expression || GeneratorExp1, GeneratorExp2, ..., GeneratorExpN, Condition1, Condition2, ... ConditionM]
+
+Pattern <- List 也可以基于模式匹配进行数据过滤
+
+8. Bit Syntax
+
+大部分语言处理 binary data 时只有很少的功能。Erlang 通过提供模式匹配的抽象能力使得操作 binary data 的能力提升一个台阶。
+
+对于 telecom 应用是必需的。
+
+binary data 用 << >> 包围。每个 segement 用 comma 分隔。segment 是一系列 bits，不一定是 bytes （bytes 为默认行为）。
+
+Color = 16#F09A29.
+
+Pixel = <<Color:24>>. (24 bits: 3 bytes)
+
+<<240,154,41>> 写入文件会成为不可读的字符，但 Erlang 读回数据时会 interpret 为 <<240,154,41>>
+
+模式匹配用于提取内容
+
+Pixels = << >>.
+
+<<Pix1,Pix2,Pix3>> = Pixels.
+
+<<Pix1:24, Pix2:24 ... >> = Pixels.
+
+Var:24 意味着 Var 保存 24 bits
+
+其他 bits 语法糖 syntactic suger
+
+binary segement 描述语法支持
+
+  Value
+  Value:Size
+  Value/TypeSpecifierList
+  Value:Size/TypeSpecifierList
+
+  TypeSpecifierList:
+
+    Type: integer | float | binary | bytes | bitstring | bits | utf8 | utf16 | utf32 (default: integer)
+      bytes 是 binary 的 shorthand
+      bits 是 bitstring 的 shorthand
+
+    Signedness: signed | unsigned (default: unsigned)
+
+    Endianness: big | little | native
+
+      只在 类型为 integer utf16 utf32 float 时有效
+
+      native: 根据 CPU 类型在 runtime 决定
+
+      默认是 big
+
+      little-endian <<72,0,0,0>> 读取为 72
+      big-endian 的 <<0,0,0,72>>  读取为 1207959552
+
+    Unit: unit:<Integer>
+      每个 segment bit 大小 bit 1-256
+
+      integers floats  bitstrings 默认值为 1
+
+      binary 默认是 8
+
+      utf8 utf16 utf32 不需要定义这个值
+
+      主要为了 byte-alignment
+
+TypeSpecifierList 分隔符为 - 例如: integer-signed-little
+
+<<X2/integer-signed-little> = <<-44>>.
+
+<<Y:4/little-unit:8>> = <<72,0,0,0>>.
+
+标准 binary 操作符
+
+bsl: Bit Shift Left
+
+bsr:
+
+band:
+
+bor:
+
+bxor:
+
+bnot:
+
+模式匹配可以用于解析 TCP segements, video encoding, images, protocol implementations。
+
+Erlang 比 C 或 C++ 慢。不是处理 video image 的好选择。但 reacting to events, message passing 会很高效。所以适合 soft-real-time applications
+
+bit strings 类似 list 但 普通 list 是 linked list，bit strings 是 arrays。
+
+语法 <<"a bit string">>.
+
+缺点是不适用于 模式匹配，用于存储修改不频繁和需要提高空间利用的地方。
+
+不要使用 bit strings 标记值，要使用 atom。也不要用 atom 替代 strings，因为 atom 只能用于比较，无法进行其他操作。
+
+9. Binary Comprehensions
+
+类似 list comprehension
+
+区别 <- 换成 <= [] 换成 <<>>
+
+2> Pixels = <<213,45,132,64,76,32,76,0,0,234,32,15>>.
+<<213,45,132,64,76,32,76,0,0,234,32,15>>
+3> RGB = [ {R,G,B} || <<R:8,G:8,B:8>> <= Pixels ].
+[{213,45,132},{64,76,32},{76,0,0},{234,32,15}]
+
+<= let us use a binary stream as a generator.
+
+RGB 是 List
+
+4> << <<R:8, G:8, B:8>> ||  {R,G,B} <- RGB >>.
+<<213,45,132,64,76,32,76,0,0,234,32,15>>
+
+由于 generator 返回 binaries，R 后边需要指定 size (TypeSpecifierList)
+
+<< <<(X+1)/integer>> || <<X>> <= <<3,7,5,4,7>> >>.
+<<4,8,6,5,8>>
+
+
+# Ch4. Modules
