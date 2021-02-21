@@ -43,6 +43,10 @@ nnoremap confe :e $MYVIMRC<CR>
 " Reload vims configuration file
 nnoremap confr :source $MYVIMRC<CR>
 
+https://reobin.dev/reload-init-vim/ Reload init.vim without restarting neovim | reobin.dev
+
+https://github.com/neoclide/coc.nvim#example-vim-configuration neoclide/coc.nvim: Nodejs extension host for vim & neovim, load extensions like VSCode and host language servers.
+
 ## message 
 
 https://learnvimscriptthehardway.stevelosh.com/chapters/01.html Echoing Messages / Learn Vimscript the Hard Way
@@ -60,6 +64,13 @@ map <C-K> :bprev<CR>
 nnoremap <Leader>b :ls<CR>:b<Space>
 
 https://vim.fandom.com/wiki/Easier_buffer_switching Easier buffer switching | Vim Tips Wiki | Fandom
+
+https://stackoverflow.com/questions/4571494/open-a-buffer-as-a-vertical-split-in-vim Open a buffer as a vertical split in VIM - Stack Overflow
+https://vi.stackexchange.com/questions/76/can-i-open-a-new-vim-split-from-an-existing-buffer Can I open a new vim split from an existing buffer? - Vi and Vim Stack Exchange
+
+:sb N
+
+:vert belowright sb N
 
 https://superuser.com/questions/66179/how-do-i-edit-an-existing-buffer-in-a-new-tab-in-vim How do I edit an existing buffer in a new tab in vim? - Super User
 
@@ -96,10 +107,19 @@ https://vi.stackexchange.com/questions/3694/is-there-a-way-to-reliably-go-back-a
 
 term://{cwd}//{pid}:{cmd}
 
+use CTRL_RIGHT 减少误触
+
 - auto exit term 
 
 https://www.reddit.com/r/vim/comments/b1lbjl/is_there_a_way_to_automatically_close_a_terminal/ is there a way to automatically close a terminal in :term when quitting? : vim
 
+https://vi.stackexchange.com/questions/10292/how-to-close-and-and-delete-terminal-buffer-if-programs-exited neovim - How to close and and delete terminal buffer if programs exited? - Vi and Vim Stack Exchange
+
+- terminl scroll 
+
+https://stackoverflow.com/questions/50535334/how-do-i-scroll-through-a-terminal-using-vim-8-1s-new-terminal-termpack-support How do I scroll through a terminal using Vim 8.1's new terminal/termpack support? - Stack Overflow
+
+switch to terminal_normal mode j/k up/down
 ## mode 
 
 https://vi.stackexchange.com/questions/10396/within-a-function-is-there-a-way-to-determine-if-vim-is-in-insert-mode vimscript - Within a function, Is there a way to determine if vim is in insert mode? - Vi and Vim Stack Exchange
@@ -195,6 +215,30 @@ https://stackoverflow.com/questions/40990454/how-to-map-mac-command-key-in-vim m
 
   It only works in MacVim
 
+- remap 
+
+https://vi.stackexchange.com/questions/7276/i-cannot-unmap-a-key-combination-yc-g key bindings - I cannot unmap a key combination `y<C-G>` - Vi and Vim Stack Exchange
+
+:verb nmap <C-b>
+
+:unmap \b (WORK)
+
+map <C-b>
+unmap <C-B>
+
+https://stackoverflow.com/questions/23025076/cant-remove-mapping-from-vim/23034558 Can't remove mapping from VIM? - Stack Overflow
+
+https://superuser.com/questions/610975/un-mapping-commands-in-vim Un-mapping commands in Vim - Super User
+
+## cursor movement  
+https://medium.com/usevim/vim-101-quick-movement-c12889e759e0# Vim 101: Quick Movement | by Alex R. Young | usevim | Medium
+CTRL_f 
+CTRL_b 
+
+## restore 
+
+buffer/history/dirs
+
 ## Help Doc 
 
 https://vim.fandom.com/wiki/Learn_to_use_help Learn to use help | Vim Tips Wiki | Fandom
@@ -209,11 +253,19 @@ https://vim.fandom.com/wiki/Learn_to_use_help#Context Learn to use help | Vim Ti
 
 :h :x 
 
+## GUI 
+
+https://vim.fandom.com/wiki/Maximize_or_set_initial_window_size Maximize or set initial window size | Vim Tips Wiki | Fandom
+
+## recording 
+
 ## vimscript 
 
 - variable 
 
 https://medium.com/usevim/vim-101-let-13fd86c7df82 Vim 101: Let | by Alex R. Young | usevim | Medium
+
+:help let
 
 - function 
 
@@ -254,6 +306,15 @@ https://learnvimscriptthehardway.stevelosh.com/chapters/26.html#concatenation St
 
 "AAA" . "BBB"
 
+# Plugin 
+
+## vim-plug 
+
+https://stackoverflow.com/questions/31424796/using-vundle-behind-proxy git - Using Vundle behind Proxy - Stack Overflow
+
+let $https_proxy="url"
+press R (upcase r)
+
 # Dev 
 
 ## Common 
@@ -261,6 +322,8 @@ https://learnvimscriptthehardway.stevelosh.com/chapters/26.html#concatenation St
 - Full Screen Dev Mode 
 
 - NERDTree icon (neovim)
+
+https://github.com/ryanoasis/vim-devicons ryanoasis/vim-devicons: Adds file type icons to Vim plugins such as: NERDTree, vim-airline, CtrlP, unite, Denite, lightline, vim-startify and many more
 
 - comment 
 
@@ -282,12 +345,26 @@ https://learnvimscriptthehardway.stevelosh.com/chapters/26.html#concatenation St
 
 - git fugitive
 
+https://stackoverflow.com/questions/61494103/neovim-plugin-fugitive-isnt-using-the-ssh-key-agent-so-i-cant-gpush-git-push
+
+  set "GIT_SSH_COMMAND=ssh -Tv"
+
+https://git-scm.com/docs/git Git - git Documentation
 
 ## Frontend 
 
 ## Elixir 
 
 https://github.com/elixir-lsp/elixir-ls/pull/351 Remove the default .tool-versions file by axelson · Pull Request #351 · elixir-lsp/elixir-ls
+
+- highlight 
+
+https://medium.com/@siever/setup-vim-for-elixir-development-280a01150152
+
+https://github.com/elixir-editors/vim-elixir elixir-editors/vim-elixir: Vim configuration files for Elixir
+
+Plug 'sheerun/vim-polyglot' 多种语言高亮，包含 vim-elixir
+https://github.com/sheerun/vim-polyglot sheerun/vim-polyglot: A solid language pack for Vim.
 
 - format
 
@@ -303,8 +380,42 @@ vim-ale 是 vim 的 linting engine，支持多种（足够多）语言。
 
 https://github.com/dense-analysis/ale
 
+autocmd FileType elixir setlocal formatprg=mix\ format\ -
+  (https://arusahni.net/blog/2020/08/elixir-vim.html Elixir Development with Vim | AruSahni.net)
+
+- Language Server
+
+Inline dyalizer warnings
+
+Semantic code navigation
+
+View documentation
+
+View an outline of current file
+
+- Project-wide Find/Replace
+
+https://github.com/stefandtw/quickfix-reflector.vim stefandtw/quickfix-reflector.vim: Change code right in the quickfix window
+
+- Alternating through files
+
+vim-projectionist
+
+https://github.com/tpope/vim-projectionist tpope/vim-projectionist: projectionist.vim: Granular project configuration
+
+- Test 
+
+Plug 'vim-test/vim-test'
+
+" this part is optional, but I prefer using neoterm as the vim-test runner
+Plug 'kassio/neoterm'
+let test#strategy = "neoterm"
+
+https://github.com/kassio/neoterm kassio/neoterm: Wrapper of some vim/neovim's :terminal functions.
 
 https://github.com/dbernheisel dbernheisel (David Bernheisel)
+  Blog Written in phx  
+https://bernheisel.com/blog/vim-elixir-ls-plug Managing ElixirLS updates in Neovim with asdf and vim-plug · Bernheisel
 
 https://plausible.io/bernheisel.com Plausible · bernheisel.com
 
@@ -329,6 +440,29 @@ https://vi.stackexchange.com/questions/732/how-to-open-multiple-files-in-split-m
 - Highlight 后延迟取消高亮
 
 - auto-save 
+
+- IME auto swap en/zh 
+
+- 拦截 iTerm CMD 键
+
+CMD_R 
+
+CMD_W 
+
+- Loop switch panels 
+
+- tab switch 
+
+ALT_ARROW
+
+https://stackoverflow.com/questions/2627886/how-do-i-run-a-c-program-from-vim How do I run a C program from VIM? - Stack Overflow
+
+https://developer.ibm.com/technologies/linux/articles/l-vim-script-1/ Variables, values, and expressions – IBM Developer
+
+https://vi.stackexchange.com/questions/25938/understanding-local-s-l-and-a-variables vimrc - Understanding local (s, l, and a) variables - Vi and Vim Stack Exchange
+
+https://vim.fandom.com/wiki/Set_working_directory_to_the_current_file Set working directory to the current file | Vim Tips Wiki | Fandom
+
 
 # Key binding
 
