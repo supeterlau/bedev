@@ -47,6 +47,10 @@ https://reobin.dev/reload-init-vim/ Reload init.vim without restarting neovim | 
 
 https://github.com/neoclide/coc.nvim#example-vim-configuration neoclide/coc.nvim: Nodejs extension host for vim & neovim, load extensions like VSCode and host language servers.
 
+https://vi.stackexchange.com/questions/15299/how-to-correctly-use-a-local-script-variable How to correctly use a local script variable - Vi and Vim Stack Exchange
+  so file 
+  execute "source " . s:user_config
+  
 ## message 
 
 https://learnvimscriptthehardway.stevelosh.com/chapters/01.html Echoing Messages / Learn Vimscript the Hard Way
@@ -257,7 +261,14 @@ https://vim.fandom.com/wiki/Learn_to_use_help#Context Learn to use help | Vim Ti
 
 https://vim.fandom.com/wiki/Maximize_or_set_initial_window_size Maximize or set initial window size | Vim Tips Wiki | Fandom
 
-## recording 
+## Font 
+
+iTerm 
+  English 
+  zh 
+  icon 
+
+## recording (Macro)
 
 ## vimscript 
 
@@ -443,6 +454,24 @@ https://vi.stackexchange.com/questions/732/how-to-open-multiple-files-in-split-m
 
 - IME auto swap en/zh 
 
+autocmd 
+  https://learnvimscriptthehardway.stevelosh.com/chapters/12.html Autocommands / Learn Vimscript the Hard Way
+
+https://www.hscripts.com/tutorials/vim-commands/showcmd.html
+
+https://stackoverflow.com/questions/5868940/show-pressed-keys-in-vim-normal-mode-statusline keyboard - Show pressed keys in VIM normal mode statusline - Stack Overflow
+  :h showcmd
+
+https://vi.stackexchange.com/questions/1894/how-to-display-invoked-keystrokes-and-commands-in-normal-mode options - How to display invoked keystrokes and commands in normal mode? - Vi and Vim Stack Exchange
+  q: 查看历史命令。老按错的
+
+https://apple.stackexchange.com/questions/158854/how-to-differentiate-between-applications-with-the-same-name-in-applescripts How to differentiate between applications with the same name in applescripts - Ask Different
+
+https://apple.stackexchange.com/questions/238757/how-do-i-find-the-application-name-to-open-a-file-using-applescript How do I find the application name to open a file using AppleScript? - Ask Different
+
+https://alvinalexander.com/mac-os-x/applescript-unix-mac-osx-foreground-application-result/ AppleScript/Unix: How to get the current MacOS foreground application name | alvinalexander.com
+https://alvinalexander.com/blog/post/mac-os-x/running-applescript-from-unix/ How to run an AppleScript from the Mac OS X Unix shell | alvinalexander.com
+https://alvinalexander.com/taxonomy/term/133/ Nodes for the term 'applescript' on alvinalexander.com
 - 拦截 iTerm CMD 键
 
 CMD_R 
