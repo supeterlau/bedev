@@ -1,0 +1,208 @@
+
+# Basic 
+
+## runtimepath
+
+:help 'rtp'
+:set runtimepath=''
+:echo &rtp 
+
+https://medium.com/usevim/vim-101-runtimepath-83194d411b0a Vim 101: runtimepath | by Alex R. Young | usevim | Medium
+https://superuser.com/questions/152891/what-is-a-vim-runtime-directory gvim - What is a vim "runtime directory"? - Super User
+
+## status 
+
+https://stackoverflow.com/questions/14717571/vimscript-how-to-get-current-filetype-as-a-variable/14717933 vim - Vimscript: how to get current filetype as a variable - Stack Overflow
+
+## indent 
+
+https://vi.stackexchange.com/questions/7975/how-can-i-change-the-indent-size indentation - How can I change the indent size? - Vi and Vim Stack Exchange
+
+:set shiftwidth=2
+:set autoindent
+:set smartindent
+
+## filetype 
+
+https://stackoverflow.com/questions/2779379/find-what-filetype-is-loaded-in-vim/2779390 Find what filetype is loaded in vim - Stack Overflow
+
+  set ft 
+
+https://stackoverflow.com/questions/14717571/vimscript-how-to-get-current-filetype-as-a-variable/14717933 vim - Vimscript: how to get current filetype as a variable - Stack Overflow
+
+  echo &ft / &filetype 
+
+## config 
+
+https://www.cyberciti.biz/faq/how-to-reload-vimrc-file-without-restarting-vim-on-linux-unix/
+
+" Edit vimr configuration file
+nnoremap confe :e $MYVIMRC<CR>
+" Reload vims configuration file
+nnoremap confr :source $MYVIMRC<CR>
+
+## message 
+
+https://learnvimscriptthehardway.stevelosh.com/chapters/01.html Echoing Messages / Learn Vimscript the Hard Way
+
+:messages
+
+## buffer 
+
+https://vi.stackexchange.com/questions/2129/fastest-way-to-switch-to-a-buffer-in-vim vimrc - Fastest way to switch to a buffer in vim? - Vi and Vim Stack Exchange
+
+" move among buffers with CTRL
+map <C-J> :bnext<CR>
+map <C-K> :bprev<CR>
+
+nnoremap <Leader>b :ls<CR>:b<Space>
+
+https://vim.fandom.com/wiki/Easier_buffer_switching Easier buffer switching | Vim Tips Wiki | Fandom
+
+## history 
+
+https://stackoverflow.com/questions/3171284/recent-file-history-in-vim Recent file history in Vim? - Stack Overflow
+
+:History 
+
+https://vi.stackexchange.com/questions/3694/is-there-a-way-to-reliably-go-back-and-forth-in-file-history buffers - Is there a way to reliably go back and forth in file history - Vi and Vim Stack Exchange
+
+## vimscript 
+
+- variable 
+
+https://medium.com/usevim/vim-101-let-13fd86c7df82 Vim 101: Let | by Alex R. Young | usevim | Medium
+
+- function 
+
+https://learnvimscriptthehardway.stevelosh.com/chapters/23.html Functions / Learn Vimscript the Hard Way
+
+https://learnvimscriptthehardway.stevelosh.com/chapters/24.html Function Arguments / Learn Vimscript the Hard Way
+
+:function DisplayName(name)
+:  echom "Hello!  My name is:"
+:  echom a:name
+:endfunction
+
+a:name 表示 name 在参数作用域
+
+https://vim.fandom.com/wiki/Write_your_own_Vim_function Write your own Vim function | Vim Tips Wiki | Fandom
+
+https://stackoverflow.com/questions/1812448/what-is-difference-between-function-and-function-in-vim What is difference between "function" and "function!" in VIM? - Stack Overflow
+
+For instance, using function!, you can redeclare an already defined function.
+
+E127
+
+https://stackoverflow.com/questions/22633115/why-do-i-get-e127-from-this-vimscript python - Why do I get E127 from this vimscript? - Stack Overflow
+https://vi.stackexchange.com/questions/26479/refreshing-vim-file-from-within-a-function buffers - Refreshing vim file from within a function - Vi and Vim Stack Exchange
+
+- condition 
+
+https://learnvimscriptthehardway.stevelosh.com/chapters/22.html Comparisons / Learn Vimscript the Hard Way
+
+if 10 > 1
+    echom "foo"
+endif
+
+- concat strings 
+
+https://learnvimscriptthehardway.stevelosh.com/chapters/26.html#concatenation Strings / Learn Vimscript the Hard Way
+
+"AAA" . "BBB"
+
+# Dev 
+
+## Common 
+
+- comment 
+
+- fold 
+
+## Frontend 
+
+## Elixir 
+
+https://github.com/elixir-lsp/elixir-ls/pull/351 Remove the default .tool-versions file by axelson · Pull Request #351 · elixir-lsp/elixir-ls
+
+- format
+
+mix format
+
+vim way:
+
+Plug 'dense-analysis/ale'
+
+let g:ale_fixers = { 'elixir': ['mix_format'] }
+
+vim-ale 是 vim 的 linting engine，支持多种（足够多）语言。 
+
+https://github.com/dense-analysis/ale
+
+
+https://github.com/dbernheisel dbernheisel (David Bernheisel)
+
+https://plausible.io/bernheisel.com Plausible · bernheisel.com
+
+- Refs 
+
+https://subvisual.com/blog/posts/vim-elixir-ide
+
+https://www.freecodecamp.org/news/learn-linux-vim-basic-features-19134461ab85/ Why I love Vim: It’s the lesser-known features that make it so amazing
+
+https://vi.stackexchange.com/questions/14519/how-to-run-internal-vim-terminal-at-current-files-dir working directory - How to run internal vim terminal at current file's dir? - Vi and Vim Stack Exchange
+https://stackoverflow.com/questions/12239952/how-to-always-have-the-same-current-directory-in-vim-and-in-terminal unix - How to always have the same current directory in VIm and in Terminal? - Stack Overflow
+https://unix.stackexchange.com/questions/444682/opening-a-vertical-terminal-in-vim-8-1 vimrc - Opening a vertical terminal in Vim 8.1 - Unix & Linux Stack Exchange
+
+https://vi.stackexchange.com/questions/732/how-to-open-multiple-files-in-split-mode command line - How to open multiple files in split mode? - Vi and Vim Stack Exchange
+
+# TODO 
+
+- key bind avoid input :h 
+
+:h = :help 
+
+# Key binding
+
+jump in help doc:
+
+  Ctrl_] 
+
+switch panels:
+
+  Alt/Meta_h 
+
+Term: (iTerm2 中 Left Opt 设置为 ESC+)
+
+  Ctrl_n 
+
+NERDTree:
+
+  Ctrl_b 
+
+fzf: 
+
+  Ctrl_p 搜索
+  Ctrl_t tab 打开
+  Ctrl_s
+  Ctrl_v
+
+
+
+# Misc
+
+VimWiki
+
+  https://github.com/vimwiki/vimwiki vimwiki/vimwiki: Personal Wiki for Vim
+
+  https://cristianpb.github.io/blog/vimwiki-hugo Writing notes with Vimwiki and Hugo static generator - Cristian Perez Brokate
+
+# Refs 
+
+https://vimconfig.com/ VimConfig - Sane and simple Vim configuration
+
+https://vim.fandom.com/wiki/Open_vimrc_file Open vimrc file | Vim Tips Wiki | Fandom
+https://vi.stackexchange.com/questions/6112/how-can-i-get-vim-to-ignore-all-user-configuration-as-if-it-were-freshly-instal startup - How can I get Vim to ignore all user configuration, as if it were freshly installed? - Vi and Vim Stack Exchange
+https://stackoverflow.com/questions/8977649/how-to-locate-the-vimrc-file-used-by-vim-editor command - How to locate the vimrc file used by vim editor? - Stack Overflow
+  so $MYVIMRC
+
