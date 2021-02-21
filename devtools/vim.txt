@@ -14,6 +14,8 @@ https://superuser.com/questions/152891/what-is-a-vim-runtime-directory gvim - Wh
 
 https://stackoverflow.com/questions/14717571/vimscript-how-to-get-current-filetype-as-a-variable/14717933 vim - Vimscript: how to get current filetype as a variable - Stack Overflow
 
+https://learnvimscriptthehardway.stevelosh.com/chapters/17.html Status Lines / Learn Vimscript the Hard Way
+
 ## indent 
 
 https://vi.stackexchange.com/questions/7975/how-can-i-change-the-indent-size indentation - How can I change the indent size? - Vi and Vim Stack Exchange
@@ -59,6 +61,19 @@ nnoremap <Leader>b :ls<CR>:b<Space>
 
 https://vim.fandom.com/wiki/Easier_buffer_switching Easier buffer switching | Vim Tips Wiki | Fandom
 
+https://superuser.com/questions/66179/how-do-i-edit-an-existing-buffer-in-a-new-tab-in-vim How do I edit an existing buffer in a new tab in vim? - Super User
+
+:tab sb 2
+
+## path 
+
+https://vim.fandom.com/wiki/Get_the_name_of_the_current_file Get the name of the current file | Vim Tips Wiki | Fandom
+
+echo expand('%:t') 	my.txt	name of file ('tail')
+echo expand('%:p') 	full path
+
+https://superuser.com/questions/252893/vim-use-the-path-of-the-current-file/252902 Vim: use the path of the current file - Super User
+
 ## history 
 
 https://stackoverflow.com/questions/3171284/recent-file-history-in-vim Recent file history in Vim? - Stack Overflow
@@ -66,6 +81,133 @@ https://stackoverflow.com/questions/3171284/recent-file-history-in-vim Recent fi
 :History 
 
 https://vi.stackexchange.com/questions/3694/is-there-a-way-to-reliably-go-back-and-forth-in-file-history buffers - Is there a way to reliably go back and forth in file history - Vi and Vim Stack Exchange
+
+## Terminal 
+
+:h ter 
+
+:te[rminal][!] [{cmd}] 非交互运行 cmd 
+
+:![{cmd}]  Execute {cmd} with 'shell'
+
+:edit term://bash
+
+:vsplit term://top
+
+term://{cwd}//{pid}:{cmd}
+
+- auto exit term 
+
+https://www.reddit.com/r/vim/comments/b1lbjl/is_there_a_way_to_automatically_close_a_terminal/ is there a way to automatically close a terminal in :term when quitting? : vim
+
+## mode 
+
+https://vi.stackexchange.com/questions/10396/within-a-function-is-there-a-way-to-determine-if-vim-is-in-insert-mode vimscript - Within a function, Is there a way to determine if vim is in insert mode? - Vi and Vim Stack Exchange
+https://vi.stackexchange.com/questions/19247/how-to-get-the-current-mode-in-vim vimscript - How to get the current mode in vim? - Vi and Vim Stack Exchange
+
+:h mode 
+
+echo mode() 
+
+- move in insert mode 
+
+https://vi.stackexchange.com/questions/10296/navigation-in-insert-mode Navigation in insert mode - Vi and Vim Stack Exchange
+
+<CTRL_o>b (hjkl)
+
+- move cursor in command mode 
+
+https://stackoverflow.com/questions/2075569/how-can-i-move-around-in-the-vim-command-line How can I move around in the Vim command line? - Stack Overflow
+
+ctrl-B: cursor to beginning of command-line
+ctrl-E: cursor to end of command-line
+ctrl-W: delete the word before the cursor
+ctrl-U: remove all characters between the cursor position and the beginning of the line
+
+- custom command in command mode 
+
+http://vimdoc.sourceforge.net/htmldoc/usr_40.html#40.2 Vim documentation: usr_40
+
+:command -nargs=+ Say :echo "<args>"
+:command! -nargs=+ Say :echo "<args>"
+
+- command mode completion 
+
+case insensitive 
+
+https://vi.stackexchange.com/questions/16509/how-do-you-make-the-command-mode-case-insensitive How do you make the command mode case insensitive? - Vi and Vim Stack Exchange
+
+  set wildignorecase
+
+wild match
+
+https://www.linux.com/training-tutorials/vim-101-beginners-guide-vim/ Vim 101: A Beginner's Guide to Vim - Linux.com
+
+https://www.freecodecamp.org/news/vim-editor-modes-explained/ Vim Editor Modes Explained
+
+## display 
+
+- display space/tab 
+
+https://stackoverflow.com/questions/1675688/make-vim-show-all-white-spaces-as-a-character whitespace - Make Vim show ALL white spaces as a character - Stack Overflow
+
+:set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
+
+- display not copy 
+
+https://www.reddit.com/r/vim/comments/e4jwxb/how_not_to_copy_eol_character/ How not to copy eol character : vim
+
+## search 
+
+/ forward
+? backward
+
+https://stackoverflow.com/questions/2287440/how-to-do-case-insensitive-search-in-vim How to do case insensitive search in Vim - Stack Overflow
+
+:help 'smartcase'
+set smartcase
+
+https://vim.fandom.com/wiki/Highlight_unwanted_spaces Highlight unwanted spaces | Vim Tips Wiki | Fandom
+
+## map 
+
+https://stackoverflow.com/questions/3776117/what-is-the-difference-between-the-remap-noremap-nnoremap-and-vnoremap-mapping What is the difference between the remap, noremap, nnoremap and vnoremap mapping commands in Vim? - Stack Overflow
+
+:map and :noremap are recursive and non-recursive versions of the various mapping commands
+
+https://apple.stackexchange.com/questions/49178/bind-cmd-s-in-vim
+
+https://vi.stackexchange.com/questions/8660/can-the-enter-key-be-made-to-behave-like-the-return-key-should-i-do-so-in-vim key bindings - Can the ENTER key be made to behave like the RETURN key? Should I do so in vim? - Vi and Vim Stack Exchange
+
+https://vim.fandom.com/wiki/Mappings Mappings | Vim Tips Wiki | Fandom
+
+- show key map 
+
+https://stackoverflow.com/questions/7047650/in-vim-how-to-find-out-what-a-key-combination-does In Vim, how to find out what a key combination does - Stack Overflow
+
+https://stackoverflow.com/questions/7642746/is-there-any-way-to-view-the-currently-mapped-keys-in-vim Is there any way to view the currently mapped keys in Vim? - Stack Overflow
+
+- CMD in vim 
+
+https://stackoverflow.com/questions/40990454/how-to-map-mac-command-key-in-vim macos - How to map mac command key in vim? - Stack Overflow
+
+  :help <D-
+
+  It only works in MacVim
+
+## Help Doc 
+
+https://vim.fandom.com/wiki/Learn_to_use_help Learn to use help | Vim Tips Wiki | Fandom
+
+jump 
+  Ctrl-] to follow the link
+  Ctrl-T to go back
+  Ctrl-O to jump to older locations
+  Ctrl-I to jump to newer locations
+
+https://vim.fandom.com/wiki/Learn_to_use_help#Context Learn to use help | Vim Tips Wiki | Fandom
+
+:h :x 
 
 ## vimscript 
 
@@ -99,6 +241,7 @@ https://vi.stackexchange.com/questions/26479/refreshing-vim-file-from-within-a-f
 
 - condition 
 
+https://learnvimscriptthehardway.stevelosh.com/chapters/21.html Conditionals / Learn Vimscript the Hard Way
 https://learnvimscriptthehardway.stevelosh.com/chapters/22.html Comparisons / Learn Vimscript the Hard Way
 
 if 10 > 1
@@ -115,9 +258,30 @@ https://learnvimscriptthehardway.stevelosh.com/chapters/26.html#concatenation St
 
 ## Common 
 
+- Full Screen Dev Mode 
+
+- NERDTree icon (neovim)
+
 - comment 
 
 - fold 
+
+- completion
+
+  pair 
+
+  filename
+
+  command 
+
+  history 
+
+  buffer 
+
+  content
+
+- git fugitive
+
 
 ## Frontend 
 
@@ -162,6 +326,10 @@ https://vi.stackexchange.com/questions/732/how-to-open-multiple-files-in-split-m
 
 :h = :help 
 
+- Highlight 后延迟取消高亮
+
+- auto-save 
+
 # Key binding
 
 jump in help doc:
@@ -190,6 +358,8 @@ fzf:
 
 
 # Misc
+
+:x 类似 :wq 
 
 VimWiki
 
