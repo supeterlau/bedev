@@ -50,7 +50,7 @@ https://github.com/neoclide/coc.nvim#example-vim-configuration neoclide/coc.nvim
 https://vi.stackexchange.com/questions/15299/how-to-correctly-use-a-local-script-variable How to correctly use a local script variable - Vi and Vim Stack Exchange
   so file 
   execute "source " . s:user_config
-  
+
 ## message 
 
 https://learnvimscriptthehardway.stevelosh.com/chapters/01.html Echoing Messages / Learn Vimscript the Hard Way
@@ -338,6 +338,19 @@ https://github.com/ryanoasis/vim-devicons ryanoasis/vim-devicons: Adds file type
 
 - comment 
 
+https://github.com/tpope/vim-commentary tpope/vim-commentary: commentary.vim: comment stuff out
+
+gcc to comment out a line (takes a count), 
+gc to comment out the target of a motion (for example, gcap to comment out a paragraph), 
+gc in visual mode to comment out the selection, 
+and gc in operator pending mode to target a comment. 
+
+You can also use it as a command, either with a range like :7,17Commentary, or as part of a :global invocation like with :g/TODO/Commentary. That's it.
+
+it uncomments, too. 
+
+The above maps actually toggle, and gcgc uncomments a set of adjacent commented lines.
+
 - fold 
 
 - completion
@@ -361,6 +374,29 @@ https://stackoverflow.com/questions/61494103/neovim-plugin-fugitive-isnt-using-t
   set "GIT_SSH_COMMAND=ssh -Tv"
 
 https://git-scm.com/docs/git Git - git Documentation
+
+- template 
+
+https://shapeshed.com/vim-templates/ Using template files in Vim | George Ornbo
+
+:h template
+
+echo variable 导致 用 silent 
+silent !echo Hello
+https://vim.fandom.com/wiki/Avoiding_the_%22Hit_ENTER_to_continue%22_prompts Avoiding the "Hit ENTER to continue" prompts | Vim Tips Wiki | Fandom
+
+https://opensource.com/article/19/12/bash-script-template Creating a Bash script template | Opensource.com
+
+https://github.com/aperezdc/vim-template aperezdc/vim-template: Simple templates plugin for Vim
+
+Plug 'aperezdc/vim-template'
+
+- snippets / short key
+
+https://github.com/neoclide/coc-snippets neoclide/coc-snippets: Snippets solution for coc.nvim
+https://blog.prismatik.com.au/snippets-in-vim-43cf2ad79000 Snippets in Vim. Last week a colleague of mine who was… | by Simon Taylor | The Prismatik
+https://www.chrisatmachine.com/Neovim/17-snippets/ https://www.chrisatmachine.com/Neovim/17-snippets/
+https://mkaz.blog/working-with-vim/snippets/ Snippets – Working with Vim – mkaz.blog
 
 ## Frontend 
 
@@ -441,6 +477,16 @@ https://stackoverflow.com/questions/12239952/how-to-always-have-the-same-current
 https://unix.stackexchange.com/questions/444682/opening-a-vertical-terminal-in-vim-8-1 vimrc - Opening a vertical terminal in Vim 8.1 - Unix & Linux Stack Exchange
 
 https://vi.stackexchange.com/questions/732/how-to-open-multiple-files-in-split-mode command line - How to open multiple files in split mode? - Vi and Vim Stack Exchange
+
+## Go 
+
+- refs 
+
+https://medium.com/@furkanbegen/go-development-with-vim-79cfa0a928b0 Go Development With Vim. If you are a Go developer or learning… | by Furkan BEĞEN | Medium
+
+## Java 
+
+## Rust 
 
 # TODO 
 
