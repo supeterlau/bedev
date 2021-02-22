@@ -36,6 +36,8 @@ https://stackoverflow.com/questions/14717571/vimscript-how-to-get-current-filety
 
 ## config 
 
+https://gist.github.com/celso/6cefedb9fce92827ee38e8f7411b8b30 Neovim setup for OSX users
+
 https://www.cyberciti.biz/faq/how-to-reload-vimrc-file-without-restarting-vim-on-linux-unix/
 
 " Edit vimr configuration file
@@ -124,6 +126,20 @@ https://vi.stackexchange.com/questions/10292/how-to-close-and-and-delete-termina
 https://stackoverflow.com/questions/50535334/how-do-i-scroll-through-a-terminal-using-vim-8-1s-new-terminal-termpack-support How do I scroll through a terminal using Vim 8.1's new terminal/termpack support? - Stack Overflow
 
 switch to terminal_normal mode j/k up/down
+
+## yank paste 
+
+https://vi.stackexchange.com/questions/84/how-can-i-copy-text-to-the-system-clipboard-from-vim How can I copy text to the system clipboard from Vim? - Vi and Vim Stack Exchange
+
+se this as more convenient keybinds:
+
+noremap <Leader>y "*y
+noremap <Leader>p "*p
+noremap <Leader>Y "+y
+noremap <Leader>P "+p
+
+:help 'clipboard'
+
 ## mode 
 
 https://vi.stackexchange.com/questions/10396/within-a-function-is-there-a-way-to-determine-if-vim-is-in-insert-mode vimscript - Within a function, Is there a way to determine if vim is in insert mode? - Vi and Vim Stack Exchange
@@ -278,6 +294,8 @@ https://medium.com/usevim/vim-101-let-13fd86c7df82 Vim 101: Let | by Alex R. You
 
 :help let
 
+https://stackoverflow.com/questions/9990219/vim-whats-the-difference-between-let-and-set Vim: What's the difference between let and set? - Stack Overflow
+
 - function 
 
 https://learnvimscriptthehardway.stevelosh.com/chapters/23.html Functions / Learn Vimscript the Hard Way
@@ -317,6 +335,24 @@ https://learnvimscriptthehardway.stevelosh.com/chapters/26.html#concatenation St
 
 "AAA" . "BBB"
 
+## other script 
+
+https://stackoverflow.com/questions/13294267/how-can-you-check-which-options-vim-was-compiled-with How can you check which options vim was compiled with? - Stack Overflow
+
+- Lua 
+
+https://github.com/nanotee/nvim-lua-guide#initlua nanotee/nvim-lua-guide: A guide to using Lua in Neovim
+
+https://www.2n.pl/blog/how-to-write-neovim-plugins-in-lua How to write neovim plugins in Lua | 2n it sp. z o.o.
+
+:echo has('lua')
+
+- Python 
+
+:echo has('python')
+
+:h +feature-list
+
 # Plugin 
 
 ## vim-plug 
@@ -325,6 +361,10 @@ https://stackoverflow.com/questions/31424796/using-vundle-behind-proxy git - Usi
 
 let $https_proxy="url"
 press R (upcase r)
+
+## coc.nvim 
+
+https://zhuanlan.zhihu.com/p/65524706 coc.nvim 插件体系 - 介绍 - 知乎
 
 # Dev 
 
@@ -353,7 +393,7 @@ The above maps actually toggle, and gcgc uncomments a set of adjacent commented 
 
 - fold 
 
-- completion
+- completion / tab
 
   pair 
 
@@ -398,9 +438,14 @@ https://blog.prismatik.com.au/snippets-in-vim-43cf2ad79000 Snippets in Vim. Last
 https://www.chrisatmachine.com/Neovim/17-snippets/ https://www.chrisatmachine.com/Neovim/17-snippets/
 https://mkaz.blog/working-with-vim/snippets/ Snippets – Working with Vim – mkaz.blog
 
+- execute file/project 
+https://stackoverflow.com/questions/18948491/running-python-code-in-vim Running Python code in Vim - Stack Overflow
+
 ## Frontend 
 
 ## Elixir 
+
+https://medium.com/@jethro.riosa/my-neovim-mac-setup-for-phoenix-elixir-bedd97ba42a8 My Neovim MAC Setup For Phoenix/Elixir | by Pau Riosa | Medium
 
 https://github.com/elixir-lsp/elixir-ls/pull/351 Remove the default .tool-versions file by axelson · Pull Request #351 · elixir-lsp/elixir-ls
 
@@ -439,6 +484,18 @@ Semantic code navigation
 View documentation
 
 View an outline of current file
+
+elixir-ls
+  如果不是 mix 项目，则不创建 .elixir-ls 提示但不干扰用户 no prompts
+
+https://github.com/elixir-lsp/coc-elixir elixir-lsp/coc-elixir: Elixir language server extension based on elixir-ls for coc.nvim
+
+https://github.com/elixir-lsp/elixir-ls elixir-lsp/elixir-ls: A frontend-independent IDE "smartness" server for Elixir. Implements the "Language Server Protocol" standard and provides debugger support via the "Debug Adapter Protocol"
+
+[coc.nvim] No mixfile found in project. To use a subdirectory, set `elixirLS.projectDir` in your settings
+
+https://github.com/JakeBecker/elixir-ls/issues/76 Constantly getting "no mixfile found in project" error (Vim) · Issue #76 · JakeBecker/elixir-ls
+https://stackoverflow.com/questions/62715692/error-when-saving-a-file-in-an-elixir-project-elixirls-projectdir error when saving a file in an elixir project (elixirLS.projectDir) - Stack Overflow
 
 - Project-wide Find/Replace
 
@@ -486,9 +543,48 @@ https://medium.com/@furkanbegen/go-development-with-vim-79cfa0a928b0 Go Developm
 
 ## Java 
 
+https://dev.to/mafflerbach/vim-as-java-ide-3b1a Vim as Java IDE - DEV Community 👩‍💻👨‍💻
+
 ## Rust 
 
+https://rust-analyzer.github.io/manual.html#
+https://github.com/rust-analyzer/rust-analyzer/releases
+
+https://sts10.github.io/2020/10/11/rust-neovim-setup.html Notes on my Rust + Neovim setup (2020) | Prevent Default
+
+https://github.com/fannheyward/coc-rust-analyzer fannheyward/coc-rust-analyzer: rust-analyzer extension for coc.nvim
+
+:CocInstall coc-rust-analyzer
+
+https://dev.to/drmason13/configure-neovim-for-rust-development-1fjn Configure neovim for rust development - DEV Community 👩‍💻👨‍💻
+
+https://dev.to/veer66/enable-rust-autocomplete-in-neovim-j3o Enable Rust autocomplete in Neovim - DEV Community 👩‍💻👨‍💻
+
+https://oren.github.io/articles/rust/neovim/ https://oren.github.io/articles/rust/neovim/
+
 # TODO 
+
+- Tab 补全
+
+- elixir-ls 
+
+elixir-ls
+  如果不是 mix 项目，则不创建 .elixir-ls 提示但不干扰用户 no prompts
+
+- Automatically reload files when changed
+
+https://github.com/ivanceras/rust-vim-setup#automatically-reload-files-when-changed ivanceras/rust-vim-setup: Setting up vim to be used in rust development
+
+- replace regex highlight 
+
+- vim replace under cursor
+
+* 
+https://stackoverflow.com/questions/5541253/in-vim-replace-all-occurrences-of-current-term-under-cursor/30077277 In Vim, replace all occurrences of current term under cursor - Stack Overflow
+
+%s/<c-r><c-a>
+
+https://stackoverflow.com/questions/5702206/find-character-under-cursor-in-vim Find character under cursor in vim - Stack Overflow
 
 - key bind avoid input :h 
 
@@ -518,6 +614,7 @@ https://apple.stackexchange.com/questions/238757/how-do-i-find-the-application-n
 https://alvinalexander.com/mac-os-x/applescript-unix-mac-osx-foreground-application-result/ AppleScript/Unix: How to get the current MacOS foreground application name | alvinalexander.com
 https://alvinalexander.com/blog/post/mac-os-x/running-applescript-from-unix/ How to run an AppleScript from the Mac OS X Unix shell | alvinalexander.com
 https://alvinalexander.com/taxonomy/term/133/ Nodes for the term 'applescript' on alvinalexander.com
+
 - 拦截 iTerm CMD 键
 
 CMD_R 
@@ -577,6 +674,8 @@ VimWiki
   https://cristianpb.github.io/blog/vimwiki-hugo Writing notes with Vimwiki and Hugo static generator - Cristian Perez Brokate
 
 # Refs 
+
+https://areweideyet.com/ Are we (I)DE yet?
 
 https://vimconfig.com/ VimConfig - Sane and simple Vim configuration
 
