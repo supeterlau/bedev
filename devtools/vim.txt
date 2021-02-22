@@ -286,6 +286,14 @@ iTerm
 
 ## recording (Macro)
 
+https://www.thegeekstuff.com/2009/01/vi-and-vim-macro-tutorial-how-to-record-and-play/ Vi and Vim Macro Tutorial: How To Record and Play
+
+按 q 开始记录，(q 被绑定为 <Leader>q)，跟者按下 a lower case character 对宏命名
+执行任意操作，会被记录
+退出记录再按下 q 
+执行宏 @ 加 宏名
+
+
 ## vimscript 
 
 - variable 
@@ -661,6 +669,11 @@ fzf:
   Ctrl_s
   Ctrl_v
 
+emmet:
+
+  Ctrl-y
+
+  https://stackoverflow.com/questions/34639369/how-to-expand-vim-emmet-abbreviation How to expand VIM emmet abbreviation - Stack Overflow
 
 
 # Misc
