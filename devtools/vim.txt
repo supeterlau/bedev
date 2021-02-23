@@ -16,6 +16,34 @@ https://stackoverflow.com/questions/14717571/vimscript-how-to-get-current-filety
 
 https://learnvimscriptthehardway.stevelosh.com/chapters/17.html Status Lines / Learn Vimscript the Hard Way
 
+:h statusline 
+
+format: 
+
+  C's printf or Python's string interpolation
+
+  things that start with % are expanded to different text depending on what comes after them
+
+:set statusline=%f
+
+set statusline=%f\ -\ FileType:\ %y
+
+set statusline=%f         " Path to the file
+set statusline+=\ -\      " Separator
+set statusline+=FileType: " Label
+set statusline+=%y        " Filetype of the file
+
+set statusline=%!MyStatusLine() 执行 function 
+
+https://www.reddit.com/r/vim/comments/2zkmmu/where_can_i_find_the_default_statusline_setting/ Where can I find the default statusline setting? : vim
+
+/ruler 
+
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
+
+echo &statusline | set statusline&vi | echo &statusline
+echo &statusline | set statusline&vim | echo &statusline
+
 ## indent 
 
 https://vi.stackexchange.com/questions/7975/how-can-i-change-the-indent-size indentation - How can I change the indent size? - Vi and Vim Stack Exchange
@@ -193,6 +221,12 @@ https://stackoverflow.com/questions/1675688/make-vim-show-all-white-spaces-as-a-
 
 :set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 
+esc 退出时生效
+
+  10i*<esc>
+
+https://www.xspdf.com/resolution/52335260.html Repeating characters in VIM insert mode
+
 - display not copy 
 
 https://www.reddit.com/r/vim/comments/e4jwxb/how_not_to_copy_eol_character/ How not to copy eol character : vim
@@ -263,6 +297,14 @@ buffer/history/dirs
 
 https://vim.fandom.com/wiki/Learn_to_use_help Learn to use help | Vim Tips Wiki | Fandom
 
+https://stackoverflow.com/questions/630884/opening-vim-help-in-a-vertical-split-window Opening Vim help in a vertical split window - Stack Overflow
+
+:vert help
+
+topleft (to) and botright (bo).
+
+:vert bo help
+
 jump 
   Ctrl-] to follow the link
   Ctrl-T to go back
@@ -304,6 +346,14 @@ https://medium.com/usevim/vim-101-let-13fd86c7df82 Vim 101: Let | by Alex R. You
 
 https://stackoverflow.com/questions/9990219/vim-whats-the-difference-between-let-and-set Vim: What's the difference between let and set? - Stack Overflow
 
+https://vi.stackexchange.com/questions/10329/use-variable-for-mapping-inside-vimrc key bindings - Use variable for mapping inside vimrc - Vi and Vim Stack Exchange
+
+The :map command takes :help key-notation, but not variables.
+
+execute 'sleep' timetowait . 'm'
+
+execute 'nnoremap <silent>' . s:meta . ' :set paste<CR>m`o<Esc>``:set nopaste<CR>'
+
 - function 
 
 https://learnvimscriptthehardway.stevelosh.com/chapters/23.html Functions / Learn Vimscript the Hard Way
@@ -327,6 +377,20 @@ E127
 
 https://stackoverflow.com/questions/22633115/why-do-i-get-e127-from-this-vimscript python - Why do I get E127 from this vimscript? - Stack Overflow
 https://vi.stackexchange.com/questions/26479/refreshing-vim-file-from-within-a-function buffers - Refreshing vim file from within a function - Vi and Vim Stack Exchange
+
+默认参数
+
+A one-line version of DrAl's answer:
+
+let current_scheme = get(g:, 'colors_name', 'default')
+The get() function will fall back to 'default' if the variable has not yet been set.
+
+https://stackoverflow.com/questions/2419624/how-to-tell-which-colorscheme-a-vim-session-currently-uses configuration - How to tell which colorscheme a Vim session currently uses - Stack Overflow
+
+https://vi.stackexchange.com/questions/2410/how-to-make-a-vimscript-function-with-optional-arguments How to make a vimscript function with optional arguments? - Vi and Vim Stack Exchange
+
+  let arg2 = get(a:, 1, 0)
+  let arg3 = get(a:, 2, 0)
 
 - condition 
 
@@ -585,6 +649,12 @@ https://github.com/ivanceras/rust-vim-setup#automatically-reload-files-when-chan
 
 - replace regex highlight 
 
+https://vim.fandom.com/wiki/Search_and_replace Search and replace | Vim Tips Wiki | Fandom
+
+%s 中的 s 是 substitute
+
+:h substitute
+
 - vim replace under cursor
 
 * 
@@ -686,6 +756,22 @@ VimWiki
 
   https://cristianpb.github.io/blog/vimwiki-hugo Writing notes with Vimwiki and Hugo static generator - Cristian Perez Brokate
 
+# Q&A
+
+- 防止主题不见
+
+https://stackoverflow.com/questions/5698284/in-my-vimrc-how-can-i-check-for-the-existence-of-a-color-scheme vim - In my .vimrc, how can I check for the existence of a color scheme? - Stack Overflow
+
+- asm 语法高亮问题
+
+dracula 主题导致
+
+语法检查是 ale 显示
+
+- 找到编译参数
+
+https://stackoverflow.com/questions/13294267/how-can-you-check-which-options-vim-was-compiled-with How can you check which options vim was compiled with? - Stack Overflow
+
 # Refs 
 
 https://areweideyet.com/ Are we (I)DE yet?
@@ -697,3 +783,5 @@ https://vi.stackexchange.com/questions/6112/how-can-i-get-vim-to-ignore-all-user
 https://stackoverflow.com/questions/8977649/how-to-locate-the-vimrc-file-used-by-vim-editor command - How to locate the vimrc file used by vim editor? - Stack Overflow
   so $MYVIMRC
 
+vim client/server
+https://vi.stackexchange.com/questions/317/can-i-open-a-file-in-an-existing-vim-instance-from-an-external-command sessions - Can I open a file in an existing Vim instance from an external command? - Vi and Vim Stack Exchange

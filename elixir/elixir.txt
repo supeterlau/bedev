@@ -3020,6 +3020,14 @@ mix deps.tree
 
 mix help deps
 
+指定仅在特定环境下引入依赖
+
+{some_test_deps, "~> 1.0", only: :test}
+
+改变开发环境
+
+MIX_ENV=prod mix compile
+
 2. 内部依赖
 
 项目特定依赖。
