@@ -1,3 +1,6 @@
+https://www.cyberciti.biz/ nixCraft - Linux Tips, Hacks, Tutorials, And Ideas In Blog
+
+
 ## The Silver Searcher (aka. ag)
 
 https://github.com/ggreer/the_silver_searcher ggreer/the_silver_searcher: A code-searching tool similar to ack, but faster.
@@ -32,14 +35,16 @@ ag --help
 
 ag -p nvim/data/plugged 'status.vim' .
 
-- sed 
+# sed 
 
 sed -e 's/aaa/bbb/g' string
 
 https://stackoverflow.com/questions/9984748/how-do-i-get-sed-to-read-from-standard-input linux - How do I get sed to read from standard input? - Stack Overflow
 
-- awk 
+# awk 
 
-- grep 
+# grep 
 
-- find 
+
+
+# find 
