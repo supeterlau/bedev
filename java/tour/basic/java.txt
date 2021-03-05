@@ -1,0 +1,184 @@
+http://tutorials.jenkov.com/java/your-first-java-app.html
+
+01. main
+
+java -cp classes myjavacode.MyClass
+
+传入参数
+
+java -cp classes myjavacode.MyClass Hello World
+
+含有 main 函数的类是 main 类
+
+You can have as many classes as you want in your project with a main() method in. But, the Java Virtual Machine can only be instructed to run one of them at a time. You can still call the other main() methods from inside the main() method the Java Virtual Machine executes (you haven't seen how yet) and you can also start up multiple virtual machines which each execute a single main() method.
+
+javac src/myfirstapp/*.java -d classes
+
+02. 核心概念
+
+http://tutorials.jenkov.com/java/core-concepts.html
+
+Variables
+
+Operations
+  操作变量
+  控制流程
+    for
+    while
+    if
+    switch
+    方法调用 Method calls
+
+Classes + Objects
+
+A class can have fields, constructors and methods (plus more, but that is not important now)
+
+  Fields
+    A field is a variable that belongs to a class or an object.
+
+  Constructors
+    Constructors are a special kind of method that is executed when an object of that class is created. Constructors typically initialize the objects internal fields - if necessary.
+
+  Method
+
+Interface
+  An interface describes what methods a certain object should have available on it. A class can implement an interface.
+
+03. 语法
+
+http://tutorials.jenkov.com/java/syntax.html
+
+扩展 .java
+
+包声明
+
+  package core.java;
+
+导入语句
+
+  import java.util.HashMap;
+
+  只需要导入不再同一个包内的其他文件
+
+04. 变量
+
+http://tutorials.jenkov.com/java/variables.html
+
+四种变量类型
+
+Non-static fields
+
+  属于 object 的变量，又称 instance variables 实例变量
+
+Static fields
+
+  属于 class 的变量，类变量 class variables
+
+Local fields
+
+  方法内的变量
+
+Parameters
+
+  方法参数
+
+变量声明 type myVarName;
+
+type 可以是
+
+  primitive data types
+
+    byte
+    short
+    char
+    int
+    long
+    float
+    double
+
+  object types
+
+    Byte
+    Short
+    Character
+    Integer
+    Long
+    Float
+    Double
+    String
+
+变量名约定
+  区分大小写
+  首字符 letter 或 $ 或 _
+  不能是 reserved key words
+
+Java 版本 10: local-variable type inference
+
+  String myStr = "My String";
+
+  可以写为
+
+  var myStr = "My String";
+
+var myClassObj = new MyClass();
+
+05. 数据类型
+
+决定变量占用内存空间大小
+
+
+Primitive data types 
+  boolean true/false
+  byte    8bit -128 to 127
+  short   16bit signed value
+  char    16bit Unicode character
+  int     32bit 4bytes
+  long    64bit 8bytes
+  float   32bit 
+  double  64bit
+
+Object references
+
+  多个不同变量可以引用同一个 object，primitive data types 无法做到。
+
+  Object 版本的基本类型是 immutable，但引用可以改变
+
+Auto Boxing
+
+  需要注意 NullPointerException 当 Object version 值为 null 时会报错。编译通过，运行时报错。
+
+06. Math 
+
+import java.lang.Math;
+
+Math.ceil() : floating point value 到 nearest larger integer value 返回值为 doule
+
+Math.random() : 返回 0 到 1
+
+Math.exp()
+Math.log() e
+Math.log10() 10
+Math.pow()
+Math.sqrt()
+
+三角函数
+
+Math.toDegrees()
+
+07. Arrays 
+
+same type 元素集合
+
+int[] intArray;
+
+方括号位置可选
+  SomeClass[] someClassArray;
+  SomeClass someClassArray[];
+
+数组初始化，大括号内是数组字面量值
+
+[TBD] http://tutorials.jenkov.com/java/arrays.html
+
+运行 Java: 
+  
+  sh ./compile.sh demo/Demo07.jav
