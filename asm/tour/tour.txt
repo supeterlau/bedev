@@ -1,0 +1,71 @@
+Quick Tour
+
+https://www.tutorialspoint.com/assembly_programming
+
+编译环境
+
+$HQ/Space/play/extra.sh
+
+docker exec -it play-dev-extra zsh
+
+# 1. Basic Syntax
+
+https://www.tutorialspoint.com/assembly_programming/assembly_basic_syntax.htm
+
+Assembly 程序分为三个部分
+
+data 部分
+  声明初始化数据
+  运行时不改变
+  section .data 
+
+bss 部分
+  声明变量
+  section .bss
+
+text 部分
+  实际代码部分
+  section .text
+
+  必须要以 global _start 开始。类似 main 函数，程序入口
+
+  section .text
+    global _start 
+  _start:
+
+注释 ; This is a comment 
+
+语句有三种
+  可执行指令 或 指令 executable instructions or instructions
+    每个指令都由一个 opcode 组成
+    Each executable instruction generates one machine language instruction.
+  Assembler directives or pseudo-ops 
+    不执行，不生成机器代码
+  macros 
+    文本替换机制
+
+语句格式
+  [label]   mnemonic   [operands]   [;comment]
+
+# 2. Memory Segements
+
+https://www.tutorialspoint.com/assembly_programming/assembly_memory_segments.htm
+
+内存段
+
+section 关键字可以替换为 segment 
+
+
+
+
+
+
+
+Linux 编译
+  nasm -f elf hello.asm
+  ld -m elf_i386 -s -o hello hello.o
+
+  uname -m 查看多少位系统
+
+macOS 编译运行 https://gist.github.com/FiloSottile/7125822
+  64bit macOS 换成 rxx 系列寄存器即可
