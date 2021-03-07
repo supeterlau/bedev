@@ -1,0 +1,144 @@
+QuickStart:
+
+https://www.tutorialspoint.com/scala/index.htm
+
+a modern multi-paradigm programming language
+
+express common programming patterns in a concise, elegant and type-safe way.
+
+creator: Martin Odersky
+
+1. Intro
+
+object HelloWorld {
+    def main(args: Array[String]) {
+        println("Hello, World!")
+    }
+}
+
+install see mainpage.
+
+>scala -version
+>scala // 启动 repl 界面
+
+scalac File.java
+scala File
+
+object
+class
+methods
+fields 每个对象唯一的实例变量
+closure
+trait 封装 method 和 field 定义。通过指定支持的方法签名来定义 object types.
+
+starts with a letter or an underscore, followed by further letters, digits, or underscores. 
+
+The '$' character is a reserved keyword in Scala and should not be used in identifiers. $ 是保留字
+
+字面量标识符
+A literal identifier is an arbitrary string enclosed in back ticks (` . . . `).
+Following are legal literal identifiers −
+`x` `<clinit>` `yield`
+
+comment like Java /* */ 和 //
+
+基于行的语言 末尾可以加可不加分号 ; 一行多语句必须加分号 (of course)
+
+导入包:
+    import scala.xml._
+    import scala.collection.mutable.HashMap
+    import scala.collection.immutable.{TreeMap, TreeSet}
+
+Apply Dynamic <Detail>
+
+2. Data Types
+
+Byte    1
+Short   2
+Int     4
+Long    8
+
+Float
+Double
+
+Char
+String
+
+Boolean true/false
+
+Unit    no value
+Null    null/empty reference
+Nothing The subtype of every other type; includes no values
+
+Any     The supertype of any type
+AnyRef  The supertype of any reference type
+
+字面量:
+1000l 1000L
+1.3f 1.3F
+
+Symbol 字面量: A symbol literal 'x is a shorthand for the expression scala.Symbol("x")  Symbol is a case class
+
+字符 ''
+字符串 ""
+多行字符 """ ... """
+
+Null Values
+scala.Null
+
+3. 变量
+
+var myVar :Int 变量
+val myVal :String 常量 
+
+多重赋值
+val (myVar1: Int, myVar2: String) = Pair(40, "Foo")
+
+They can exist as fields, as method parameters and as local variables.
+
+Method parameters are always immutable which are defined by val keyword
+函数参数总是常量
+
+变量作用域:
+
+    fields
+      内部都可以访问
+      外部要看 access modifiers
+      可以为 可变或不可变
+    method parameters
+      只能内部访问
+      常为 不可变
+    local variables
+      在函数内部定义的
+      通过 return 这类变量可以从外部访问
+
+4. Classes & Objects
+
+>1: A class is a blueprint for objects
+
+继承 子类继承父类全部 non-private members 
+
+不同签名的同名函数不互相覆盖
+
+>2: Implicit Classes
+
+>3: Scala is more object-oriented than Java because in Scala, we cannot have static members.
+
+A singleton is a class that can have only one instance, i.e., Object. You create singleton using the keyword object instead of class keyword.
+无法传递参数给单例的 primary constructor
+
+
+学习 scala -> scala.js -> binding.scala
+http://appliedscala.com/blog/2016/learning-scala/
+http://appliedscala.com/blog/
+http://fileadmin.cs.lth.se/scala/scala-impatient.pdf 快学 scala
+https://twitter.github.io/scala_school/basics.html Twitter scala
+http://docs.scala-lang.org/tour/tour-of-scala.html 官方文档
+
+
+命令习惯
+
+大小写敏感
+类名 class MyFirstScalaClass
+方法名 def myMethodName()
+文件名 和类名一致
