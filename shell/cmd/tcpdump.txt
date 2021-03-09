@@ -1,0 +1,7 @@
+https://danielmiessler.com/study/tcpdump/
+https://mitmproxy.org/
+
+tcpdump -nnSX port 443
+
+https://stackoverflow.com/questions/34075430/i-am-having-issues-with-tcpdump-in-terminal
+  use sudo
