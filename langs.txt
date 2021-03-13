@@ -1,0 +1,32 @@
+function
+	javascript
+	bash
+	php
+
+func
+	go
+
+fun
+	kotlin
+	swift
+
+fn
+	rust
+	vlang
+	clojure (anonymous function
+	elixir (anonymous function
+
+def
+	elixir
+	ruby
+	python
+
+defn
+	scheme
+	clojure
+
+no keyword
+	c/cpp/java
+	erlang
+	dart
+
