@@ -1,0 +1,30 @@
+大写标识符被导出
+
+var name: string = "John Wick"
+
+const 不能用简短形式
+
+type Vertex {
+  X int
+	Y int
+}
+
+v := Vertex{1, 2}
+
+array
+	var intArr: [10]int = {1...10}
+
+slice
+  var intSlice: []int = intArr[1:4]; 1-3
+	s := make([]string, len, cap)
+
+map
+	var vmap = map[string]Vertex{
+		"key1": Vertex{1,2},
+		"key2": {3,6},
+	}
+
+channel
+  ch := make(chan int, 5)
+	ch<- value
+	v := <-ch
