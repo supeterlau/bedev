@@ -1,0 +1,58 @@
+Ch1
+
+https://www.tutorialspoint.com/scala/scala_basic_syntax.htm
+
+Identifiers 支持四种
+
+  Alphanumeric 数字 字母 下划线
+
+  Operator 操作符字符 + ++ 内部转为 $colon$colon
+
+  Mixed unary_+,  myvar_= 操作符重载 字母+下划线+操作符
+
+  Literal `x` `<click>`
+
+关键字 
+
+  forSome
+  lazy
+  match
+  sealed
+  trait
+  Var 
+  type
+  =>
+  <-
+  <:
+  <%
+  >:
+
+注释
+  /* */
+  // 
+
+
+Ch2 数据类型
+
+https://www.tutorialspoint.com/scala/scala_data_types.htm
+
+Byte 1 byte
+Short 2 bytes
+Int 4 bytes
+Long 8 bytes
+Float 4 bytes
+Double 8 bytes
+Char 2 bytes unsigned Unicode
+String 
+Boolean true/false 
+Unit 对应 no value
+Null 对应 null 或 空 reference
+Nothing 全部类型的子类型
+Any 全部类型的父类型
+AnyRef 全部引用类型的父类型
+
+Ch3 变量
+
+https://www.tutorialspoint.com/scala/scala_variables.htm
+
+
