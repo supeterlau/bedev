@@ -1,0 +1,27 @@
+https://cons.io/
+
+https://cons.io/guide/
+
+https://cons.io/tutorials/
+
+- 安装 
+
+brew install gerbil-scheme
+
+关联语言 gambit
+
+  https://gambitscheme.org/ gambitscheme.org
+
+  https://github.com/gambit/gambit gambit/gambit: Gambit is an efficient implementation of the Scheme programming language.
+
+- 体验
+
+The Gerbil interpreter is $GERBIL_HOME/bin/gxi
+
+the compiler is $GERBIL_HOME/bin/gxc
+
+gxi 
+
+(displayln "Hello Gerbil")
+
+https://cons.io/guide/intro.html#hello-world An Introduction to Gerbil | Gerbil Scheme
