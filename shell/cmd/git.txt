@@ -1,0 +1,16 @@
+git.txt
+
+:Author: Peter Lau
+:Email: superpeterlau@outlook.com
+:Date: 2021-03-22 14:05
+
+- 分支别名
+
+例如 master 和 main 
+
+https://til.hashrocket.com/posts/mujkrj4yru-alias-a-git-branch-name-
+
+git symbolic-ref refs/heads/epic refs/heads/long-epic-branch-name
+https://stackoverflow.com/questions/14365946/git-branch-alias
+https://stackoverflow.com/questions/549920/is-it-possible-to-alias-a-branch-in-git/549949#549949
+https://davidwalsh.name/set-branch-alias-with-git

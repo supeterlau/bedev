@@ -1,0 +1,5 @@
+- 仅显示匹配内容
+
+https://stackoverflow.com/questions/1546711/can-grep-show-only-words-that-match-search-pattern
+
+grep -oh "" file
