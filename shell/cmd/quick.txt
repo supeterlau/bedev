@@ -48,3 +48,8 @@ https://stackoverflow.com/questions/9984748/how-do-i-get-sed-to-read-from-standa
 
 
 # find 
+
+# ps 
+
+只显示 pid command
+ps -eo pid,command | grep -v grep | grep -i emacs
