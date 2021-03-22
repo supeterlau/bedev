@@ -1,0 +1,25 @@
+## gdb 
+
+## lldb 
+
+x64dbg
+
+程序逆向反汇编修改神器，免费开源x64/x32位动态调试器，适用Windows的专业程序调试器
+
+https://www.52pojie.cn/thread-1374894-1-1.html x64dbg 简体中文版(Feb 15 2021) - 『逆向资源区』 - 吾爱破解 - LCG - LSG |安卓破解|病毒分析|www.52pojie.cn
+
+OllyDbg调试工具类似，支持类似C表达式解析器、DLL和EXE文件调试、IDA式的跳跃箭头与侧边栏、动态识别模块指令、反汇编、自动化可调试的脚本语言等诸多实用逆向分析功能
+
+https://www.52pojie.cn/thread-1362353-1-1.html 从零开始教你做辅助(一) - 『脱壳破解区』 - 吾爱破解 - LCG - LSG |安卓破解|病毒分析|www.52pojie.cn
+
+游戏修改器
+https://wiki.cheatengine.org/index.php?title=Main_Page Cheat Engine
+
+https://www.52pojie.cn/thread-1362431-1-1.html 简明、现代而优雅的破解技术笔记（一） - 『脱壳破解区』 - 吾爱破解 - LCG - LSG |安卓破解|病毒分析|www.52pojie.cn
+
+Windows 电脑
+  
+  - GameDev
+
+  - 最新版 Visual Studio，并且使用C语言或C++来编写程序
+
