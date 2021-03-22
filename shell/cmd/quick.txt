@@ -53,3 +53,5 @@ https://stackoverflow.com/questions/9984748/how-do-i-get-sed-to-read-from-standa
 
 只显示 pid command
 ps -eo pid,command | grep -v grep | grep -i emacs
+
+https://superuser.com/questions/568245/how-to-get-only-the-user-the-pid-and-the-command-run-for-a-specific-process-u
