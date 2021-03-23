@@ -36,6 +36,12 @@ https://www.cyberciti.biz/open-source/command-line-hacks/ag-supercharge-string-s
 
 ag STRING dir1 dir2 dir3
 
+搜索特殊字符
+
+https://unix.stackexchange.com/questions/197894/how-use-token-when-using-it-for-searching-with-ag-awk
+
+ag '\(\)' dest_files
+
 ## qemu 
 
 brew install qemu nasm (support linux/macos)
