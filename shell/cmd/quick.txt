@@ -1,5 +1,14 @@
 https://www.cyberciti.biz/ nixCraft - Linux Tips, Hacks, Tutorials, And Ideas In Blog
 
+  tee 
+    显示在终端同时输出到文件 
+  tr 
+    https://linuxize.com/post/linux-tr-command/
+  cat 
+    -e 显示不可见字符
+  mv 
+    不覆盖同名文件
+  cp -avh
 
 
 # sed 
@@ -22,3 +31,11 @@ https://stackoverflow.com/questions/9984748/how-do-i-get-sed-to-read-from-standa
 ps -eo pid,command | grep -v grep | grep -i emacs
 
 https://superuser.com/questions/568245/how-to-get-only-the-user-the-pid-and-the-command-run-for-a-specific-process-u
+
+# mv 
+
+mv file1 file2 dest_folder
+-i 覆盖前提示
+-n 不覆盖旧文件
+-u 只移动新文件
+https://shapeshed.com/unix-mv/#how-to-not-overwrite-an-existing-file

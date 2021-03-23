@@ -1,6 +1,11 @@
-awk
+Tour:
+  https://www.tutorialspoint.com/unix/index.htm
+  https://bash.cyberciti.biz/guide/Main_Page
 
-添加一列到 csv
+
+- 添加一列到 csv
+
+awk
 
   awk -v random=$RANDOM -F, '{$2=rand","$2}1' OFS=, input.csv
 
@@ -18,3 +23,23 @@ FILE=/etc/resolv.conf
 if [ -f "$FILE" ]; then
     echo "$FILE exists."
 fi
+
+- check variable is empty string 
+
+https://www.diskinternals.com/linux-reader/bash-if-string-not-empty/
+
+https://unix.stackexchange.com/questions/396526/why-do-z-and-v-have-different-syntax
+
+https://unix.stackexchange.com/questions/109625/shell-scripting-z-and-n-options-with-if
+  man test 
+  man [
+https://tldp.org/LDP/abs/html/comparison-ops.html
+https://www.tutorialspoint.com/unix/unix-basic-operators.htm
+
+check_empty() {
+[ -z $1 ] && echo "Empty" || echo "Get $1"
+}
+
+- Logical not 
+
+[ ! expression ]

@@ -32,6 +32,10 @@ ag --help
 
 ag -p nvim/data/plugged 'status.vim' .
 
+https://www.cyberciti.biz/open-source/command-line-hacks/ag-supercharge-string-search-through-directory-hierarchy
+
+ag STRING dir1 dir2 dir3
+
 ## qemu 
 
 brew install qemu nasm (support linux/macos)
