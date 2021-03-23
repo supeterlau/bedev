@@ -39,3 +39,11 @@ mv file1 file2 dest_folder
 -n 不覆盖旧文件
 -u 只移动新文件
 https://shapeshed.com/unix-mv/#how-to-not-overwrite-an-existing-file
+
+# alias
+
+多行
+
+alias v="echo 1;
+echo 2;
+echo 3;"
