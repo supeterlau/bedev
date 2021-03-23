@@ -42,6 +42,10 @@ https://unix.stackexchange.com/questions/197894/how-use-token-when-using-it-for-
 
 ag '\(\)' dest_files
 
+https://stackoverflow.com/questions/41594706/silver-searcher-ag-with-multiple-search-expressions
+
+ag "pattern1|patter2" dest
+
 ## qemu 
 
 brew install qemu nasm (support linux/macos)
