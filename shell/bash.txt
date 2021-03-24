@@ -2,6 +2,45 @@ Tour:
   https://www.tutorialspoint.com/unix/index.htm
   https://bash.cyberciti.biz/guide/Main_Page
 
+- sh -c 中如何定义函数? (unsolved) 
+
+sh -c "custom(){}; custom" (EOF error)
+
+- clean .zshrc
+
+sed -n '/# ZSHRC END/,$p' $ZSHRC | tail -n +3
+
+- heredoc pipe 
+
+cat <<DOC | xargs sh
+ls;
+date;
+DOC
+
+(
+cat <<DOC 
+ls;
+date;
+DOC
+) | xargs sh
+
+- 提取匹配分组 macOS 
+
+macOS grep 不支持 P (perl-style)
+
+可以用 sed 或 bash 字符提取
+
+  sed -nE "s/patttern/\group_number/p"
+
+  https://tldp.org/LDP/abs/html/string-manipulation.html
+
+
+
+- 查看处于哪一层 shell 
+
+  https://en.wikipedia.org/wiki/Shellshock_(software_bug)
+
+echo $SHLVL
 
 - one line condition
 [ -d iso/boot ] && echo 'yes' || echo 'no'
