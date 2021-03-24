@@ -3,6 +3,16 @@ Tour:
   https://bash.cyberciti.biz/guide/Main_Page
 
 
+- one line condition
+[ -d iso/boot ] && echo 'yes' || echo 'no'
+https://stackoverflow.com/questions/17203122/bash-if-else-statement-in-one-line/17203203
+
+- Default parameter
+
+VAR=${1:-DEFAULT}
+
+https://coderwall.com/p/s8n9qa/default-parameter-value-in-bash
+
 - 添加一列到 csv
 
 awk
