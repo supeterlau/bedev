@@ -71,3 +71,11 @@ find config file:
   browsh --debug
 
 https://www.brow.sh/docs/mosh/ Mosh is better than SSH - Browsh
+
+# jq 
+
+Lightweight and flexible command-line JSON processor
+
+brew info jq 
+
+brew install jq
