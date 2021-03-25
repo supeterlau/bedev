@@ -47,3 +47,9 @@ https://shapeshed.com/unix-mv/#how-to-not-overwrite-an-existing-file
 alias v="echo 1;
 echo 2;
 echo 3;"
+
+# ssh-add
+
+https://unix.stackexchange.com/questions/90853/how-can-i-run-ssh-add-automatically-without-a-password-prompt
+
+https://kb.iu.edu/d/aeww About ssh-agent and ssh-add in Unix
