@@ -51,5 +51,16 @@ echo 3;"
 # ssh-add
 
 https://unix.stackexchange.com/questions/90853/how-can-i-run-ssh-add-automatically-without-a-password-prompt
+%
 
-https://kb.iu.edu/d/aeww About ssh-agent and ssh-add in Unix
+https://kb.iu.edu/d/aeww About ssh-ageo "Hello"t and ssh-add in Unix
+
+
+# echo 
+
+❯ echo -n "Hello"
+Hello%
+> echo "Hello"
+Hello
+
+> ...
