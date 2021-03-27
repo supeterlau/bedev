@@ -1,0 +1,1298 @@
+
+In Elixir, a world without references, we always pass by value
+
+Elixir 语言学习路线
+  https://www.douban.com/doulist/36683383/
+
+@doc false
+@moduledoc false
+隐藏文档
+
+
+IEx 中打印 CharLists
+1..10 |> Enum.filter(&(&1 == 8)) |> inspect(charlists: false)
+https://www.theguild.nl/print-list-of-integers-as-integers-in-iex/
+
+
+__add__/2 或者 _add_/2
+The compiler does not import functions with leading underscores
+hint to anyone reading the code of their intended private usage.
+
+
+编译
+    elixirc math.ex
+    生成 Elixir.Math.beam
+    同级目录启动 iex 就可以使用
+
+
+iex> i fn x -> x end
+
+
+Comprehensions
+
+    列表解析+filter
+
+    iex> multiple_of_3? = fn(n) -> rem(n, 3) == 0 end
+    iex> for n <- 0..5, multiple_of_3?.(n), do: n * n
+    [0, 9]
+
+    dirs = ['/home/mikey', '/home/james']
+    for dir  <- dirs,
+        file <- File.ls!(dir),
+        path = Path.join(dir, file),
+        File.regular?(path) do
+    File.stat!(path).size
+    end
+
+    iex> for {key, val} <- %{"a" => 1, "b" => 2}, into: %{}, do: {key, val * val}
+    %{"a" => 1, "b" => 4}
+
+    iex> for {key, val} <- %{"a" => 1, "b" => 2}, do: {key, val * val}
+    [{"a", 1}, {"b", 4}]
+
+
+> i 'hello'
+
+'h' === "h"
+false
+
+'h'
+Data type
+  List
+
+"h"
+Data type
+  BitString
+
+
+Atom
+    true == :true
+
+
+(Linked) Lists
+  链表
+    获取长度需要遍历
+    头部增加元素 比 尾部要快
+[1, 2, 3] ++ [4, 5, 6]
+  • ++/2
+  • --/2
+  • hd/1
+  • tl/1
+  • in/2
+  • length/1
+
+
+Tuple h(Tuple)
+  顺序存储 -> 获取大小 获取单个索引元素很快；更新和添加会慢
+  {"aa", 1}
+  • elem/2 - access a tuple by index
+    elem {}, 1
+      ArgumentError
+  • put_elem/3 - insert a value into a tuple by index
+  • tuple_size/1 - get the number of elements in a tuple
+
+
+Keyword List
+    the first item of the tuple (i.e. the key) is an atom
+    [{:a, 1}, {:b, 2}] == [a: 1, b: 2]
+
+    可以有多个同样的 key，不常用与模式匹配，因为要求左右元素数必须一致。有 Keyword 模块。
+    需要一一对应考虑使用 map
+
+
+Map
+    Maps allow any value as a key.
+    Maps’ keys do not follow any ordering.
+
+map = %{:a => 1, 2 => :b}
+%{2 => :b, :a => 1}
+map[:a]
+map[2]
+map[:c] == nil
+
+map 键全为原子类型时
+When all the keys in a map are atoms, you can use the keyword syntax for convenience:
+iex> map = %{a: 1, b: 2}
+%{a: 1, b: 2}
+map.a
+> map.c
+** (KeyError) key :c not found in: %{a: 1, b: 2}
+
+%{map | one: "one"}
+
+map_size(amap)
+4
+%{:west => a} = amap
+%{east: :south, north: :east, south: :west, west: :north}
+a == :north
+
+
+Struct
+    bare maps
+    none of the protocols implemented for maps are available for structs
+        例如无法使用 john[:name] 或 Enum.each
+        可以使用 Map 模块的方法
+        提供 data polymorphism 能力
+        MapSets (sets based on maps) are implemented as structs
+            set = %MapSet{} = MapSet.new
+
+            MapSet 原来没有 Size 协议，
+                Size.size(%{})
+                Size.size(%MapSet{}) 报错
+            可以手动实现 Size 协议
+            defimpl Size, for: MapSet do
+              def size(set), do: MapSet.size(set)
+            end
+        use structs to build more robust data types, like queues, and implement all relevant protocols
+
+defmodule User do
+    @enforce_keys [:name] 指定必须参数
+    defstruct name: "John", age: 27
+    defstruct [:name] 不指定默认值默认值为 nil
+end
+
+john = %User{}
+
+%User{name: "Jane"}
+
+%User.name
+
+jane = %{john | name: "Jane"} 更新语法 update syntax (|)
+
+%User{name: name} = john 模式匹配
+
+is_map(john)
+
+
+bitstring <<1 :: size(15)>>
+binary    <<1 :: size(16)>>
+
+<<0, 1, x :: binary>> = <<0, 1, 2, 3>>
+"he" <> rest = "hello"
+
+Charlists a list of code points
+'hełło'
+[104, 101, 322, 322, 111]
+注意 IEx will only output code points if any of the integers is outside the ASCII range
+
+
+模式匹配
+    pattern match against an existing variable, you need to use the pin operator ^
+    x = 1
+    {y, ^x} = {2, 1}
+    {y, ^x} = {2, 2} MatchError
+
+    Guards
+        https://hexdocs.pm/elixir/guards.html
+
+        pattern matching with more complex checks
+
+        errors in guards do not leak but simply make the guard fail. 强大
+
+        自定义 Guards
+        defmodule MyInteger do
+            defmacro is_even(number) do
+                quote do
+                    is_integer(unquote(number)) and rem(unquote(number), 2) == 0
+                end
+            end
+        end
+
+
+Control Flow
+    有 if else / unless else
+    无 elseif
+        case compare a value against many patterns until we find a matching one
+        cond match against different values
+        允许额外条件 allow extra conditions
+            when x > 0 (guards)
+    case value do
+        pattern {when ...} ->
+          ...
+        pattern ->
+          ...
+        _ ->
+          ...
+    end
+
+    f = fn
+        x, y when x > 0 -> x + y
+        x, y -> x * y
+    end
+    f.(x, y)
+
+    cond
+
+
+Function
+    cannot invoke def/2 outside module
+
+    命名习惯 https://hexdocs.pm/elixir/master/naming-conventions.html
+        question mark in zero? means that this function returns a boolean
+        以 ? 结尾的函数返回 布尔值
+
+    named functions support both do: and do/end block syntax
+
+    匿名函数 add = fn a, b -> a + b end
+    is_function(func_name, func_a)
+    (fn -> x = 0 end).()
+
+Elixir 中参数用逗号分隔 each argument is separated by a comma
+    do/end block
+
+    if true, do: 1 + 2 (if/2 macro)
+
+    if false, do: :this, else: :that
+
+    if true do
+      a = 1 + 2
+      a + 10
+    end
+
+    if true, do: (
+      a = 1 + 2
+      a + 10
+    )
+
+    do/end blocks is they are always bound to the outermost function call.
+
+    is_number if true do
+      1 + 2
+    end (error)
+
+    会被解释为
+    is_number(if true) do
+      1+2
+    end
+
+    修正
+    is_number(if true do
+      1+2
+    end)
+
+def zero(x) when x > 10, do
+  ...
+end
+
+函数捕获
+    name/arity  can actually be used to retrieve a named function as a function type
+
+fun = &Math.zero?/1
+
+fun = &(&1 + 1)
+
+is_function(fun)
+
+&is_function/1
+(&is_function/1).(fun)
+
+
+Binaries (and bitstrings)
+In Elixir, you can define a binary using <<>>:
+iex> <<0, 1, 2, 3>>
+<<0, 1, 2, 3>>
+iex> byte_size(<<0, 1, 2, 3>>)
+4
+
+
+"123" bitstring
+iex> bit_size(<<433::16, 3::3>>)
+    19
+iex> bit_size(<<1, 2, 3>>) bit_size(<<1::8, 2::8, 3::8>>)
+    24
+
+
+Pipe 管道操作符 h((|>/2)) macro
+    left |> right
+        left 作为 right 的第一个参数
+
+    一定要在管道中使用匿名函数的话: anonymous function calls foo.()
+    1 |> (&(&1+2)).()
+    fun = &(&1 + 1)
+    fun |> is_function true
+    fun |> is_function(2) false
+
+    foo 1 |> bar 2 |> baz 3
+
+        is ambiguous and should be written as
+
+    foo(1) |> bar(2) |> baz(3)
+
+    Enum.map(1..3, &(&1+1))
+    1..3 |> Enum.map(&(&1+1))
+    (+ 1) |> &(Enum.map(1..3, &1))
+
+    fun = &(&1 + 1)
+    fun.(1) 错误形式 fun. 1 fun(1)
+
+    1..10 |> Enum.filter(&(&1 > 8)) |> inspect(charlists: false)
+
+
+Processes
+    In Elixir, all code runs inside processes.
+    Processes are isolated from each other, run concurrent to one another and communicate via message passing
+
+    spawn fn -> 1 + 2 end
+    pid = spawn fn -> 1 + 2 end
+    Process.alive?(pid)
+    self() PID of the current process self/0
+
+    send receive
+    send self(), {:hello, "world"}
+    receive do
+        {:hello, msg} -> msg
+        {:world, msg} -> "Won't match"
+    after  # timeout
+        1_000 -> "noting after 1s"
+    end
+    receive/1 supports guards and many clauses, such as case/2
+    The receive/1 block goes through the current process mailbox searching for a message that matches any of the given patterns.
+    receive 是 block 的。
+
+    iex(18)> spawn fn -> send(parent, {:hello, self()}) end
+    #PID<0.227.0>
+    iex(19)> receive do
+    ...(19)>   {:hello, pid} -> "Got hello from #{inspect pid}"
+    ...(19)> end
+    "Got hello from #PID<0.227.0>"
+
+    iex> send self(), :hello
+    :hello
+    iex> flush()
+    :hello
+    :ok
+
+    多数时候进程都是 linked process
+    spawn_link fn -> raise "oops" end
+
+    Process.register(self(), :test) 给 pid 起别名
+    Process.monitor(pid)
+    Process.exit(pid, :kill)
+
+    Kernel 自动 import 函数
+        Kernel.spawn/1 and Kernel.spawn/3
+        Kernel.spawn_link/1 and Kernel.spawn_link/3
+            @spec spawn_link(module(), atom(), list()) :: pid()
+            Spawns the given function fun from the given module passing it the given args,links it to the current process, and returns its PID
+        Kernel.spawn_monitor/1 and Kernel.spawn_monitor/3
+        Kernel.self/0
+        Kernel.send/2
+
+    Process.send_after time 后发送
+
+    Task 基于 spawn 函数，错误报告和 introspection 更好
+        提供了在后台执行一个函数的方式
+        Task.start fn -> raise "oops" end
+        use Task to get better error reports
+
+        x = Task.async(fn -> 666 end)
+        res = 777
+        res + Task.await(x) await(task, timeout \\ 5000) Task :: Struct
+
+        It is not recommended to await a long-running task inside an OTP behaviour such as GenServer.
+        Instead, you should match on the message coming from a task inside your GenServer.handle_info/2 callback
+
+    State
+        Processes are the most common answer TO KEEP state.
+
+        通常不手动处理
+
+            Elixir provides agents, which are simple abstractions around state
+
+            Agent.start_link/2
+            A :name option could also be given to Agent.start_link/2 and it would be automatically registered
+
+            Agents provide a segregation between the client and server APIs (similar to GenServers). In particular, the functions passed as arguments to the calls to Agent functions are invoked inside the agent (the server SERVER). This distinction is important because you may want to avoid expensive operations inside the agent, as they will effectively block the agent until the request is fulfilled.
+
+            Consider these two examples:
+
+            # Compute in the agent/server
+            def get_something(agent) do
+              Agent.get(agent, fn state -> do_something_expensive(state) end)
+            end
+
+            # Compute in the agent/client
+            def get_something(agent) do
+              Agent.get(agent, & &1) |> do_something_expensive()
+            end
+
+            第一个阻塞 agent
+            第二个将状态复制到 client 并在 client 执行操作
+
+        iex> {:ok, pid} = Agent.start_link(fn -> %{} end)
+        {:ok, #PID<0.72.0>}
+
+        iex> Agent.update(pid, fn map -> Map.put(map, :hello, :world) end)
+        :ok
+
+        iex> Agent.get(pid, fn map -> Map.get(map, :hello) end)
+        :world
+
+    process -> task -> agent -> GenServer
+
+    [Supervisor]
+
+    GenServer is a behaviour to implement generic servers
+        used as a process wrapper around some state
+        Agent is only a convenience wrapper around GenServer as it is implemented with it
+
+    https://medium.com/scientific-breakthrough-of-the-afternoon/elixir-agent-vs-genserver-ef443aa4a441
+
+    http://whatdidilearn.info/2017/12/17/elixir-multiple-processes-basics.html
+
+    process (blocked)
+    process (non-blocked by Recursion)
+    Linking processes
+        发送无法处理的错误信息给进程
+        send_msg.(pid, fn -> "Error" end)
+        {#PID<0.185.0>, #Function<20.128620087/0 in :erl_eval.expr/5>}
+        进程挂掉
+        pid = spawn_link(HelloWorld, :hello, [])
+        出错后 IEx 进程重启，self 改变 pid 为 undefined
+
+    Keep state
+
+
+inspect/1
+
+
+Enum
+    Enum module
+    Enumerable protocol
+
+Enum.map [a: 1, b: 2], fn {k, v} -> {k, -v} end
+
+Enum.sum(1..3)
+
+Enum.reduce(1..3, 0, &+/2)
+
+Enum.reduce([1, 2, 3], 0, fn(x, acc) -> x + acc end)
+Enum.reduce([1, 2, 3], 0, &+/2)
+
+fun |> Enum.map
+
+
+Stream (alternative to Enum)
+  lazy operations
+
+Stream.map
+
+
+Typespecs
+    函数签名类型
+    自定义类型
+@spec round(number) :: integer
+def round(number), do: number+1
+
+@typedoc """
+Just a number followed by a string.
+"""
+@type number_with_remark :: {number, String.t}
+
+
+Protocol
+
+defstruct/1, however, allows protocol implementations to be derived
+@derive [Size]
+defstruct [:name, :age]
+
+Protocols vs. Behaviours
+https://samueldavies.net/2017/04/19/polymorphism-in-elixir-protocols-vs-behaviours/
+datatype polymorphism is one of the major advantages Elixir holds over its cousin, Erlang
+Protocols
+    Apply to data structures
+    Specify new implementations of existing functions for new datatypes
+    Exclusive to Elixir
+Behaviours
+    Apply to modules
+    Specify a public spec/contract for modules to implement
+    Provided by the Erlang runtime
+https://stackoverflow.com/questions/26215206/difference-between-protocol-behaviour-in-elixir
+Protocol is type/data based polymorphism. When I call Enum.each(foo, ...), the concrete enumeration is determined from the type of foo.
+Behaviour is a typeless plug-in mechanism. When I call GenServer.start(MyModule), I explicitly pass MyModule as a plug-in, and the generic code from GenServer will call into this module when needed.
+
+A protocol is indeed a behaviour + dispatching logic.
+
+Behaviours
+
+Modules adopting the Parser behaviour will have to implement all the functions defined with the @callback directive
+
+defmodule JSONParser do
+  @behaviour Parser
+
+  @impl Parser
+  def parse(str), do: {:ok, "some json " <> str} # ... parse JSON
+
+  @impl Parser
+  def extensions, do: ["json"]
+end
+
+动态分配
+defmodule Parser do
+  @callback parse(String.t) :: {:ok, term} | {:error, String.t}
+  @callback extensions() :: [String.t]
+
+  def parse!(implementation, contents) do
+    case implementation.parse(contents) do
+      {:ok, data} -> data
+      {:error, error} -> raise ArgumentError, "parsing error: #{error}"
+    end
+  end
+end
+
+
+The forms alias and import are used to be able to refer to functions without having to use their fully qualified names. The form use is used to add functionality to the current module by running a macro from another module. When macros are used from an external module, require is needed to make the macros available to the compiler at compile time.
+
+比较 import use require
+  https://stackoverflow.com/questions/28491306/elixir-use-vs-import
+alias  lexically scoped
+alias Math.List (alias Math.List, as: List)
+you can alias the modules MyApp.Foo, MyApp.Bar and MyApp.Baz at once as follows:
+    alias MyApp.{Foo, Bar, Baz}
+defmodule Foo do
+  defmodule Bar do
+  end
+end
+等价于
+defmodule Elixir.Foo do
+  defmodule Elixir.Foo.Bar do
+  end
+  alias Elixir.Foo.Bar, as: Bar
+end
+An alias in Elixir is a capitalized identifier (like String, Keyword, etc) which is converted to an atom during compilation
+String alias translates by default to the atom :"Elixir.String"
+is_atom(String)
+to_string(String)
+
+
+require  lexically scoped
+require Integer 导入全部（为了使用 macro)
+    you must require Integer before invoking the macro Integer.is_odd/1
+    require(Integer)
+    Integer.is_odd 8
+Elixir provides macros as a mechanism for meta-programming (writing code that generates code). Macros are expanded at compile time.
+Public functions in modules are globally available, but in order to use macros, you need to opt-in by requiring the module they are defined in.
+
+
+import  lexically scoped
+use import whenever we want to easily access functions or macros from other modules without using the fully-qualified name.
+import List, only: [duplicate: 2] (only except)
+    By default functions starting with _ are not imported. If you really want to
+    import a function starting with _ you must explicitly include it in the :only
+    selector.
+import Integer, only: :macros / :functions
+
+
+use
+    frequently used as an extension point.
+use requires the given module and then calls the __using__/1 callback on it allowing the module to inject some code into the current context
+defmodule Example do
+  use Feature, option: :value
+end
+编译为
+defmodule Example do
+  require Feature
+  Feature.__using__(option: :value)
+end
+
+Since use allows any code to run, we can’t really know the side-effects of using a module without reading its documentation. For this reason, import and alias are often preferred, as their semantics are defined by the language. 更常用 import alias （use 用于 ExUnit GenServer 等）
+
+alias MyApp.{Foo, Bar, Baz} 支持 import use alias require IEx 无法补全
+
+
+call Erlang modules:
+iex> :lists.flatten([1, [2], 3])
+[1, 2, 3]
+
+
+Operators
+Elixir 无法定义新操作符，但可以重载已用操作符和定义可解析但未使用的操作符（未在 Kernel 中定义）
+While it's possible to define unused operators (such as <~>) and to "override" predefined operators (such as +), the Elixir community generally discourages this
+
+defmodule WrongMath do
+  # Let's make math wrong by changing the meaning of +:
+  def a + b, do: a - b
+end
+
+import WrongMath
+import Kernel, except: [+: 2]
+1 + 2
+-1
+重载操作符需要排除导入原来的操作符
+
+
+Bitwise View Source
+A set of macros that perform calculations on bits.
+use Bitwise
+bnot(1) # named
+1 &&& 1 # operator
+
+
+Errors
+
+runtime error
+    raise "oops"
+other errors
+    raise ArgumentError, message: "invalid argument foo"
+自定义 error
+    defmodule MyError do
+      defexception message: "default message"  # 默认 error
+    end
+    raise MyError
+    raise MyError, message: "Hello Error"
+try/rescue 结构
+try do
+  raise "oops"
+rescue
+    e in RuntimeError -> e
+end
+%RuntimeError{message: "oops"}
+Elixir developers rarely use the try/rescue construct
+
+case File.read "hello" do
+    {:ok, body}      -> IO.puts "Success: #{body}"
+    {:error, reason} -> IO.puts "Error: #{reason}"
+end
+
+throw and catch are reserved for situations where it is not possible to retrieve a value unless by using throw and catch
+不常用的写法
+try do
+    Enum.each -50..50, fn(x) ->
+      if rem(x, 13) == 0, do: throw(x)
+    end
+    "Got nothing"
+catch
+    x -> "Got #{x}"
+end
+但 Enum 提供了 API 来干这个
+Enum.find -50..50, &(rem(&1, 13) == 0)
+
+Elixir 代码在进程中执行，进程互相连通。进程因为 natural cause 退出（未处理的异常），会发出 exit 信号。也可以主动发出 exit.
+spawn_link fn -> exit(1) end
+try do
+  exit "I am exiting"
+catch
+  :exit, _ -> "not really"
+end
+很少用
+Once an exit signal is received, the supervision strategy kicks in and the supervised process is restarted.
+
+after
+{:ok, file} = File.open "sample", [:utf8, :write]
+IO.read(file, :all/:line/count)
+File.close(file)
+after 的代码不会执行，仅提供软保证。但 VM 进程管理保证了资源释放，这个过程与 after 独立
+Note, however, that if a linked process exits, this process will exit and the after clause will not get run. Thus after provides only a soft guarantee. Luckily, files in Elixir are also linked to the current processes and therefore they will always get closed if the current process crashes, independent of the after clause.
+
+try do
+rescue
+    ArithmeticError ->
+        :infinity
+else
+    ->
+    ->
+end
+variables defined inside try/catch/rescue/after blocks do not leak to the outer context
+
+Elixir allows you to omit the try line
+defmodule RunAfter do
+  def without_even_trying do
+    raise "oops"
+  after
+    IO.puts "cleaning up!"
+  end
+end
+
+
+iex> ?$ 获取 Unicode endpoint
+
+
+exit IEx : C-\ or C-c
+
+
+https://elixir-lang.org/blog/2017/07/25/elixir-v1-5-0-released/ @impl
+allows developers to mark which functions in a given module are an implementation of a callback.
+
+
+You use if with one condition and a possible else, that's it. You use the cond statement when you have more than one condition and an if statement isn't enough, by the end, the case statement is used when you want to pattern match some data.
+https://stackoverflow.com/questions/21075026/what-is-the-difference-between-cond-and-case
+
+Packages:
+https://github.com/codedge-llc/scribe
+
+
+Inlined by the compiler.
+    Those functions are called BIFs (built-in internal functions) in Erlang-land and they exhibit interesting properties, as some of them are allowed in guards and others are used for compiler optimizations.
+    https://hexdocs.pm/elixir/Kernel.html#module-inlining
+    Those functions will be explicitly marked in their docs as "inlined by the compiler".
+    &Kernel.is_atom/1
+
+
+Macro
+
+quote 获取表达式内部表达形式 AST（比 函数好在 不用求值 ）
+get the representation of any expression by using the quote macro
+{atom | tuple, list, list | atom}
+第一项
+第二项 a keyword list containing metadata, like numbers and contexts
+第三项 a list of arguments for the function call 或者 atom （表示这是个变量）
+
+quote do: x
+{:x, [], Elixir}
+quote(do: x)
+{:x, [], Elixir}
+
+a_fun = &(1 + &1)
+quote do: a_fun.(9)
+{{:., [], [{:a_fun, [], Elixir}]}, [], '\t'}
+
+quote do: x
+quote do
+  ...
+end
+
+get the textual code representation back 重新得到文本形式
+Converts the given expression AST to a string AST 转文本
+The given fun is called for every node in the AST with two arguments: the AST
+of the node being printed and the string representation of that same node 可以带参数 fun 参数为逐个 ast node 和 文本显示
+Macro.to_string(quote do: x)
+
+iex> Macro.to_string(quote(do: foo.bar(1, 2, 3)))
+"foo.bar(1, 2, 3)"
+
+iex> Macro.to_string(quote(do: 1 + 2), fn
+...>   1, _string -> "one"
+...>   2, _string -> "two"
+...>   _ast, string -> string
+...> end)
+"one + two
+
+unquote
+在 qutoe 返回值中 用变量的值替换变量名
+Macro.to_string(quote do: 11 + number)
+"11 + number"
+Macro.to_string(quote do: 11 + unquote number)
+"11 + 42"
+
+inject many values inside : 逐个对列表操作 unquote_splicing (unquote 会将整个列表当作一个值)
+
+Some values, such as integers, atoms, and strings, have a quoted expression equal to the value itself.
+Other values, like maps, need to be explicitly converted.
+map = %{hello: :world}
+map = %{:hello => :world}
+Finally, values like functions and references cannot be converted to a quoted expression at all.
+
+map = %{b: 10, c: 30}
+Macro.to_string(quote do: %{map | b: 30})
+Macro.to_string(quote do: %{Macro.escape(map) | b: 30})
+
+__ENV__ Macro.Env struct
+  .module
+  .file
+  .requires
+
+
+
+
+
+Elixir 数据不可变
+https://medium.com/@darioghilardi/immutability-in-elixir-6acb07708b6e
+
+
+ToyRobot
+http://whatdidilearn.info/2017/11/26/toy-robot-simulator-part-1.html
+
+Create an application that can read in commands of the following form:
+
+PLACE X,Y,F
+MOVE
+LEFT
+RIGHT
+REPORT
+
+Place the robot into initial position
+
+test/toy_robot_test.exs
+
+lib/position.ex
+
+Get reports from the Robot
+
+In OOP we usually have an object, objects know their state.
+In our case, it is position of the robot.
+Then we send a message report to an object without additional arguments and the object itself can provide all required data.
+it should be separate Report class which receives the object and build the report
+The object itself should not know how to report itself.
+
+in functional programming, we need to pass all required data to the function as arguments
+
+Rotate the robot
+
+LEFT and RIGHT will rotate the robot 90 degrees
+
+it’s considered as a bad practice to have more than one asserts per unit test
+
+Moving the robot
+
+Moving improvements
+    移动中不能超出范围
+    超出范围的移动被忽略
+
+Placing the robot improvements
+    初始位置不能掉出范围
+
+
+
+
+
+Elixir Forum
+    getstart
+    news
+    general dev.to news
+    github update [release issue pr]
+        https://github.com/elixir-lang/elixir
+    book / post release
+
+
+// fetch('https://api.github.com/repos/jasonrudolph/keyboard')
+
+fetch('https://api.github.com/repos/elixir-lang/elixir')
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(myJson) {
+    // console.log(JSON.stringify(myJson));
+    console.log(myJson.stargazers_count)
+  });defmodule AccioCrawler.Utils do
+
+  def test target_path do
+    full_path = Path.join([File.cwd!, "config", "worker", target_path])
+    dir_path = Path.dirname(full_path)
+    if !File.exists?(dir_path) do
+      File.mkdir_p!(dir_path)
+    end
+    base_temp = ~s(use Mix.Config
+
+config :accio_crawler, :"#{dir_path |> Path.split |> List.last}.crawler",
+  cities_scope: %{})
+    other_temp = ~s(use Mix.Config
+
+config :accio_crawler, :"#{dir_path |> Path.split |> List.last}.#{Path.basename(target_path, ".exs")}.crawler",
+  sample_num: 10)
+    temp = case String.contains?(target_path, "base") do
+      true -> base_temp
+      false -> other_temp
+    end
+    if !File.exists?(full_path) do
+      File.write!(full_path, temp)
+      IO.puts "File created: #{full_path}"
+    else
+      IO.puts "File exists: #{full_path}"
+    end
+  end
+end
+
+
+
+https://hexdocs.pm/elixir/Access.html
+
+The bracket-based syntax, user[:name], is used by dynamic structures, is extensible and returns nil on missing keys.
+
+The dot-based syntax, user.name, is used exclusively to access atom keys in maps and structs, and it raises on missing keys.
+
+System.cmd("whoami", [])
+# => {"lukas\n", 0}
+
+System.cmd("ls", ["-al"]) #works, while
+System.cmd("ls -al", []) #does not.
+
+https://stackoverflow.com/questions/22594988/run-shell-commands-in-elixir
+
+
+
+
+%HTTPoison.Response{body: body} = HTTPoison.get!("http://weibo.cn")
+File.write!("/tmp/image.png", body)
+
+address = "https://mmbiz.qpic.cn/mmbiz_jpg/I1BZD9S3sia6Rl41ibH2K3cuLFk6quSMPhIcPQiaR5wNEFib0M2fHULyIX4cXokrxfrVibdrhvkzvks0DY9JNGB57HA/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1"
+
+
+Application.ensure_all_started :inets
+:ssl.start()
+{:ok, resp} = :httpc.request(:get, {'http://example.com/my_image.jpg', []}, [], [body_format: :binary])
+{:ok, resp} = :httpc.request(:get, {to_charlist(address), []}, [], [body_format: :binary])
+{{_, 200, 'OK'}, _headers, body} = resp
+File.write!("online_image.jpg", body)
+https://stackoverflow.com/questions/30267943/elixir-download-a-file-image-from-a-url
+https://tech.labs.oliverwyman.com/blog/2018/01/23/a-basic-recipe-for-an-elixir-ssl-server/
+
+
+IEx 帮助
+
+h(+/2)
+
+iex concat.exs
+iex -r concat.ex
+
+iex --erl "-kernel shell_history enabled"
+export ERL_AFLAGS="-kernel shell_history enabled"
+清屏 CMD+k
+
+
+操作符重载
+
+https://medium.com/blackode/the-secret-behind-elixir-operator-overriding-to-a564fd6c0dd6
+
+def a + b do
+  a - b
+end
+
+会和 kernel 中的 +/2 冲突
+
+import Kernel, except: [+: 2]
+import MyWrongOperators
+
+
+
+mylist = [
+    %{"id"=>100, "policy"=>"polyci1"},
+    %{"id"=>200, "policy"=>"polyci2"},
+    %{"id"=>300, "policy"=>"polyci3"},
+    %{"id"=>400, "policy"=>"polyci4"}
+]
+mylist |> Enum.map(fn %{"id"=>id, "policy"=>policy} -> IO.puts "#{id} - #{policy} end)
+
+
+
+strings are made of bytes while charlists are lists with Unicode codepoints
+IO.puts('hello world')
+IO.puts(['hello', ?\s, "world"])
+
+
+
+[city: %{}, source: "cma", type: "life_suggestion"]
+def load_config [city: _, source: _, type: _], do something
+顺序和输入 Keyword List 一致
+
+
+[type: "life_suggestion", city: %{}, source: "cma"]
+
+  def load_config [type: type, city: _, source: _] do
+    ["AccioCrawler", "Worker", crawler, source] = Module.split(__MODULE__)
+    crawler_key = [crawler, source, type] |> Enum.map(&String.downcase(&1)) |> Enum.join(".")
+    cma_key = [crawler, source] |> Enum.join(".")
+    base_key = crawler |> String.downcase
+    Utils.merge_config([base_key, cma_key, crawler_key])
+  end
+
+  load_config arg
+
+
+
+
+没有所谓可变参数
+    https://stackoverflow.com/questions/32136801/is-there-a-splat-operator-in-elixir
+
+
+
+[aaa, bbb] = [1,2]
+
+
+Code.string_to_quoted!
+https://elixirforum.com/t/using-code-eval-string-to-call-other-functions-in-the-module/12866/7
+
+
+
+Use the pin operator ^ when you want to pattern match against an existing variable’s value rather than rebinding the variable
+
+x = 1
+{y, ^x} = {2, 1} :ok
+{y, ^x} = {2, 2} :error
+
+{x, x} = {1, 1} :ok
+{x, x} = {1, 2} :error
+
+
+https://elixirforum.com/t/creating-list-adding-elements-on-specific-conditions/6295/3
+
+https://stackoverflow.com/questions/26209829/module-properties-elixir
+defmodule Config do
+  defstruct [
+    some_property: nil,
+    other_property: nil
+  ]
+
+  def new(one, two) do
+    %Config{
+      some_property: one,
+      other_property: two
+    }
+  end
+end
+
+
+use Bitwise, only_operators: true
+
+use ExUnit.Case, async: true
+https://hexdocs.pm/ex_unit/ExUnit.Case.html#module-examples
+
+Easily skip ExUnit tests in Elixir
+https://medium.com/@pomodoro_cc/easily-skip-exunit-tests-in-elixir-31c26b516146
+
+检验是否实现某个 protocol Protocol.impl_for
+https://stackoverflow.com/questions/39609255/how-can-i-check-whether-the-protocol-is-implemented
+
+List 转 Map
+https://stackoverflow.com/questions/42262115/elixir-convert-list-into-a-map
+
+-module(hex).
+-export([bin_to_hexstr/1,hexstr_to_bin/1]).
+
+bin_to_hexstr(Bin) ->
+  lists:flatten([io_lib:format("~2.16.0B", [X]) ||
+    X <- binary_to_list(Bin)]).
+
+hexstr_to_bin(S) ->
+  hexstr_to_bin(S, []).
+hexstr_to_bin([], Acc) ->
+  list_to_binary(lists:reverse(Acc));
+hexstr_to_bin([X,Y|T], Acc) ->
+  {ok, [V], []} = io_lib:fread("~16u", [X,Y]),
+  hexstr_to_bin(T, [V | Acc]).
+
+hexstr_to_bin(S) ->
+{ok, [N], []} = io_lib:fread("~16u", S),
+<>.
+
+
+Hex 超时解决方案
+HEX_HTTP_CONCURRENCY=1 HEX_HTTP_TIMEOUT=120 mix deps.get
+
+config :your_app, env: Mix.env
+Application.get_env(:your_app, :env)
+
+Mix.env
+
+
+generate files in crawler/preprocessor
+
+dir_path = Path.join([File.cwd!, "lib", "worker", stage])
+if !File.exists?(dir_path) do
+  File.mkdir_p!(dir_path)
+end
+Application.get_env(@app_name, SupportedTasks)[:task]
+|> Map.values
+|> List.flatten
+|> Enum.uniq
+|> Enum.each(fn source -> do
+  full_path = Path.join([dir_path, "#{source}.ex])
+  temp = ~s(
+defmodule AccioCrawler.Worker.#{Macro.camelize stage}.#{Macro.camelize source} do
+  alias AccioCrawler.Utils
+end
+  )
+  if !File.exists?(full_path) do
+    File.write!(full_path, temp)
+    IO.puts "File created: #{full_path}"
+  else
+    IO.puts "File exists: #{full_path}"
+  end
+end)
+
+defmodule AccioCrawler.Worker.Crawler.Cma do
+  alias AccioCrawler.Utils
+end
+
+https://stackoverflow.com/questions/25896762/how-can-pattern-matching-be-done-on-text
+
+
+定义 bitstring 的 type
+https://hexdocs.pm/elixir/Kernel.SpecialForms.html#%3C%3C%3E%3E/1-types
+
+定制 guard
+https://hexdocs.pm/elixir/guards.html#defining-custom-guard-expressions
+
+
+deep merge
+
+[cities_scope: %{
+    "index" => "country_id",
+    "scope" => "CN,HK,MO,TW",
+    "exclude" => [],
+    "needed_fields" => ["cma"]
+  },
+headers: [{"connection", "keep-alive"}]]
+
+[cities_scope: %{
+    "index" => "country_id",
+    "exclude" => [],
+    "needed_fields" => ["cma"]
+  },
+headers: [{"content-type", "text/html"}]]
+
+Kyeword.merge(config1, config2, fn _k, v1, v2 ->
+  merge_value v1, v2
+  cond do
+    Enum.all?([v1, v2], &is_list(&1)) ->
+      v1 ++ v2
+    Enum.all?([v1, v2], &is_map(&1)) ->
+      Map.merge v1, v2
+    Enum.all?([v])
+    True -> v2
+  end
+end)
+
+
+Keyword.keyword?
+String.valid?
+
+
+https://stackoverflow.com/questions/40207758/check-if-a-value-is-a-keyword-list
+不是宏无法用于 guards
+
+根据索引访问元素
+https://til.hashrocket.com/posts/633ba08446-accessing-a-single-element-of-a-list-by-index
+Elixir 非 OO 语言
+Enum.at([], index)
+Enum.fetch([], index)
+
+elem(aTuple, 1)
+elem({1,2}, 0)
+
+获取 map 的 key
+https://stackoverflow.com/questions/37375727/how-to-get-key-for-value-in-map
+
+https://stackoverflow.com/questions/29030309/how-can-i-do-a-line-break-line-continuation-in-elixir
+
+
+Get a value from nested maps
+nested = %{ one: %{ two: 3} }
+3 = get_in(nested, [:one, :two])
+
+解决嵌套的 case
+https://elixirschool.com/en/lessons/basics/control-structures/#with
+
+
+note: struct 无 Enum 方法
+
+is_binary "Hello" String
+is_binary <<1,2,3>> Bytes 序列 binaries
+
+a binary is a bitstring where the number of bits is divisible by 8.
+
+byte_size(string)
+String.length(string)
+String.codepoints("hełło")
+String.valid?(<<239, 191, 19>>)
+
+binaries 中能保存的最大 byte 数字形式为 255 <<256>> == <<0>> 截断
+<<256 :: size(16)>> 设置存储数字的 byte 数
+<<256 :: utf8>> 转为 codepoint
+
+pattern match on binaries / bitstrings
+<<0, 1, x>> = <<0, 1, 2>>
+<<0, 1, x :: binary>> = <<0, 1, 2, 3>>
+
+<< header :: size(8), "|", data :: binary >> = "1|2345"
+
+'Hello' charlist
+
+<<a: , binary>> = bin
+不操作 binanry 下次递归 重用 match，底层可变数据
+
+1.0 == 1 true
+1.0 === 1 false
+
+
+移除所有空白字元
+String.strip("\t\ntest   ")
+https://stackoverflow.com/questions/26995608/what-does-do-in-elixir
+
+codepoint 转 字符串
+List.to_string/1
+https://stackoverflow.com/questions/46386066/convert-list-of-codepoints-or-binary-to-string
+
+
+一个最简单函数
+def send(notification)
+
+A range is represented internally as a struct. However, the most common form of creating and matching on ranges is via the ../2 macro, auto-imported from Kernel
+Range.new(first, last)
+
+
+List comprehensions 中使用 filter / guards
+https://culttt.com/2016/07/04/understanding-comprehensions-elixir/ 可以用任意函数
+for x <- 1..100, rem(x, 13) == 0, do: IO.puts x * 2
+
+https://github.com/elixir-lang/elixir/issues/4471
+inspect [10, 10], char_lists: :as_lists
+
+
+https://stackoverflow.com/questions/39609255/how-can-i-check-whether-the-protocol-is-implemented
+Enumerable.impl_for {}
+
+mix test --include skip
+
+mix 项目 template
+  类似 mix phx.new 写一个包，使用其中的 new
+
+Elixir Enum.map 性能 < List Comprehension
+
+unquote > leex >
+
+''.join([i for i in sms if i!=' ' and i!="\n"]).replace("'", '"')
+
+.replace("'", '"')
+
+ips - this stands for “iterations per second,” which tells us how often the given function can be executed in one second. For this metric, a higher number is better.
+average - this is the average execution time of the given function. For this metric, a lower number is better.
+deviation - this is the standard deviation, which tells us how much the results for each iteration varies in the results. Here it is given as a percentage of the average.
+median - when all measured times are sorted, this is the middle value (or average of the two middle values when the number of samples is even). Because of environmental inconsistencies this is more stable than the average, and somewhat more likely to reflect the normal performance of your code in production. For this metric, a lower number is better.
+99th % - 99% percent of all measurements are faster than this, which makes this sort of worst case performance. Lower is better.
+
+ips 循环次数 越大越好
+average 平均运行时间 越小越好
+方差 越小越好
+中位数运行时间 越小越好
+99% 大于的运行时间 最差性能 越小越好
+
+
+https://elixir-examples.github.io/examples/get-a-nested-map-value
+
+
+https://elixirschool.com/en/lessons/basics/control-structures/#with
+
+
+- hex ascii 
+
+http://www.petecorey.com/blog/2018/04/09/hex-dumping-with-elixir/ Pete Corey - Hex Dumping with Elixir
+
+打印 16 进制
+
+https://stackoverflow.com/questions/47512198/printing-integer-in-hexadecimal-with-elixir string formatting - Printing integer in hexadecimal with Elixir - Stack Overflow
+
+  :io.fwrite('~.16X~n', [65, '0x'])
+
+https://stackoverflow.com/questions/34404781/converting-hexadecimal-string-to-integer elixir - Converting hexadecimal string to integer - Stack Overflow
+
+https://medium.com/@alxtz.tw/elixir-otp-20-covert-ascii-number-to-string-97f4e2751b93 [Elixir/OTP 20] Covert ascii/number to string | by Alex Tzeng | Medium
+
+
+iex(5)> List.to_string([65])
+"A"
+iex(6)> List.to_string([64])
+"@"
+
+- hex to string
+https://elixirforum.com/t/converting-hex-to-string/9088
+"0x" <> str = "0x4c"
+
+converter = fn input ->
+  "0x" <> str = input
+  Integer.parse(str, 16)
+  |> elem(0) |> (&(List.insert_at([], 0, &1))).()
+end
+converter.("0x4c")
+
+https://medium.com/elixirlabs
+https://medium.com/erlang-battleground/
