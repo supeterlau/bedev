@@ -1,0 +1,107 @@
+A Docker Playground
+
+$HQ/Space/play
+  - about.txt
+
+Run Playground:
+  docker run -rm -it -v $(PWD):/home/dev/play peterlau/play sh
+
+
+Dockerfile
+
+- Debian
+
+apt/sources.list
+
+apt-get install 
+
+sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+janet
+  https://janet-lang.org
+  https://janet-lang.org/introduction.html
+
+  https://github.com/janet-lang/janet
+  https://janetdocs.com/
+  https://git.sr.ht/~bakpakin/janet
+
+  编译 make 
+
+  测试 make test 
+
+  ./build/janet 
+
+  (doc)
+
+  (doc quit)
+
+  退出 REPL (quit)
+
+- Docker 
+
+https://docs.docker.com/get-started/07_multi_container/
+
+https://docs.docker.com/get-started/09_image_best/
+
+- docker access host
+
+- proxy
+
+https://docs.docker.com/network/proxy/
+
+- use sudo in Debian/Ubuntu
+
+https://stackoverflow.com/questions/25845538/how-to-use-sudo-inside-a-docker-container
+- dockerfile 
+
+https://docs.docker.com/engine/reference/builder/#usage
+
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+
+- entrypoint vs cmd
+
+https://docs.docker.com/engine/reference/builder/#entrypoint
+
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#entrypoint
+
+COPY ./docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["postgres"]
+
+https://phoenixnap.com/kb/docker-cmd-vs-entrypoint
+https://www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/
+https://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint
+
+- keep container running 
+
+https://serverfault.com/questions/661909/the-right-way-to-keep-docker-container-started-when-it-used-for-periodic-tasks
+
+# Ah, ha, ha, ha, stayin' alive...
+while :; do :; done & kill -STOP $! && wait $!
+
+- export / import container
+
+- non Root 
+
+https://dzone.com/articles/docker-without-root-privileges
+https://gist.github.com/alkrauss48/2dd9f9d84ed6ebff9240ccfa49a80662
+https://engineering.bitnami.com/articles/why-non-root-containers-are-important-for-security.html
+
+
+RUN groupadd --gid 5000 newuser \
+    && useradd --home-dir /home/newuser --create-home --uid 5000 \
+        --gid 5000 --shell /bin/sh --skel /dev/null newuser
+
+- reduce container size
+
+三个命令会产生 layer 
+
+  Only the instructions RUN, COPY, ADD create layers.
+
+- Gcc
+
+- Python2
+
+2.7.9
+
+https://medium.com/@DahlitzF/run-python-applications-as-non-root-user-in-docker-containers-by-example-cba46a0ff384
