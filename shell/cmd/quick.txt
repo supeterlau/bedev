@@ -64,3 +64,10 @@ Hello%
 Hello
 
 > ...
+
+# cut
+https://linuxize.com/post/linux-cut-command/
+
+# xargs
+
+https://www.cyberciti.biz/faq/linux-unix-bsd-xargs-construct-argument-lists-utility xargs
