@@ -3,7 +3,7 @@ https://ds26gte.github.io/tyscheme/index-Z-H-1.html#node_toc_start
 
 $racket
 
-Ch 1 Enter Scheme
+## Ch1. Enter Scheme
 
 https://ds26gte.github.io/tyscheme/index-Z-H-3.html#TAG:__tex2page_chap_1
 
@@ -31,7 +31,7 @@ REPL 模式载入文件代码
 
 退出 (exit)
 
-Ch 2 Data types
+## Ch2. Data types
 
 https://ds26gte.github.io/tyscheme/index-Z-H-4.html#TAG:__tex2page_chap_2
 
@@ -68,7 +68,7 @@ integer 可以是任意进制
 八进制   #o
 十六进制 #x
 
-通用的 equality predicate 相等检测 eqv?
+通用的 equality predicate 相等检测 eqv? (eq? equal?)
 
 可以比较任意类型
 
@@ -351,6 +351,16 @@ symbol->string
 
 string->symbol
 
+> (string->uninterned-symbol "Apple")
+'Apple
+
+> (eq? 'a (string->uninterned-symbol "a"))
+#f
+
+> (eq? (string->uninterned-symbol "a")
+       (string->uninterned-symbol "a"))
+#f
+
 3. 其他数据类型
 
 - procedure
@@ -379,7 +389,7 @@ current-output-port 获取当前标准输出
 
 本章全部表达式都是 S-expression
 
-Ch 3 Forms
+## Ch3. Forms
 
 https://ds26gte.github.io/tyscheme/index-Z-H-5.html#TAG:__tex2page_chap_3
 
