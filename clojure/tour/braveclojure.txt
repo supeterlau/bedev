@@ -1,4 +1,6 @@
-## Ch3 
+## Ch3. Crash Course
+
+https://www.braveclojure.com/do-things/
 
 LISP 的核心 syntax functions data
 
@@ -464,6 +466,12 @@ x 删除光标下字符
 
 
 用 reduce 改进 Symmetrizer
+
+## Ch4. Core Functions in Depth
+
+https://www.braveclojure.com/core-functions-in-depth/
+
+# WIP 3/13
 
 
 Tips:
