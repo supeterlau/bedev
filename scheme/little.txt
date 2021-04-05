@@ -1,0 +1,92 @@
+car 
+cdr 
+cons 
+eq?
+null?
+zero?
+addl
+subl
+number?
+and 
+or
+quote
+lambda
+define
+cond
+
+Kent Dybvig (Chez Scheme)
+
+(atom? (quote ()))
+  => #f
+
+Daniel P. Friedman
+
+The Little Schemer 
+
+## Ch1. Toys 
+
+atom 
+list 
+
+atom 和 list 都是 S-expression
+
+car 获取 list 第一个元素。只能用于 non-empty list 
+
+cdr 获取 list 除第一个元素外余下元素。只能用于 non-empty list 
+
+cons 添加 atom 到 list 前端 front of list 
+  (cons any-s-expression any-list)
+
+  (list? (cons 1 #t))
+    #f
+  (list? (cons 1 '()))
+    #t
+
+(null? '())
+  => #t 
+
+(null? (quote ())) 
+  => #t 
+
+null? 检查 list 是否 empty 
+
+atom? 检查是否是 atom
+
+CommonLisp:
+
+(defun atom? (x)
+  (not (listp x)))
+
+Scheme: 
+
+(define atom? 
+  (lambda (x)
+    (and (not (pair? x)) (not (null? x)))))
+
+(atom? 'a)
+  => #t
+
+l: '(Harry had a heap of apples)
+
+(atom? (car (cdr l)))
+  => #t
+
+(eq? a1 a2)
+
+Racket REPL 中结果可能不一致
+
+  https://stackoverflow.com/questions/23782308/the-little-schemer-semantic
+
+# WIP 1/10
+
+Racket
+  ,h
+  ,quit ,exit ,ex
+
+https://beautifulracket.com/
+https://beautifulracket.com/explainer/repl.html
+
+https://docs.racket-lang.org/guide/intro.html#(tech._repl)
+https://docs.racket-lang.org/xrepl/index.html
+
+https://docs.racket-lang.org/guide/dialects.html
