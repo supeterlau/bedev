@@ -1,0 +1,166 @@
+安装
+
+Installation
+
+https://agda.readthedocs.io/en/latest/getting-started/installation.html
+
+安装 cabal 
+
+https://www.haskell.org/cabal/#install-upgrade
+
+brew install cabal-install 
+
+配置 cabal (https://mirrors.tuna.tsinghua.edu.cn/help/hackage/)
+
+cabal --version
+
+cabal update
+
+待生成~/.cabal/config配置文件之后Ctrl+C,
+
+Cabal ≥ 1.2.4 (GHC 8.0)
+修改 ~/.cabal/config，加入
+
+repository mirrors.tuna.tsinghua.edu.cn
+  url: http://mirrors.tuna.tsinghua.edu.cn/hackage
+为了访问速度，可以选择把官方仓库注释掉:
+
+repository hackage.haskell.org
+  url: http://hackage.haskell.org/
+  -- secure: False
+  -- root-keys:
+  -- key-threshold:
+
+cabal install Agda -v 
+  (build start at 05:08, end at 06:08)
+
+agda-mode setup
+
+Compile Agda mode as well (you’ll need to do this again if you update Agda):
+
+agda-mode compile
+
+/bin/rm /usr/local/bin/emacs && ln -s /Applications/Emacs.app/Contents/MacOS/Emacs /usr/local/bin/emacs
+
+/bin/rm /usr/local/bin/emacs && ln -s $HQ/config/emacs/exec/emacs.sh /usr/local/bin/emacs
+
+Running the agda-mode program
+  export PATH=$HOME/.cabal/bin:$PATH
+  agda-mode setup
+    错误 无法启动 Emacs 与当前操作系统版本不兼容
+
+    brew unlink emacs-plus@27
+    brew tap d12frosted/emacs-plus
+    brew install emacs-plus@27 --HEAD --with-cocoa --with-imagemagick --with-no-frame-refocus --with-mailutils --with-dbus --with-modern-black-variant-icon --with-xwidgets
+    brew uninstall emacs-plus@27
+    brew install emacs-plus@27 --HEAD --with-no-frame-refocus --with-mailutils --with-dbus --with-modern-black-variant-icon --with-xwidgets --with-no-titlebar
+
+    brew uninstall emacs-plus@27
+    brew install emacs-plus@27 --HEAD --with-no-frame-refocus --with-mailutils --with-dbus --with-modern-black-variant-icon --with-xwidgets
+
+    ln -s /usr/local/opt/emacs-plus@27/Emacs.app /Applications (0700 - 0730)
+
+https://agda.readthedocs.io/en/latest/getting-started/hello-world.html
+
+https://github.com/agda/agda-stdlib
+  Agda binding to Haskell
+
+agda --compile hello.agda
+
+https://github.com/agda/agda/issues/3619 
+  cabal install --lib ieee754
+
+// mkdir -p ~/.agda && \
+// echo $(brew --prefix)/lib/agda/standard-library.agda-lib >>~/.agda/libraries && \
+
+mkdir -p ~/.agda && \
+echo $HERE/agda-stdlib-1.5/standard-library.agda-lib >> $HOME/.agda/libraries
+echo standard-library >>~/.agda/defaults
+
+https://superuser.com/questions/324980/how-do-you-re-install-a-package-with-homebrew-mac/575255 macos - How do you re-install a package with Homebrew (Mac)? - Super User
+
+upgrade:
+
+cabal install Cabal cabal-install
+
+mkdir myproject && cd myproject
+cabal init
+cabal run
+
+# LYA 
+
+To enter ℕ into emacs, type \bn
+
+  \b<Shift>n
+
+To enter the unicode arrow (→), type \->
+
+data 关键字表示定义 type
+
+data ℕ : Set
+
+类型 N 是 Set 类型
+
+Set 类型也有自己的类型 Set^1
+Set^1 的类型是 Set^2
+
+Set^1 无法包含 Set^1 或 Set^2 只包含 Set，从而避免罗素悖论
+
+为自然数定义 0 
+
+zero : ℕ 
+
+其他自然数要用 inductive definition 归纳法定义
+
+Agda 中 _ 作为参数占位符
+
+if a then b else c 会被解析为 if_then_else_ a b c
+
+use \' to input ′.
+
+run a check, type C-c C-l into emacs or choose Load from the Agda menu
+
+type C-c C-n into emacs, or select “Evaluate term to normal form” from the Agda menu.
+
+https://stackoverflow.com/questions/7238147/can-i-get-cabal-install-to-use-multiple-cores haskell - Can I get `cabal install` to use multiple cores? - Stack Overflow
+
+  jobs: $ncpus
+
+https://stackoverflow.com/questions/30913145/what-is-the-difference-between-cabal-and-stack/30922706# haskell - What is the difference between Cabal and Stack? - Stack Overflow
+
+https://emacsformacosx.com/builds Emacs For Mac OS X: Releases, Pretests & Nightlies
+
+brew cask install emacs (version 27)
+https://www.gnu.org/software/emacs/download.html GNU Emacs download - GNU Project
+
+## emacs 输入
+
+https://agda.readthedocs.io/en/latest/getting-started/quick-guide.html
+
+https://agda.readthedocs.io/en/latest/tools/emacs-mode.html#notation-for-key-combinations
+
+# Tutorial 
+
+http://learnyouanagda.liamoc.net/pages/introduction.html Learn You An Agda - Introduction
+
+https://williamdemeo.github.io/2014/02/27/learn-you-an-agda/ Learn You an Agda - William DeMeo
+
+Dependently Typed Programming in Agda
+  http://www.cse.chalmers.se/~ulfn/papers/afp08/tutorial.pdf tutorial.pdf
+
+http://www.cs.cmu.edu/~drl/teaching/oplss13/ Programming and Proving in Agda
+
+https://plfa.github.io/GettingStarted/ Programming Language Foundations in Agda – Getting Started
+
+https://github.com/agda/agda/issues/4250 the official 2.6 version hello-world doesn't work with standard install on Ubuntu 18 · Issue #4250 · agda/agda
+
+https://github.com/agda/agda-system-io/blob/master/src/System/IO/Examples/HelloWorld.agda agda-system-io/HelloWorld.agda at master · agda/agda-system-io
+
+https://agda.readthedocs.io/en/latest/getting-started/quick-guide.html Quick Guide to Editing, Type Checking and Compiling Agda Code — Agda 2.6.2 documentation
+
+https://github.com/agda/agda-stdlib/blob/master/notes/installation-guide.md agda-stdlib/installation-guide.md at master · agda/agda-stdlib
+
+https://stackoverflow.com/questions/50901672/running-a-hello-world-app-in-agda-emacs Running a 'Hello World' app in Agda emacs - Stack Overflow
+
+
+
