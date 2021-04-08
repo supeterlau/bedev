@@ -2,6 +2,19 @@ Tour:
   https://www.tutorialspoint.com/unix/index.htm
   https://bash.cyberciti.biz/guide/Main_Page
 
+Refs:
+  https://www.javatpoint.com/linux-networking-commands
+
+- macOS free 
+
+https://apple.stackexchange.com/questions/4286/is-there-a-mac-os-x-terminal-version-of-the-free-command-in-linux-systems
+
+| sed -nE 's/.* ([0-9]+M) used.*/\1/p'
+
+- hyphen
+
+https://stackoverflow.com/questions/40230008/whats-the-usages-of-hyphen-in-linux-shell
+
 - sh -c 中如何定义函数? (unsolved) 
 
 sh -c "custom(){}; custom" (EOF error)
