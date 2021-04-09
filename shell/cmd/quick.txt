@@ -71,3 +71,8 @@ https://linuxize.com/post/linux-cut-command/
 # xargs
 
 https://www.cyberciti.biz/faq/linux-unix-bsd-xargs-construct-argument-lists-utility xargs
+
+# cd 
+
+- cd history
+https://unix.stackexchange.com/questions/157763/do-we-have-more-history-for-cd
