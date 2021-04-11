@@ -1,0 +1,43 @@
+C++ Primer Plus [5]
+
+# Ch 01.
+
+头文件名风格
+
+C++ 旧式 iostream.h (Cpp)
+C 旧式 math.h       (Cpp C)
+C++ 新式 iostream   (Cpp)
+转换过的 C cmath    (Cpp) 可以用 namespace 
+
+命名空间用法
+
+Apple::check();
+Amazon::check();
+
+# Ch 02.
+
+cout 是一个 ostream 类对象
+
+cout << "aaa"
+     << "bbb"
+     << "ccc"
+
+cin 是一个 istream 类对象
+
+# Ch 03.
+
+类型转换
+
+(long) value C 风格
+long (value) Cpp 风格
+
+自动类型推导 (重写 C  的关键字)
+
+auto n = 1.3e12L; // long double
+
+std::vector<double> scores;
+auto pv = scores.begin();
+
+# Ch 04.
+
+# Ch 18.
