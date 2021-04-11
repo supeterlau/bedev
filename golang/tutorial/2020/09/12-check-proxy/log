@@ -1,0 +1,5 @@
+Testing: 127.0.0.1:1081
+Get "http://err.taobao.com/error1.html": EOF
+Testing: 129.24.51.99:21320
+Get "http://err.taobao.com/error1.html": proxyconnect tcp: dial tcp 129.24.51.99:21320: connect: connection refused
+Body: The request was not understood

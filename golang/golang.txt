@@ -488,38 +488,11 @@ float64 返回值类型
 
 可以将方法改写为常规函数
 
-
-4.2 方法是函数
-
-可以将方法改写为常规函数
-
-
-
-
-
-4.2 方法是函数
-
-可以将方法改写为常规函数
-
-
-
-
-
-4.2 方法是函数
-
-可以将方法改写为常规函数
-
-
-
-
-
-4.2 方法是函数
-
-可以将方法改写为常规函数
-
 4.3 方法
 
 非 struct 类型也可以定义方法
+
+只需要是 type
 
 type SomeFloat float64
 
@@ -573,7 +546,7 @@ pointer receiver
 
 避免在每个方法里 copy 值，当 receiver 是一个大的 struct 时，能提高效率
 
-通常，一个给定的类型应当只有 valeu 或 pointer receiver 而不使用混合二者的方法。
+通常，一个给定的类型应当只有 value 或 pointer receiver 而不使用混合二者的方法。
 
 4.9 Interfaces
 
