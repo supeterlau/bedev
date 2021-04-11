@@ -1,0 +1,258 @@
+alacritty -> zsh -> tmux -> xterm
+
+# alacritty
+
+fullscreen
+The default macOS binding to toggle fullscreen is Ctrl + Command + F.
+
+new instance
+  https://github.com/alacritty/alacritty/issues/2607
+  - { key: N, mods: Command, action: SpawnNewInstance }
+  CMD+N
+  https://superuser.com/questions/466917/how-to-set-launch-options-for-programs-on-os-x
+
+workdir
+  alacritty --working-directory <working-directory>
+  http://hints.macworld.com/article.php?story=20131123074223584
+
+opacity
+
+  0.00 - 1.00
+
+open url
+  press SHIFT
+
+https://github.com/alacritty/alacritty/wiki/Color-schemes
+
+- run command
+  https://github.com/alacritty/alacritty/issues/1266
+
+- start newinstance from command
+  CMD+N 
+  alacritty
+
+- key map
+https://gist.github.com/ipatch/7b904877367e015c1a77a741d97bc6d2
+
+## refs
+
+https://clubmate.fi/alacritty
+
+https://dev.to/hlappa/my-web-development-environment-alacritty-tmux-neovim-4pd2
+
+
+
+# tmux
+
+https://tmuxguide.readthedocs.io/en/latest/tmux/tmux.html
+
+https://tmuxcheatsheet.com/
+
+HQ_TMUX_HOME=$HQ/config/tmux
+ln -s $HQ_TMUX_HOME ~/.tmux
+touch $HQ_TMUX_HOME/tmux.conf
+ln -s $HQ_TMUX_HOME/tmux.conf ~/.tmux.conf
+
+$BEDEV/devtools/term.txt
+
+https://github.com/tmux-plugins/tpm
+
+git clone https://github.com/tmux-plugins/tpm $HQ_TMUX_HOME/plugins/tpm
+
+Use the tpm install command: prefix + I (default prefix is ctrl+b)
+
+man tmux
+
+tmux source ~/.tmux.conf
+
+tmux source-file .tmux.conf
+
+show option:
+  tmux show -g status-right
+
+## tmux session number reset
+
+https://unix.stackexchange.com/questions/177644/how-can-i-reset-tmuxs-automatic-session-name-numbering
+
+## key bind 
+
+tmux list-keys
+
+unbind C-b
+set -g prefix C-x
+bind C-x send-prefix
+
+Ctrl-b l (Move to the previously selected window)
+
+Ctrl-b w (List all windows / window numbers) q (exit)
+
+Ctrl-b <window number> (Move to the specified window number, the default bindings are from 0 – 9)
+
+Ctrl-b q  (Show pane numbers, when the numbers show up type the key to goto that pane)
+
+Ctrl-b f <window name> (Search for window name)
+
+Ctrl-b w (Select from interactive list of windows)
+
+Ctrl+b arrow key — switch pane (https://lukaszwrobel.pl/blog/tmux-tutorial-split-terminal-windows-easily/)
+
+Hold Ctrl+b, don’t release it and hold one of the arrow keys — resize pane.
+
+Ctrl+b M-<arrow key> resize pane
+
+Ctrl+b t show current time
+
+Ctrl+b n Next Window
+Ctrl+b p Previours Window
+
+Ctrl+b & Close current window
+Ctrl+b , rename current window
+
+- copy mode
+
+tmux list-windows
+
+默认布局 ~/.tmuxinator/default.yml
+
+name: default
+root: ~/
+windows:
+  - default:
+      layout: 20a0,274x83,0,0{137x83,0,0,3,136x83,138,0[136x41,138,0,5,136x41,138,42,6]}
+      panes:
+        - clear
+        - vim
+        - clear && emacs -nw
+  - remote:
+      layout: 24ab,274x83,0,0{137x83,0,0,3,136x83,138,0,4}
+      panes:
+        - 
+        - 
+
+Test the new default layout with (yes, it is "mux"):
+
+mux default
+
+## work directory
+
+https://unix.stackexchange.com/questions/12032/how-to-create-a-new-window-on-the-current-directory-in-tmux
+
+## command 
+
+set-window-option setw
+
+## status
+
+https://arcolinux.com/everything-you-need-to-know-about-tmux-status-bar/
+
+## plugins
+
+安装 prefix + I (upcase)
+
+https://github.com/tmux-plugins
+
+https://github.com/tmux-plugins/tmux-resurrect
+  https://github.com/tmux-plugins/tmux-resurrect/blob/master/docs/restoring_vim_and_neovim_sessions.md
+
+  恢复 tmux 会话
+
+  prefix + Ctrl-s - save
+  prefix + Ctrl-r - restore
+
+https://github.com/tpope/vim-obsession
+
+https://github.com/tmux-plugins/tmux-continuum
+  Continuous saving of tmux environment (依赖 tmux-resurrect )
+
+https://github.com/thewtex/tmux-mem-cpu-load
+  cpu mem monitor
+
+https://github.com/jimeh/tmux-themepack
+
+
+## Q&A
+
+- open url 
+
+https://github.com/alacritty/alacritty/issues/2437
+
+  press SHIFT
+  
+- copy/paste
+
+https://unix.stackexchange.com/questions/131011/use-system-clipboard-in-vi-copy-mode-in-tmux
+
+https://www.seanh.cc/2020/12/27/copy-and-paste-in-tmux
+
+https://www.rockyourcode.com/copy-and-paste-in-tmux/
+
+https://adikari.medium.com/vim-style-copy-paste-in-tmux-dd6f1dc37c0e
+
+- tmux inside tmux
+https://superuser.com/questions/239707/sending-commands-to-tmux-running-in-tmux#
+https://superuser.com/questions/552744/issues-reconfiguring-send-prefix-for-tmux
+bind-key C-j send-prefix
+
+copy/paste
+  https://medium.com/hackernoon/tmux-in-practice-copy-text-from-remote-session-using-ssh-remote-tunnel-and-systemd-service-dd3c51bca1fa
+
+https://github.com/tmux-plugins/tmux-open
+  not work
+  
+- backspace-not-working
+
+https://stackoverflow.com/questions/51488920/backspace-not-working-in-tmux-command-prompt
+tmux kill-server
+
+- Ctrl + <arrow> mac 下无法使用
+Alt/M + <arrow> 替代
+
+- invalid option window-status-current-bg, mouse-select-pane
+
+https://github.com/tmux/tmux/issues/1689
+
+set -g window-status-current-style bg=red,fg=green,blink
+
+set -g window-status-current-style bg=yellow
+
+https://stackoverflow.com/questions/11832199/tmux-set-g-mouse-mode-on-doesnt-work
+  set -g mouse on
+
+- bind key to shell command
+
+https://unix.stackexchange.com/questions/283759/tmux-how-to-bind-a-key-to-launch-shell-command
+bind C send-keys -t.- 'mvn install' Enter
+
+- toggle option
+https://stackoverflow.com/questions/25909964/tmux-how-to-toggle-on-and-off-options-with-the-same-key
+
+  w/o on or off
+
+- Synchronizing panes
+https://blog.amjith.com/synchronize-panes-in-tmux
+https://medium.com/@bingorabbit/tmux-propagate-to-all-panes-9d2bfb969f01
+
+- conf variables
+
+https://unix.stackexchange.com/questions/369034/how-can-i-set-custom-variables-in-tmux
+
+- plugin install stuck all tmux 
+
+- Rime 中文输入似乎有延迟 莫名卡死
+
+- Vim alt-j not work
+
+https://github.com/christoomey/vim-tmux-navigator
+https://stackoverflow.com/questions/35330381/getting-alt-to-work-in-the-terminal-with-tmux-and-vim
+
+## Refs
+
+https://github.com/dylanaraps/neofetch
+
+https://gist.github.com/spicycode/1229612
+
+https://www.sitepoint.com/10-killer-tmux-tips
+
+https://peterxjang.com/blog/a-minimalist-guide-to-tmux.html#
+
+https://ryanlue.com/posts/2018-01-13-pair-programming-over-ssh
