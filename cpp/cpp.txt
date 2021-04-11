@@ -1,0 +1,20 @@
+https://www.learncpp.com/ Learn C++
+
+https://en.cppreference.com/w/
+  https://en.cppreference.com/w/cpp/20
+  https://en.cppreference.com/w/cpp/utility/variadic
+
+https://www.cplusplus.com/doc/tutorial/
+  https://www.cplusplus.com/doc/tutorial/functions/
+
+C++ 从入门到项目实践
+
+Misc:
+
+#pragma once
+In the C and C++ programming languages, #pragma once is a non-standard but widely supported preprocessor directive designed to cause the current source file to be included only once in a single compilation.
+
+Code Style:
+
+  https://google.github.io/styleguide/cppguide.html Google C++ Style Guide
+  https://stackoverflow.com/questions/3706379/what-is-a-good-naming-convention-for-vars-methods-etc-in-c What is a good naming convention for vars, methods, etc in C++? - Stack Overflow
