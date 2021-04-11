@@ -1,0 +1,8 @@
+# shortcut
+
+截屏
+  保存为文件 Shift+CMD+3
+  复制到剪贴板 Ctrl+Shift+CMD+3
+  选择区域 保存为文件 Shift+CMD+4
+  选择区域 复制到剪贴板 Ctrl+Shift+CMD+4
+  可选参数 Shift+CMD+5
