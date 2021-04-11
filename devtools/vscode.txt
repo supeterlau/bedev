@@ -1,0 +1,34 @@
+- hot key 
+
+https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf
+
+Join Lines:
+  Ctrl+J
+
+Go to Top:
+  CMD+Up
+  
+Insert line below:
+  CMD+Enter
+
+Open Setting
+  CMD+,
+  
+- config pin tab size
+
+workbench.editor.pinnedTabSizing
+
+- display unicode
+
+U+2713
+
+\U+2713
+
+&check;
+
+&#34;
+
+https://www.w3schools.com/charsets/ref_utf_symbols.asp
+https://www.w3schools.com/charsets/ref_emoji.asp
+https://ascii.cl/htmlcodes.htm
+https://unicode.org/emoji/charts/full-emoji-list.html
