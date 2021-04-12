@@ -7,6 +7,8 @@
 #
 
 CLI=$(realpath $1)
+[[ ! -x ${CLI} ]] && chmod +x "${CLI}";
+
 APPNAME=${2:-$(basename "${CLI}" '.sh')};
 APP="/Applications/${APPNAME}.app";
 DIR="${APP}/Contents/MacOS";
@@ -19,7 +21,7 @@ fi;
 mkdir -p "${DIR}";
 
 APP_EXEC=${DIR}/${APPNAME}
-ln -Fs "${CLI}" "${APP_EXEC}";
-[[ ! -x ${APP} ]] && chmod +x "${APP_EXEC}";
+# ln -Fs "${CLI}" "${APP_EXEC}";
+cp "${CLI}" "${APP_EXEC}";
 
 echo "${APP}";
