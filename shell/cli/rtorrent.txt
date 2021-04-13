@@ -1,0 +1,10 @@
+https://wiki.archlinux.org/index.php/RTorrent
+
+# vim: set syntax=conf: to ~/.rtorrent.rc
+
+copy the example configuration file /usr/share/doc/rtorrent/rtorrent.rc to ~/.rtorrent.rc
+
+curl -Ls "https://raw.githubusercontent.com/wiki/rakshasa/rtorrent/CONFIG-Template.md" \
+    | sed -ne "/^######/,/^### END/p" \
+    | sed -re "s:/home/USERNAME:$HOME:" >~/.rtorrent.rc
+mkdir -p ~/rtorrent/
