@@ -1,0 +1,86 @@
+https://www.tutorialspoint.com/erlang/index.htm
+
+io:fwrite("~w",[tuple_size(P)]).
+~p
+~w charlist
+~s string
+
+https://www.cnblogs.com/me-sa/p/erlang_notes_129.html
+https://www.jigsawcode.com/tag/erlang/
+https://tylerscript.dev/bringing-the-beam-to-webassembly-with-lumen
+http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=73993F4B68836CD1EF093D958523F16A?doi=10.1.1.111.6798&rep=rep1&type=pdf
+	An introduction to Core Erlang
+
+CoreErlang -> BEAM Bytecode
+
+https://github.com/AlexanderKaraberov/Erlang-BEAM-Links
+https://baha.github.io/intro-core-erlang-1/
+# Ch 09
+
+
+https://erlang.org/doc/reference_manual/macros.html
+
+1. 文件引入
+
+-include(File).
+-include_lib(File).
+
+File 是字符串变量，指向文件路径
+
+效果就和文件内容直接替换掉指令行一样
+
+引入文件主要为了使用 record 和 macro 定义
+
+被引入文件推荐使用 .hrl 后缀
+
+文件路径中可以使用环境变量
+
+$ENV_VAR 会通过 os:getenv(ENV_VAR) 获取,如果返回 false 就解释为 $ENV_VAR
+
+绝对路径,直接载入文件
+
+否则按照
+	当前工作目录
+	模板被编译目录
+	includes 选项中目录
+顺序查找
+
+-include_lib(File) 将 File 路径第一部分当作 application
+
+通过 code:lib_dir(part1) 找到最新 part1 位置
+
+例如 "kernel/include/file.hrl"
+
+先找到 kernel 位置,然后在 include 中查找 file.hrl
+
+2. 定义使用 macros
+
+-define(Const, value).
+
+-define(Block, expr).
+
+?block
+?Block
+
+3. 预定义宏
+
+?MODULE
+?MODULE_STRING 当前模块字符串形式
+?FILE
+?LINE
+?MACHINE
+	machine name
+
+4. 宏重载
+
+除预设的宏外可以重载
+
+5. 宏中的条件
+
+-undef(Macro).
+-ifdef(Macro).
+-ifndef(M).
+-else.
+-endif.
+-if(Condition).
+-elif(Condition).
