@@ -1,6 +1,7 @@
 Tour:
   https://www.tutorialspoint.com/unix/index.htm
   https://bash.cyberciti.biz/guide/Main_Page
+  https://www.shell-tips.com/bash/math-arithmetic-calculation/
 
 Refs:
   https://www.javatpoint.com/linux-networking-commands
