@@ -1,3 +1,11 @@
 - undo last commit
 https://www.git-tower.com/learn/git/faq/undo-last-commit/
   git reset --soft HEAD~1
+
+- list all file change under directory
+
+https://stackoverflow.com/questions/9000163/git-list-new-files-only
+  git ls-files -o --exclude-standard
+  git ls-files -o --exclude-standard --full-name
+  git ls-files -d (All deleted) 
+  git ls-files -m (All modified)
