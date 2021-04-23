@@ -1,0 +1,3 @@
+mykey=one
+replace=me
+lastvalue=three

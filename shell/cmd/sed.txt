@@ -1,0 +1,28 @@
+- insert
+
+https://fabianlee.org/2018/10/28/linux-using-sed-to-insert-lines-before-or-after-a-match/
+
+[macOS/BSD]
+
+https://stackoverflow.com/questions/40843994/extra-characters-after-at-the-end-of-a-command
+
+sed -e '/^re.*/a\
+after=me' sed_tmp.txt
+
+sed -e "/^re.*/a\\
+after=me" sed_tmp.txt
+
+sed -E
+sed -r
+
+https://unix.stackexchange.com/questions/13711/differences-between-sed-on-mac-osx-and-other-standard-sed
+
+https://taoofmac.com/space/cli/sed
+
+RE 格式
+
+  man re_format
+
+sed $'s/, /\\\n         /g'
+
+https://superuser.com/questions/307165/newlines-in-sed-on-mac-os-x
