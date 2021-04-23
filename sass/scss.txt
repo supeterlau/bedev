@@ -1,0 +1,49 @@
+use SCSS: brackets based
+
+sass --watch input.scss output.css
+
+sass --watch app/sass:public/stylesheets
+
+选 scss 语法
+https://stackoverflow.com/questions/5654447/whats-the-difference-between-scss-and-sass css - What's the difference between SCSS and Sass? - Stack Overflow
+
+- 变量
+$primary-color: #333;
+
+- 嵌套
+
+nav {
+  ul {}
+  li {}
+  a {}
+}
+
+- partials
+css 片段
+
+_partial.css 通过 @use 使用 模板功能
+
+- modules
+
+_base.scss
+
+$primary-color: #333;
+
+style.scss
+
+@use 'base';
+
+.inverse {
+  color: base.$primary-color;  提供 namespace
+}
+
+- mixins
+组合 css 声明，方便重用
+
+- extend / inheritance
+继承 扩展 样式
+
+
+https://sass-lang.com/documentation/
+
+Function names, like all Sass identifiers, treat hyphens and underscores as identical. This means that scale-color and scale_color both refer to the same function.
