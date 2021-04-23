@@ -1,3 +1,9 @@
+- show file in other branch
+
+https://stackoverflow.com/questions/7856416/view-a-file-in-a-different-git-branch-without-changing-branches
+
+git show branch:file
+
 - undo last commit
 https://www.git-tower.com/learn/git/faq/undo-last-commit/
   git reset --soft HEAD~1
