@@ -1,0 +1,14 @@
+https://swift.org/documentation/#the-swift-programming-language
+
+https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html
+
+https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html
+
+https://docs.swift.org/swift-book/ReferenceManual/AboutTheLanguageReference.html
+
+# Tour
+
+print("Hello Swift")
+
+var a = 100
+let const = 200 const
