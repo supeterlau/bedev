@@ -7,3 +7,28 @@ ld -macosx_version_min 10.14 -o taste -e _start taste.o -lSystem
   https://blog.csdn.net/uuq/article/details/88079596
 
 https://www.tutorialspoint.com/assembly_programming/index.htm Assembly Programming Tutorial - Tutorialspoint
+
+# NASM
+
+https://gist.github.com/FiloSottile/7125822
+
+# Quick Tour
+
+https://www.tutorialspoint.com/assembly_programming/assembly_basic_syntax.htm
+
+# 汇编语言
+
+8086 CPU 16bit 2bytes
+通用寄存器 AX BX CX DX 
+
+32bit
+通用寄存器 EAX EBX ECX EDX 
+
+64bit
+通用寄存器 RAX RBX RCX RDX 
+
+十进制 20000
+十六进制 4E20H
+二进制 ...B
+
+
