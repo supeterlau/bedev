@@ -1,0 +1,56 @@
+
+## 8. Variable Scope
+
+https://www.tutorialspoint.com/cplusplus/cpp_variable_scope.htm Variable Scope in C++ - Tutorialspoint
+
+可以同时有同名全局变量和局部变量
+
+局部的会覆盖全局变量
+
+初始值
+
+int 0
+char '\0'
+float 0
+double 0
+pointer NULL
+
+## 9. Constants Literals
+
+https://www.tutorialspoint.com/cplusplus/cpp_constants_literals.htm
+
+不改变的值
+
+  字面量
+
+  const 关键字
+
+Integer Literals 
+
+  可以是十进制 八进制 十六进制
+
+  212
+  215u = 215U (U: unsigned L: long)
+  0xFeeL
+  077ul
+
+Floating-point Literals 
+
+  必须有整数和小数部分，或整数和科学记数部分
+
+  314159E-5L
+
+Boolean Literals
+
+  true 
+
+  false
+
+Character Literals 
+
+  wchar_t 类型 L'x'
+
+  值可以是 
+    'Z'
+    '\t'
+    '\u02C0'

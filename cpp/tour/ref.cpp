@@ -12,6 +12,17 @@
 
 using namespace std;
 
+/* 
+struct Books {
+   char  title[50];
+   char  author[50];
+   char  subject[100];
+   int   book_id;
+} book;  
+
+struct Books Book1;
+ */
+
 typedef struct {
   char title[50];
   char author[50];
