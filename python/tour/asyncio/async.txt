@@ -1,0 +1,25 @@
+# asyncio
+
+https://docs.python.org/3/library/asyncio.html
+
+async def 声明一个 coroutine
+
+启动 coroutine
+
+  - asyncio.run(coroutine_func())
+
+  - await coroutine_func()
+
+  - asyncio.create_task() 将 coroutine 作为 task 运行
+
+三种 awaitable 对象 
+  coroutines
+    coroutine 可以指代两个近似概念
+      coroutine function: 就是 async def function
+      coroutine object: 调用 coroutine function 返回的对象
+  tasks
+    用于并行地调度 coroutines
+    task = asyncio.create_task(nested()) 进行 wrapped 处理
+    task 可以 cancel 也可以 await 来执行
+  futures
+    low-level awaitable 对象表示异步操作结果
