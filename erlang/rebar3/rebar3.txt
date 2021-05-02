@@ -1,0 +1,66 @@
+# getting-started
+
+https://rebar3.org/docs/getting-started/
+
+rebar3 new umbrella myproj
+
+# start
+
+https://medium.com/erlang-central/building-your-first-erlang-app-using-rebar3-25f40b109aad
+
+rebar3 new app start
+
+src 是源码目录
+
+src/start.app.src .app.src file to define your app as an OTP application
+  定义 app 为 OTP 应用，使用 Erlang 语法
+
+src/start_app.erl 包含基本的启动停止应用代码
+
+rebar.config 用于管理依赖等
+  (https://github.com/erlang/rebar3/blob/master/rebar.config.sample)
+
+在 app 内，基于依赖启动 erlang shell
+
+rebar3 shell
+  (https://ferd.ca/rebar3-shell.html)
+
+启动应用
+
+> application:start(start).
+
+从 hex.pm 安装依赖，首先安装 hex 插件
+
+https://rebar3.org/docs/configuration/plugins/#hex-package-management
+
+mix hex.config mirror_url
+
+rebar.config 中添加 {plugins, [rebar3_hex]}.
+
+rebar3 update 
+
+Run rebar3 with DEBUG=1 set to see errors
+
+rebar3 全局配置: global rebar.config 
+
+~/.config/rebar3/rebar.config
+
+查找 packages
+
+rebar3 hex search cowboy
+
+安装 packages (hex.mp, GitHub, Local)
+
+{deps, [cowboy, meck]}.
+{deps, [{cowboy, “1.0.2”}, {meck, "0.8.3"}]}.
+
+rebar3 compile
+
+删除 packages
+
+从 deps 中删除，然后 
+
+rebar3 unlock
+rebar3 deps 显示 deps 列表
+
+https://rebar3.org/docs/tutorials/building_plugins/
