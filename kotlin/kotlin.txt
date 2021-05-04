@@ -1,0 +1,3 @@
+ Kotlin Software Developer Kit (SDK)
+
+ ls ~/Desktop/read/Programming.Kotlin.2019.9.pdf | xargs open --new -a "Google Chrome" --args
