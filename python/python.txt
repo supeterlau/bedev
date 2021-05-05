@@ -1,0 +1,33 @@
+https://realpython.com/pipenv-guide/
+https://realpython.com/python-data-structures/ Common Python Data Structures (Guide) – Real Python
+https://realpython.com/async-io-python/ Async IO in Python: A Complete Walkthrough – Real Python
+桌面壁纸付费 https://realpython.com/products/pythonic-wallpapers/
+
+https://asgi.readthedocs.io/en/latest/introduction.html Introduction — ASGI 3.0 documentation
+
+https://channels.readthedocs.io/en/latest/index.html Django Channels — Channels 2.4.0 documentation
+https://channels.readthedocs.io/en/latest/asgi.html ASGI — Channels 2.4.0 documentation
+
+https://www.uvicorn.org/ Uvicorn
+
+
+pip install pipenv
+
+⭐️ pipenv 未使用 pip.conf index-url 配置
+
+$HOME/.config/pip/pip.conf
+
+[global]
+index-url = https://mirrors.aliyun.com/pypi/simple/
+
+# 清华源
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 阿里源
+pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
+
+# 腾讯源
+pip config set global.index-url http://mirrors.cloud.tencent.com/pypi/simple
+
+# 豆瓣源
+pip config set global.index-url http://pypi.douban.com/simple/
