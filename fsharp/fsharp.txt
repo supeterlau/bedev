@@ -1,0 +1,43 @@
+
+https://fsharp.org/use/mac/
+https://fsharp.org/learn/
+https://exercism.io/ fsharp
+https://fsharpforfunandprofit.com/books/
+
+https://tryfsharp.fsbolero.io/
+
+https://docs.microsoft.com/en-us/dotnet/fsharp/
+https://dotnet.microsoft.com/learn/languages/fsharp-hello-world-tutorial/intro
+
+https://ionide.io/ Ionide is an organization which builds high quality, cross platform developer tools for F#
+安装
+
+下载 for macOS
+https://dotnet.microsoft.com/download
+
+> https://fsharp.org/use/mac/
+
+printfn "Hello World from F#"
+
+dotnet fsi hello.fsx
+
+https://docs.microsoft.com/en-us/dotnet/fsharp/get-started/get-started-command-line
+
+create a project use
+
+dotnet new console --language F#
+dotnet run
+
+
+
+Press Cmd+Shift+P and enter the following to install the Ionide package for VS Code.
+
+ ext install Ionide-fsharp
+
+The only plugin required for F# support in Visual Studio Code is Ionide-fsharp. However, you can also install Ionide-FAKE to get FAKE support and Ionide-Paket to get Paket support. FAKE and Paket are additional F# community tools for building projects and managing dependencies, respectively.
+
+https://fake.build/ A DSL for build tasks and more The power of F# - anywhere - anytime
+
+What is Paket?
+
+Paket is a dependency manager for .NET projects. Paket enables precise and predictable control over your dependencies. With Paket, you can reference:
