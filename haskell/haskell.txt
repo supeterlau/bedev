@@ -1,10 +1,93 @@
+# 文档
+
+https://www.haskell.org
+
+
+https://www.haskell.org/tutorial/index.html
+
+https://downloads.haskell.org/~ghc/latest/docs/html/
+
+# 安装
+
+https://www.haskell.org/downloads/
+
+macOS:
+
+  brew install ghc
+
+ubuntu:
+
+  https://www.haskell.org/ghcup/
+
+  curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+
+  aria2c https://downloads.haskell.org/\~ghc/8.10.4/ghc-8.10.4-x86_64-fedora27-linux.tar.xz
+
+haskell-language-server (HLS)
+
+安装 stack 
+
+curl -sSL https://get.haskellstack.org/ | sh
+
+# 使用
+
+运行 Haskell 文件
+
+  runhaskell file.hs
+  ghci --make file.hs && ./file
+
+  ghci
+  Prelude> :load /path/to/file.hs
+  Prelude> :q (exit)
+
+# 源
+
+- https://mirrors.tuna.tsinghua.edu.cn/help/hackage/ hackage | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror
+
+cabal update
+
+修改 ~/.cabal/config，加入
+
+repository mirrors.tuna.tsinghua.edu.cn
+  url: http://mirrors.tuna.tsinghua.edu.cn/hackage
+为了访问速度，可以选择把官方仓库注释掉:
+
+repository hackage.haskell.org
+  url: http://hackage.haskell.org/
+  -- secure: False
+  -- root-keys:
+  -- key-threshold:
+
+- https://mirrors.tuna.tsinghua.edu.cn/help/stackage/ stackage | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror
+
+修改~/.stack/config.yaml（在 Windows 下是 %APPDATA%\stack\config.yaml）, 加上:
+
+setup-info-locations: ["http://mirrors.tuna.tsinghua.edu.cn/stackage/stack-setup.yaml"]
+urls:
+  latest-snapshot: http://mirrors.tuna.tsinghua.edu.cn/stackage/snapshots.json
+
+snapshot-location-base: https://mirrors.tuna.tsinghua.edu.cn/stackage/stackage-snapshots/
+
+手动下载 https://raw.githubusercontent.com/fpco/stackage-content/master/stack/global-hints.yaml 到 ~/.stack/pantry/global-hints-cache.yaml
+
+# Tours
+
+Learn You a Haskell for Great Good!
+
+  http://learnyouahaskell.com/chapters
+
+RealWorld Haskell 
+
+# Refs
+
+  citadel/refs/haskell.txt
+
+
 Document:
 
   https://downloads.haskell.org/~ghc/8.10.2/docs/
 
 Mirror:
-  https://mirrors.tuna.tsinghua.edu.cn/help/hackage/ hackage | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror
-  https://mirrors.tuna.tsinghua.edu.cn/help/stackage/ stackage | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror
 
 Install:
 
