@@ -54,3 +54,107 @@ Character Literals
     'Z'
     '\t'
     '\u02C0'
+
+字符串字面量 
+
+"hello, \
+
+dear"
+
+定义常量
+
+  #include <iostream>
+  using namespace std;
+  #define LENGTH 10
+
+  const type variable = value;
+
+## 10. Constants Literals
+
+signed
+unsigned
+long
+short
+
+const
+volatile
+restrict
+
+## 11. Storage Classes 存储类型
+
+auto
+  局部变量的默认类型
+
+register
+  保存在寄存器的局部变量
+  It should also be noted that defining 'register' does not mean that the variable will be stored in a register.
+
+static
+  局部变量在作用域外依然保持自己的值
+  类变量
+
+extern
+  使用其他文件声明的全局变量
+
+  g++ 10.cpp outer.cpp -o run
+
+mutable
+  只用在 class 里
+
+10.cpp
+
+## 11. 操作符
+
+++ --
+  prefix form 在其他表达式执行前修改变量
+  postfix form 在其他表达式执行后修改变量
+
+A&&B
+
+A || B 
+
+!(A&&B)
+
+Binary AND: &
+Binary OR: |
+Binary XOR: ^
+Binary Ones Complement Operator: ~
+  https://stackoverflow.com/questions/791328/how-does-the-bitwise-complement-operator-tilde-work
+  比特位翻转 flip
+Left Shift: << 
+Right Shift: >>
+
+sizeof
+
+Condition ? X : Y
+
+## 12. Loop
+
+while(condition) {
+   statement(s);
+}
+
+for ( init; condition; increment ) {
+   statement(s);
+}
+
+do {
+   statement(s);
+} 
+while( condition );
+
+goto 可用于跳出嵌套循环
+
+
+
+## 10. Constants Literals
+
+
+## 10. Constants Literals
+
+## 10. Constants Literals
+
+Refs:
+
+https://stackoverflow.com/questions/11271889/global-variable-count-ambiguous
+  注意避免使用 using namespace std;
