@@ -1,0 +1,174 @@
+Programming Erlang 2nd (2013)
+
+Joe Armstrong
+
+
+# Ch 3. Basic Concepts
+
+erl
+1>
+
+退出 erl
+  Ctrl-C, a
+  q(). -> init:stop(). 清理文件数据库后停止
+  erlang:halt(). 立即停止
+
+X = 20.
+X + 20. % Erlang Comments
+
+Erlang Shell 中不能执行 annotations hyphen 开头的表达式
+  -module
+  -export
+  -import
+
+Emacs 风格的快捷键
+  Ctrl-D 删除当前字符
+  Ctrl-F
+  Ctrl-P 前一行
+  Ctrl-T 交换字符位置
+
+Erlang 使用任意大小整数进行计算 arbitrary-sized integers
+
+16 进制 x 32 进制
+16#cafe * 32#sugar.
+
+X = 5.
+
+Erlang 中的变量就和数学中的变量一样，不可变。
+
+= 不是赋值操作，是模式匹配操作
+
+single-assignment variabless 变量只能赋值一次，有值的变量叫 bound variable，其他的叫 unbound variable
+
+Y.
+* 1: variable 'Y' is unbound
+
+使用 variable 的原因
+  1. 是变量，只是值只能绑定一次
+  2. 行为和传统编程语言中变量一样
+
+变量作用域是 Lexical。没有全局或私有变量。
+
+不同函数中的同名变量没有关系。
+
+Erlang 是 immutable state 的函数式编程语言。
+
+no mutable state, no shared memory.
+
+- Float 
+
+64bit
+
+4/2. => 2.0
+
+要获得整数结果需要用 div
+
+4 div 2. => 2
+
+- Atoms 
+
+用于表示 constant values
+
+小写字母开头 alphanumeric, underscore(_), at(@)
+
+或者 quoted 形式 'Monday' 
+
+'a' == a.
+
+atom 求值结果就是自身
+
+- Tuples
+
+curly brackets
+
+{joe, 100}
+
+类似 C 的结构体
+
+strct point {
+  int x;
+  int y;
+} P;
+
+P = {10, 45}.
+
+为了表示 tuple 用途，常常添加一个 atom 
+
+P = {point, 10, 45}.
+
+tuple 可以嵌套。共享变量的引用。
+
+从 tuple 中获取数据
+
+Person = { person, {name, john, wick}, {age, 30}}.
+
+{_, {_, Who, _}, _} = Person
+
+(复杂啊)
+
+- Lists
+
+square brackets
+
+第一个元素: head
+剩余部分: tail 
+
+[H|T] 类似 LISP 的 CONS cell
+  CAR H
+  CDR T
+
+T 是 List 时结果是 properly formed list，否则叫 improper list
+
+大部分标准库只适用于 properly formed
+
+ThingsToBuy = [{apple, 10}, {pear, 6}, {milk, 3}].
+
+- Strings
+
+严格来讲 Erlang 没有 strings 
+
+有两种表示方法
+
+as a list of integer 每个 integer 表示 Unicode codepoint
+  
+  可以用 string literal 形式
+
+  Name = "John". shorthand for 整数列表
+
+  在 erl 中，如果所有整数都表示 printable Latin1 字符时，就显示字符串，否则显示列表形式
+
+  [1,2,3]. => [1,2,3]
+  [83, 117, 112]. => "Sup"
+
+  $a. dollar syntax 用于显示对应整数
+
+  用 lists 表示字符串时，需要选择合适的形式
+
+  X = "a\x{221e}b". => [97,8734,98]
+
+  \x{221e} 用于输入 hexadecimal integer 8734
+
+  显示字符 io:format("~ts~n", [X]).
+
+  强制显示 list 形式
+
+  X = [97,98,99].
+
+  io:format("~w~n", [X]).
+  
+as a binary
+
+# Ch 4. Modules and Functions 
+
+# Ch 3. Basic Concepts
+# Ch 3. Basic Concepts
+# Ch 3. Basic Concepts
+
+
+next graphcms
+next auth
+django blog/restpai
+vue todo
+phx graphql+auth
+
+algorithm
