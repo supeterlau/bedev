@@ -76,6 +76,14 @@ class Scanner
 				}
 				break;
 			// skip meaningless characters: newlines whitespace
+			case ' ':
+			case '\r':
+			case '\t':
+				break;
+			case '\n':
+				line++;
+				break;
+
 			default:
 				Lox.error(line,, "Unexpected character.");
 				break;
