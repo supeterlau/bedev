@@ -1,5 +1,7 @@
 # unison
+
 https://www.unisonweb.org/
+
 https://github.com/unisonweb/unison
 
 https://github.com/unisonweb/unison.git
@@ -10,3 +12,5 @@ $ stack --version # we'll want to know this version if you run into trouble
 $ stack build && stack exec tests && stack exec unison
 
 https://github.com/unisonweb/codebase-ui.git
+
+https://www.unisonweb.org/docs/tour

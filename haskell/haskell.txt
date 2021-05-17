@@ -23,11 +23,19 @@ ubuntu:
 
   aria2c https://downloads.haskell.org/\~ghc/8.10.4/ghc-8.10.4-x86_64-fedora27-linux.tar.xz
 
+  . $HOME/.ghcup/env
+
+  ghcup install ghc 9.0.1
+
 haskell-language-server (HLS)
 
 安装 stack 
 
 curl -sSL https://get.haskellstack.org/ | sh
+
+export PATH=$HOME/.local/bin:$PATH
+
+stack will use a sandboxed GHC it installed
 
 # 使用
 
@@ -69,6 +77,19 @@ urls:
 snapshot-location-base: https://mirrors.tuna.tsinghua.edu.cn/stackage/stackage-snapshots/
 
 手动下载 https://raw.githubusercontent.com/fpco/stackage-content/master/stack/global-hints.yaml 到 ~/.stack/pantry/global-hints-cache.yaml
+
+stack new new-project rio (rio 是模板)
+stack run
+
+HelloStack.hs
+
+#!/usr/bin/env stack
+-- stack --resolver lts-13.7 script
+
+main :: IO ()
+main = putStrLn "Hello World"
+
+stack HelloStack.hs
 
 # Tours
 
@@ -122,3 +143,6 @@ Learn You a Haskell for Great Good!
   Prelude> :q (exit)
 
 Real World Haskell
+
+
+https://www.tutorialspoint.com/haskell/index.htm

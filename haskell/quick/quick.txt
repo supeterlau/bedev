@@ -1,0 +1,121 @@
+https://tgdwyer.github.io/haskell1/
+
+if fibs 6 == 13 then "yes" else "no"
+
+:r reload .hs files
+:h show help
+:q quit prompt
+:t 查看类型
+
+x = 3 local variable
+
+List
+
+	linked lists
+	same type
+
+[]
+
+[1,2,3]
+
+[1..10]
+
+1:[1,2,3] cons
+
+1:10:100:[1000, 10000]
+
+[1,2] ++ [3,5] concat
+
+head [1,2,3]
+tail
+sum
+minimum
+maximum
+map f [1,2,3]
+
+custom length function:
+length [] == 0
+length (x:xs) = 1 + length xs
+
+Tuple
+	fixed-length
+	any type
+
+(1, "Good")
+
+fst () get first element
+
+snd () get second element 
+
+(f, s) = (1, "Good") pattern match
+
+Default Lazy
+	Lazy in JS: https://tgdwyer.github.io/lazyevaluation/
+
+	缺点
+		run-time performance
+		会意外混合 strict lazy 求值，导致意外行为
+
+Lambda
+
+\x -> x
+
+add1 = \x -> x + 1
+
+top-level 函数，最好写类型
+
+Function Application
+:t ($)
+($) :: (a -> b) -> a -> b
+f $ x = f x
+
+add1 $ 5 等价于
+
+add1 5 => 6
+
+Function Composition
+:t (.)
+(.) :: (b -> c) -> (a -> b) -> a -> c
+f . g = \x -> f (g x)
+
+map (\x -> negate (abs x)) [5,-3,-6,7,-3,2,-19,24] 等价于 
+
+map (negate . abs) [5,-3,-6,7,-3,2,-19,24]
+
+Conditional Constructs
+
+- pattern matching 可选的函数分支
+
+fibs 0 = 1
+fibs 1 = 1
+fibs n = fibs (n-1) + fibs (n-2)
+
+- if-then-else 
+
+fibs n = if n == 0 then 1 else if n == 1 then 1 else fibs (n-1) + fibs (n-2)
+
+- guards 
+
+fibs n
+  | n == 0 = 1
+  | n == 1 = 1
+  | otherwise = fibs (n-1) + fibs (n-2)
+
+otherwise 是 guards 一部分
+
+- case 
+
+fibs n = case n of
+  0 -> 1
+	1 -> 1
+	otherwise -> fibs (n-1) + fibs (n-2)
+
+Haskell 用空格缩进
+https://typeclasses.com/ghci/config
+
+$HOME/.ghc/ghci.conf
+
+λ> :{
+ > f :: Integer -> Integer
+ > f x = x + 1
+ > :}
