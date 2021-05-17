@@ -10,6 +10,13 @@ https://craftinginterpreters.com/the-lox-language.html
 
 https://craftinginterpreters.com/scanning.html
 
+it’s good engineering practice to separate 
+
+  the code that generates the errors from 
+  
+  the code that reports them.
+
+
 核心是 token scan 部分
 
 设定 token type
