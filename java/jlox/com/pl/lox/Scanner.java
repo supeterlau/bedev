@@ -85,7 +85,11 @@ class Scanner
 				break;
 
 			default:
-				Lox.error(line,, "Unexpected character.");
+				if (isDigit(c)) {
+					number();
+				} else {
+					Lox.error(line,, "Unexpected character.");
+				}
 				break;
 		}
 	}
@@ -112,6 +116,11 @@ class Scanner
 		return source.charAt(current);
 	}
 
+	private char peekNext() {
+		if (current+1 >= source.length()) return '\0';
+		return source.charAt(current + 1);
+	}
+
 	private void string() {
 		while(peek() != '"' && !isAtEnd()) {
 			if (peek() == '\n') line++;
@@ -130,6 +139,18 @@ class Scanner
 		addToken(STRING, value);
 	}
 
+	private void number() {
+		while (isDigit(peek())) advance();
+
+		if (peek() == '.' && isDigit(peekNext())) {
+			// 读取 '.'
+			advance();
+			// TODO: peek() 和 peekNext() 重复一次
+			while (isDigit(peek())) advance();
+		}
+		addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+	}
+
 	private void addToken(TokenType type) {
 		addToken(type, null);
 	}
@@ -142,6 +163,10 @@ class Scanner
 
 	private boolean isAtEnd() {
 		return current >= source.length();
+	}
+
+	private boolean isDigit(char c) {
+		return c >= '0' && c <= '9';
 	}
 }
 

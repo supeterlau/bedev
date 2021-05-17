@@ -80,6 +80,28 @@ private start / current / line 记录读取字符的位置
 
     If Lox supported escape sequences like \n, we’d unescape those here.
 
+  number
+
+    运行时里都使用 floating point 
+
+    valid
+      1234
+      12.34
+    invalid
+      .1234
+      1234.
+
+    一些 edge case
+      print -123.abs();
+
+      var n = 123;
+      print -n.abs();
+
+      123.sqrt()
+
+      调用 advance() 会 current++ 向前扫描
+
+      peekNext 要多看两个字符确认 . 后边字符
 # Refs:
 
 - InputStreamReader 
