@@ -71,6 +71,8 @@ private start / current / line 记录读取字符的位置
 
     字符串以 " 开头
 
+    If Lox supported escape sequences like \n, we’d unescape those here.
+
 # Refs:
 
 - InputStreamReader 
