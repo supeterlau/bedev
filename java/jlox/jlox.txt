@@ -1,0 +1,129 @@
+https://craftinginterpreters.com/contents.html
+
+https://craftinginterpreters.com/the-lox-language.html
+
+  class-based language
+
+# TREE-WALK INTERPRETER
+
+## 1. Scanning
+
+https://craftinginterpreters.com/scanning.html
+
+核心是 token scan 部分
+
+设定 token type
+
+  lox/TokenType.java
+
+创建 token 类
+
+  lox/Token.java
+
+  lexeme 源码字符串
+  literal 运行时对象
+  line 在源码中的位置
+
+Java 对象构造函数中要用 this.type 赋值 setter
+
+getter 不需要 this type
+
+语法扫描器 Scanner
+
+scanner
+  循环
+  判断读取的第一个字符是属于哪个 lexeme
+    然后 consume 字符以及属于这个 lexeme 的后续字符，当到达这个 lexeme 结尾时，
+    产生 token
+  重新进入产生新 token 流程
+
+判断 lexeme 可以用 regular expression 或 lex flex 但本次自己动手写
+
+Scanner 类
+
+  lox/Scanner.java
+
+保存源码内容在 source
+
+生成的 token 存在 tokens 中
+
+private start / current / line 记录读取字符的位置
+
+识别 lexemes
+
+  switch
+
+  读取一个字符就可以判断 lexeme 类型
+
+  读取两个字符判断
+
+  处理 / 区分除法和注释
+# Refs:
+
+- InputStreamReader 
+
+bytes 读取为 characters
+
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+
+// Creates an InputStream
+FileInputStream file = new FileInputStream(String path);
+
+// Creates an InputStreamReader
+InputStreamReader input = new InputStreamReader(file);
+
+InputStreamReader 可以指定编码
+
+InputStreamReader reads bytes from the input stream as characters
+
+- BufferedReader 
+
+https://www.programiz.com/java-programming/bufferedreader
+
+BufferedReader input = new BufferedReader(file); 读取到 buffer 内部大小默认 8192 characters
+
+input.read() 从 buffer 中读取一个字节
+input.read(array, start, length) 读取数据保存在 array 中
+
+readLine()
+
+InputStreamReader input = new InputStreamReader(System.in);
+BufferedReader reader = new BufferedReader(input);
+
+- java.nio.file.Files.readAllBytes
+
+将文件内容读取为 bytes array
+
+Paths.get(path)
+
+readAllBytes(Path path)
+
+Charset.defaultCharset()
+
+- throws IOException {}
+
+- for(;;) {}
+
+- 标准输入 System.in
+
+- Scanner
+
+https://www.programiz.com/java-programming/scanner
+
+import java.util.Scanner;
+
+new Scanner(InputStream stream);
+  File file
+  String string
+
+scanner.nextDouble() nextByte()
+
+next() read next word
+
+
+https://www.tutorialspoint.com/java_nio/index.htm
+
+https://howtodoinjava.com/java/io/difference-between-io-nio/
+  Java New input/output (NIO) 
+  NIO moves the most time-consuming I/O activities (namely, filling and draining buffers) back into the operating system, thus allowing for a great increase in speed.
