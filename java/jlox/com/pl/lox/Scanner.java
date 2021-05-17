@@ -64,6 +64,18 @@ class Scanner
 			case '>':
 				addToken(match('=') ? GREATER_EQUAL : GREATER);
 				break;
+			// handle / : SLASH or Comments
+			case '/':
+				if (match('/')) {
+					// 读取到 // 表示是注释，直到行末
+					// 持续读取，直到行未和文件末 
+					while (peek() != '\n' && !isAtEnd()) advance();
+				} else {
+					// 是 division
+					addToken(SLASH);
+				}
+				break;
+			// skip meaningless characters: newlines whitespace
 			default:
 				Lox.error(line,, "Unexpected character.");
 				break;
@@ -85,6 +97,11 @@ class Scanner
 		// consume
 		current++;
 		return true;
+	}
+
+	private char peek() {
+		if(isAtEnd()) return '\0';
+		return source.charAt(current);
 	}
 
 	private void addToken(TokenType type) {

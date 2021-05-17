@@ -58,6 +58,13 @@ private start / current / line 记录读取字符的位置
   读取两个字符判断
 
   处理 / 区分除法和注释
+
+  peek() 是 lookahead，lookahead 越少，扫描越快（一般 1 到 2 个字符）
+
+  lookahead 只是看当前字符内容，然后调用 advance 读取
+
+  注释不需要处理，不调用 addToken()
+
 # Refs:
 
 - InputStreamReader 
