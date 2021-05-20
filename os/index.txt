@@ -1,0 +1,9 @@
+ubuntu
+
+macOS
+
+windows
+
+archlinux
+
+nixos

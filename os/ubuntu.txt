@@ -1,0 +1,5 @@
+
+- upgrade
+
+- backup 
+https://www.fosslinux.com/14004/how-to-setup-files-and-folders-backup-on-ubuntu.htm
