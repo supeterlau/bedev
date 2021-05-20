@@ -1,0 +1,11 @@
+[package]
+name = "pl_one"
+version = "0.1.0"
+authors = ["Peter Lau <superpeterlau@outlook.com>"]
+edition = "2018"
+description = "crate for fun"
+license = "MIT or Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
