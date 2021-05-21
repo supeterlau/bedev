@@ -10,6 +10,18 @@ Rust Book (The Book)
 
 https://doc.rust-lang.org/book/
 
+Rust crates.io 索引镜像
+
+https://mirrors.tuna.tsinghua.edu.cn/help/crates.io-index.git/
+
+编辑 ~/.cargo/config 文件，添加以下内容：
+
+[source.crates-io]
+replace-with = 'tuna'
+
+[source.tuna]
+registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"
+
 1. Getting Started 开始学
 
 rustup
