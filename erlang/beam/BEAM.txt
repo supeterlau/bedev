@@ -1,0 +1,54 @@
+https://github.com/llaisdy/beam_languages#languages-28 llaisdy/beam_languages: Languages, and about languages, on the BEAM
+
+Caramel
+  OCaml with Erlang Backend
+  Caramel is a functional language for building type-safe, scalable, and maintainable applications
+  https://github.com/AbstractMachinesLab/caramel
+  https://caramel.run/
+
+Clojurl
+  Clojure on BEAM
+
+Elixir
+  (Ruby on BEAM, orz)
+
+Gleam
+  Rust on BEAM 
+  https://gleam.run/index.html Hello, Gleam! - The Gleam Book
+  written in Rust
+
+Hamler
+  Haskell on BEAM
+  https://github.com/hamler-lang/hamler
+
+LFE
+  LISP on BEAM
+  https://lfe.io/books/tutorial/index.html The LFE Tutorial - The LFE Tutorial
+
+
+Elixir -> Elixir AST -> Erlang AST -> ... -> BEAM byte code
+
+http://gomoripeti.github.io/beam_by_example/ gomoripeti.github.io/beam_by_example/
+
+Intermediate representaions:
+
+Erlang source code --> Abstract Syntax Tree ('P') --> expanded AST ('E') --> Core Erlang ('to_core') --> BEAM byte code
+
+在 erl 中使用 beam 文件
+
+Elixir.LiveAppWeb.PostLive.Index.beam
+
+erl> :'Elixir.LiveAppWeb.PostLive.Index':module_info().
+
+iex> :'Elixir.LiveAppWeb.PostLive.Index'.module_info()
+
+In erl:
+c('module.erl', [to_core]).
+
+In erlang code:
+case compile:file(File, [to_core]) of
+    {ok, _, CoreForms} ->
+      CoreForms;
+    _Other ->
+      io:fwrite("Error: Could not compile file.~n", []).
+end.
