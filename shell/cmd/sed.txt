@@ -1,3 +1,12 @@
+- multilines match append 
+
+https://www.gnu.org/software/sed/manual/html_node/Text-search-across-multiple-lines.html
+
+sed '/#nvram = \[/,/#]/ s/#]/#]\nfoobar/' file
+
+https://stackoverflow.com/questions/11214715/using-sed-how-does-one-match-square-brackets-in-a-character-class
+https://unix.stackexchange.com/questions/533683/how-can-i-use-sed-to-insert-some-text-after-a-multiline-match
+https://stackoverflow.com/questions/17511639/sed-print-only-matching-group
 - insert
 
 https://fabianlee.org/2018/10/28/linux-using-sed-to-insert-lines-before-or-after-a-match/
