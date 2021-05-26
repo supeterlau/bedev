@@ -1,5 +1,11 @@
 git.txt
 
+- view log history 
+
+https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
+
+git log --state 显示文件变化
+
 - change commit message after push
 
 https://www.educative.io/edpresso/how-to-change-a-git-commit-message-after-a-push
