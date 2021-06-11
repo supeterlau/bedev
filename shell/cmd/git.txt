@@ -1,5 +1,9 @@
 git.txt
 
+- clean untracked files
+
+git clean -fd
+
 - view log history 
 
 https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History
