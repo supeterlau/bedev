@@ -3796,10 +3796,244 @@ cargo yank --vers 1.0.1 --undo
 
 https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html
 
+类似 umbrella
+
+多个关联模块集合
+  lib.rs 最多有一个
+  main.rs 可以有多个
+
+顶层 Cargo.toml
+
+[workspace]
+members = [
+  "adder",
+  "add-one"
+]
+
+对应文件结构
+
+Cargo.toml
+add-one 
+  Cargo.toml 
+  src 
+    lib.rs 
+adder 
+  Cargo.toml 
+  src 
+    main.rs 
+
+共用 dependency
+
+adder/Cargo.toml
+
+[dependencies]
+add-one = { path = "../add-one" } 内部模块
+rand = "0.8.3" 需要重复一遍 但不会重复下载
+
+add-one/Cargo.toml
+[dependencies]
+rand = "0.8.3"
+
 14.4 用 cargo install 从 crates.io 安装二进制文件
+
+cargo install ripgrep 下载到 .cargo/bin
+
 14.5 自定义命令扩展 cargo
 
+cargo --list 查看 
+
+命令为 cargo-subcommand 的可以用 cargo subcommand 形式调用
+
 Ch15 智能指针 smart pointers
+
+可以像指针一样使用，又带有额外 metadata 和 capabilities 的数据结构
+
+例如 reference counting type 使得数据有多个 owner 并 track owner 数量，并在 owner 为 0 时清除数据
+
+通常用 struct 实现
+
+与一般 struct 区别在于，它们实现 Deref 和 Drop trait 
+
+Deref 让 smart pointer 可以和 reference 一样使用
+
+Drop 定制当 smart point 超出作用域后的行为
+
+smart pointer 是 Rust 常见 design pattern 
+
+最常用的有
+
+  Box<T> 在 heap 上分配内存
+  Rc<T>  reference counting type 
+  Ref<T> RefMut<T> 通过 RefCell<T> 访问 在 runtime 应用 borrowing rule 
+
+另外介绍 interior mutability pattern
+
+  不可变数据提供 API 修改内部数据
+
+以及循环引用
+
+- Box<T> 指向堆上数据
+
+在 heap 保存数据,栈上保存指针
+
+没有性能差别(损失?)
+
+应用场景
+
+编译期不确定大小的 type
+  在 Boxes 中使用 递归类型
+
+传递大量数据 ownership 而不复制数据
+  stack 上数据会被 copy 可以提高性能,只拷贝少量数据(pointer)
+
+希望 own value 只关心该类型实现特定 trait 而不是特定 type 
+  trait object Ch 17
+
+- Box syntax
+
+Box::new(50);
+
+deallocated: box (stack) data (heap) 都会被清除
+
+- 用 Boxes 实现 Recursive Types
+
+不使用 Boxes 无法做到
+
+因为在编译期 Rust 需要知道每个类型占用空间
+
+占用空间未知的一种数据类型叫做 recursive type 
+
+即一部分数据是其他同类型数据
+
+boxes have a known size 可以用于实现 recursive type
+
+例如 cons list 
+
+cons list 来自 lisp
+
+cons function -> construct function 根据参数形成新 pair 
+
+参数为 single value 和 另一个 pair 
+
+这种包含其他 pair 的 pair 形成 list 
+
+将元素 x 放在 container y 头部
+
+cons list 由两个元素组成
+  current item
+  next item
+    没有 next item 的用 Nil 表示
+
+cons list 在 Rust 中不常用，大部分时间用 Vec<T> 
+
+enum List {
+  Cons(i32, List),
+  Nil,
+}
+let list = Cons(1, Cons(2, Cons(3, Nil)));
+
+Rust 计算非 recursive type (Enum) 大小
+
+enum Message {
+  Quit,
+  Move {x: i32, y: i32},
+  Write(String),
+  ChangeColor(i32, i32, i32),
+}
+
+only one variant will be used 根据占据空间最多的变体确定空间大小
+
+引入 Box 后，不需要保存全部数据，只需要保存 heap 的指针
+
+Boxes 只提供 indirection 和 heap 内存分配，没有其他特殊能力
+
+也没有性能损失，适合只需要数据 indirection 的情况
+
+Box<T> 实现 Deref 和 Drop trait
+
+15.2 用 Deref trait 像处理常规引用一样处理 Smart Pointers
+
+实现 Deref trait 可以让我们定制 dereference 操作 * 
+
+用于 reference 的代码也可以用于 smart pointer
+
+regular references 如何使用 dereference operator
+defiine 自定义类型 (smart pointer)，看看 dereference 如何工作
+为自定义类型实现 Deref trait
+Rust 的 deref coercion 特性，可以处理 references 和 smart pointer
+
+- 用 dereference 操作符获取数据
+
+普通 ref
+
+let y = &x;
+assert_eq!(5, *y);
+
+smart pointer
+
+let y = Box::new(x);
+assert_eq!(5, *y);
+
+区别在后者指向的是 x 的 copied value
+
+- 自定义 Smart Pointer
+
+The Box<T> type is ultimately defined as a tuple struct with one element
+
+define a new function
+
+impl<T> MyBox<T> {
+  fn new(x: T) -> MyBox<T> {
+    MyBox(x)
+  }
+}
+
+- 实现 Deref trait 
+
+该 trait 需要
+
+  implement one method named deref that borrows self and returns a reference to the inner data
+
+- 函数和方法中 隐式 Deref Coercions
+
+Deref Coercion 只发生在实现 Deref trait 的类型中
+
+将一种类型的引用转为另一种类型
+
+例如将 &String 转为 &str 因为 String 实现 Deref 并返回 str 
+
+Deref Coercion 在类型不一致时会自动发生
+
+这样在部分调用时不需要自己写 & 和 * 
+
+便于写出同时处理 smart pointer 和 reference 的代码
+
+fn hello(name: &str) {
+    println!("Hello, {}!", name);
+}
+
+let m = MBox::new(String::from("Rust")); 到 &str
+
+hello(&m);
+
+&MBox (自定义实现 Deref) -> &String (String 实现 Deref) -> &str
+
+deref coercion 在编译期完成，不影响 runtime
+
+- 可变数据的 deref coercion
+
+Rust 处理三种情况
+
+From &T to &U when T: Deref<Target=U>
+From &mut T to &mut U when T: DerefMut<Target=U>
+From &mut T to &U when T: Deref<Target=U>
+
+Rust 可以从 &mut T 转为 &U 不支持相反过程
+  
+  Because of the borrowing rules, if you have a mutable reference, that mutable reference must be the only reference to that data
+
+  Converting one mutable reference to one immutable reference will never break the borrowing rules. Converting an immutable reference to a mutable reference would require that the initial immutable reference is the only immutable reference to that data, but the borrowing rules don’t guarantee that. 
+
 
 Ch16 并发 Fearles Concurrency
 
@@ -3823,6 +4057,7 @@ rustup update
 rustup component add rust-src
 RUSTUP_DIST_SERVER (default: https://static.rust-lang.org )
 
+https://doc.rust-lang.org/rust-by-example/index.html
 
 Book:
   https://github.com/rust-lang/async-book Asynchronous Programming in Rust
