@@ -1,0 +1,11 @@
+https://github.com/aio-libs/aiopg aio-libs/aiopg: aiopg is a library for accessing a PostgreSQL database from the asyncio
+
+https://aiomysql.readthedocs.io/en/latest/ Welcome to aiomysql’s documentation! — aiomysql 0.0.20 documentation
+
+Django
+Flask
+Sanic
+FastAPI
+
+uvlooop
+uvc

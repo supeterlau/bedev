@@ -1,0 +1,398 @@
+https://ocaml.org/learn/tutorials/basics.html The Basics – OCaml
+
+https://caml.inria.fr/pub/docs/manual-ocaml/index.html The OCaml system
+
+https://ocamlverse.github.io/content/toplevel.html OCaml REPL (Toplevel) | OCamlverse
+
+https://opam.ocaml.org/doc/Manual.html
+
+- Refs
+
+https://ocaml.org/learn/tutorials/compiling_ocaml_projects.html
+https://ocaml.org/learn/tutorials/data_types_and_matching.html
+
+https://ocaml.org/manual/index.html#sec6
+
+https://ocaml.org/manual/language.html
+https://ocaml.org/manual/extn.html
+
+- 安装
+
+https://ocaml.org/docs/install.html
+
+Homebrew
+
+  brew install ocaml
+  brew install opam
+
+Ubuntu Ubuntu 20.04
+apt install ocaml-nox # If you don't want X11 support.
+apt install ocaml
+
+- toplevel
+
+> ocaml 
+
+https://caml.inria.fr/pub/docs/manual-ocaml/toplevel.html#s:toplevel-directives Chapter 10  The toplevel system or REPL (ocaml)
+
+  help;;
+  quit;;
+
+https://github.com/ocaml-community/utop ocaml-community/utop: Universal toplevel for OCaml
+
+安装 opam 
+  https://opam.ocaml.org/doc/Install.html
+  sh <(curl -sL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh)
+  add-apt-repository ppa:avsm/ppa
+  apt update
+  apt install opam
+
+安装 utop: opam install utop
+
+  exit 0;;
+
+https://sookocheff.com/post/ocaml/ocaml-basics/ What is the OCaml toplevel? - Kevin Sookocheff
+
+# Tutorial
+
+## Getting Started
+
+### 1. up_and_running
+
+https://ocaml.org/learn/tutorials/
+
+1+3+3;;
+
+Toplevel
+  alternative top level utop
+
+  https://github.com/ocaml-community/utop
+
+Build system Dune 
+
+  opam install dune
+
+  cd helloworld/
+  dune init exe helloworld
+  dune build
+  dune exec ./helloworld.exe
+
+Editor
+  For Vim and Emacs, install the Merlin system using opam:
+  $ opam install merlin
+
+  https://github.com/ocaml/merlin Context sensitive completion for OCaml in Vim and Emacs
+
+### 2. A First Hour with OCaml
+
+- 表达式 expression
+
+表达式末尾用 ;; 表示结束
+
+50 * 50;;
+
+let 声明变量(不可变)
+
+let x = 50 * 50;;
+
+或
+
+let x = 50 in x * x;; 表示 x * x 中  x 值为 50, 不泄漏到外部
+
+可以绑定多个变量 
+
+let m = 3 in
+let n = 4 in
+  m * n;;
+
+定义函数
+
+let square x = x * x;;
+
+多个参数
+
+let add x y z = x + y + z;;
+
+计算浮点数需要用对应的操作符 +.
+
+let average a b =
+  (a +. b) /. 2.0;;
+
+需要明确地转换类型
+
+float_of_int i +. f;;
+
+int_of_float f + i;;
+
+- 递归函数 recursive functions
+
+需要用 let rec 定义
+
+构造列表 
+
+1::[];; => [1]
+1::[1];; => [1; 1]
+
+let rec range a b =
+  if a > b then []
+  else a :: range (a + 1) b;;
+
+let 和  let rec 区别正是 let 不会查找当前定义的函数
+
+- 类型 types
+
+int 63-bit signed (64bit) 31-bit sighend (32bit)
+float C 的双精度浮点数
+bool 'true' or 'false'
+char 8-bit
+string sequence of 8 bit chars
+
+text management: https://github.com/yoriyuki/Camomile'
+
+'L';;
+
+"Help me!";;
+
+函数类型注解
+
+f : arg1 -> arg2 -> ... -> argn -> rettype
+
+int_of_char
+
+OCaml is a strongly statically typed language; each expression has a type
+
+OCaml uses type inference to work out (infer) the types
+
+OCaml doesn't do any implicit conversion of types
+
+- 模式匹配 Pattern matching
+
+let rec pmfact n =
+  match n with
+  | 0 | 1 -> 1
+  | x -> x * pmfact (x - 1);;
+
+match VALUE with
+  | match1 | match2 -> exp
+
+  | x -> x * pmfact (x - 1);;
+
+  exp 中 x 和 match_value 无关，可以用 _ 表示匹配其他所有情况
+
+关键字 function 直接引入模式匹配
+
+参数位置换到分支处
+
+let rec fpmfact = function
+  | 0 | 1 -> 1
+  | n -> n * fpmfact (n - 1);;
+
+- Lists
+
+ordered collections of elements of like type
+
+[];;
+
+[[1; 2]; [3; 4]; [5; 6]];;
+
+cons operator :: 添加元素到列表头部
+
+1 :: [];;
+
+append 操作 合并两个列表
+
+[1;2;3] @ [10;20;30];;
+
+mymap
+
+let rec length l =
+  match l with
+  | [] -> 0
+  | _ :: t -> 1 + length t;;
+  
+  使用 _ 可以支持任意类型数据 polymorphic
+
+函数支持偏函数形式
+
+let add a b = a + b;;
+let add_6 = add 6;; 
+add_6 19;;
+
+更新嵌套 list 
+
+map (map (fun x -> x * 2)) [[1; 2]; [3; 4]; [5; 6]];;
+
+- 其他内置数据类型
+
+1. tuples
+
+fixed length collections of elements of any type
+
+let t = (1, "one", '1');;
+
+2. Records
+
+类似 tuple 但是各项元素有名字
+
+type person = {
+  first_name: string;
+  surname: string;
+  age: int
+};;
+
+它们都支持 模式匹配
+
+- 自定义类型
+
+type keyword:
+
+type colors = Red | Blue | Green | Yellow;;
+
+其中的 Red Blue 叫做 type constructor 大写字母开头，可以有值
+
+type rgb =
+  | Red
+  | Blue
+  | Green
+  | Yellow
+  | RGB of int * int * int;;
+
+of int * int * int;; 对应 RGB(30,20,100)
+
+类型也支持多态和递归
+
+定义 二叉树
+
+A Lf leaf holds no information, just like an empty list. A Br branch holds a left tree, a value of type 'a and a right tree. 
+
+type 'a tree =
+  | Lf
+  | Br of 'a tree * 'a * 'a tree;;
+
+二叉树 叶节点 或 分支
+分支由 分支-节点-分支 组成
+'a 表示类型
+
+计算二叉树值的和
+
+翻转二叉树
+
+OCaml is a garbage-collected language, and will free memory for data structures when they are no longer needed. 
+
+- Error 处理
+
+1. exception E
+
+exception 类似 type 
+
+exception E of string;; 创建带字符串的错误
+
+raise (E "error message")
+
+可以利用 try 匹配错误
+
+try f 10 0 with E2 _ -> 0;;
+
+try f 10 0 with E2 
+  | _ -> 0;;
+
+2. 利用 option 类型
+
+type 'a option = None | Some
+
+List.find is_5 l;;
+Exception: Not_found.
+
+p : predicte 'a -> bool 条件
+
+let list_find_opt p l = 
+  try Some(List.find p l) with
+    Not_found -> None;;
+
+或者可以用 match 注意分支参数为 value (exception Not_found)
+
+let list_find_opt p l = 
+  match List.find p l with
+    | v -> Some v
+    | exception Not_found -> None;;
+
+- 命令式风格
+
+OCaml is not just a functional language: it supports imperative programming too.
+
+在程序中改变变量值需要用 ref 
+
+r := 100;;
+
+!r 查看值
+
+更多使用 let ... = ... in ...
+
+多个语句用 ; 换行
+
+类型 unit 用来调用没有参数的函数
+
+print_newline;;
+print_newline();;
+
+可以使用 引用 的复合类型
+
+array 
+
+  let a = [|1;2;3|];;
+
+  O(1) 的获取，更新操作
+
+  a.(1);; => 2
+
+  a.(0) <- 0;; 更新
+
+record
+
+  在 record 中用 mutable 标记该项为 ref 
+
+  type person =
+    {first_name : string;
+     surname : string;
+     mutable age : int};;
+  let grow p = p.age <- p.age + 1;;
+
+- 标准库
+
+List.concat
+
+Printf
+
+let print_length s =
+    Printf.printf "%s has %i characters\n" s 
+
+- 第三方库
+
+opam install graphics
+
+- 编译 OCaml
+
+ocamlopt -o main data.mli data.ml main.ml
+
+data.mli 是 data.ml 的类型文件
+
+- 
+
+let x = 2;;
+x = 1;; => false
+x == 1;; => false
+
+- 注释 
+
+(* square 50;; *)
+
+# Manual
+
+https://ocaml.org/manual/index.html
+
+# Real World OCaml
+
+
+
+
+

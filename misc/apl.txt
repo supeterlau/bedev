@@ -1,0 +1,12 @@
+J 
+https://www.jsoftware.com/#/README
+https://code.jsoftware.com/wiki/System/Installation/J902/Zips
+https://www.jsoftware.com/help/learning/contents.htm
+https://www.jsoftware.com/help/primer/contents.htm
+  jconsole
+
+# Learning J
+
+https://www.jsoftware.com/help/learning/01.htm
+
+
