@@ -4116,3 +4116,6 @@ http://blog.joncairns.com/2015/10/a-single-command-to-compile-and-run-rust-progr
 name=$(basename $1 .rs)
 rustc $@ && ./$name && rm $name
 
+https://stackoverflow.com/questions/29403920/whats-the-difference-between-use-and-extern/54378840
+  use 
+  extern
