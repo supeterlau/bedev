@@ -1,0 +1,21 @@
+# Type System
+
+在编译期发现问题的能力
+
+语言表现力
+
+# Languages
+
+C:
+	简洁
+	底层
+	性能
+
+Cpp:
+	强大
+	性能
+
+Erlang:
+	简洁
+	BEAM 
+	OTP
