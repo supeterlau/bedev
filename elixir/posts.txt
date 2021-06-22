@@ -4,13 +4,80 @@ https://ejpcmac.net/blog/typed-elixir-structs-without-boilerplate/ ejpcmac.net/b
 
 # Posts
 
-### 2020-08-30
+- 20210622
+
+https://medium.com/blackode/the-secret-behind-elixir-operator-overriding-to-a564fd6c0dd6
+
+✅ https://blog.lelonek.me/elixir-on-erlang-vm-demystified-320557d09e1f
+
+BEAM (Bogdan/Björn's Erlang Abstract Machine)
+  the core of the Erlang Open Telecom Platform (OTP)
+
+OTP
+  一组 Erlang libraris 组成 Erlang Runtime System (ERTS)
+  a number of ready-to-use components mainly written in Erlang, and a set of design principles for Erlang programs
+
+BEAM 也是 ERTS 一部分，将 Erlang/Elixir code 编译为 bytecode
+
+Elixir runtime is a BEAM instance
+
+编译完成，OS process starts Erlang 接管控制
+
+BEAM instance 启动单个 OS process 
+
+  ? For every available CPU, it creates a thread. This makes Erlang systems scalable because they can take advantage of all available cores.
+
+  https://www.embedded.com/getting-started-with-multicore-programming-part-2-multithreading-in-c/
+
+OS process
+  -> thread1
+    erlang processes
+  -> thread2
+    erlang processes
+  -> thread3
+    erlang processes
+  -> thread4
+    erlang processes
+
+one thread, one scheduler
+  populate erlang process queue
+  pull erlang processes from the queue
+  allocate a time slot to execute
+
+Processes (Erlang Processes)
+
+They have access only to their memory
+只通过 message share data: send a copy of their data
+
+每个 process 有 local message queue, 发送数据即 copy the message 到接收方 heap 并在 queue 中保存 message reference
+
+等待接收时，process 会被 swapped out 交换出 queue，直到收到数据或 time-out 才被放回 queue 
+
+Concurrency
+
+process 执行超过 slot 时 Erlang VM 暂停 process 放回 queue 并执行下一个 process 整个机制叫做 preemption
+
+BEAM 通过快速切换 process 来并发执行 Erlang processes
+
+每个 process 有自己的 heap 和 stack 空间。BEAM 提供 suspension 和 scheduling 机制。
+
+A suspending process 在 suspension record 中保存当前状态，并被添加到 scheduler queue。为保证公平调度，经过固定时间后，开始恢复队列中第一个 process
+
+prompt [smp:4:4] 表示有 4 核，4 个可用 schedulers
+
+https://blog.lelonek.me/
+https://blog.lelonek.me/how-to-find-an-elixir-job-db4c836890
+https://blog.lelonek.me/minimal-elixir-http2-server-64188d0c1f3a
+
+
+
+- 2020-08-30
 
 https://ejpcmac.net/blog/typed-elixir-structs-without-boilerplate/ ejpcmac.net/blog - Typed Elixir structs without boilerplate
 
 https://elixirforum.com/t/getting-each-stage-of-elixirs-compilation-all-the-way-to-the-beam-bytecode/1873 Getting each stage of Elixir's compilation all the way to the BEAM bytecode - Chat / Discussions - Elixir Forum
 
-### 2020-08-06
+- 2020-08-06
 
 https://hashrocket.com/blog/posts/build-the-ultimate-elixir-ci-with-github-actions
 
