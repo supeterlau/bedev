@@ -1,0 +1,31 @@
+https://elm-lang.org/
+
+安装
+	https://guide.elm-lang.org/install/elm.html
+
+Linux 下安装
+	https://github.com/elm/compiler/blob/master/installers/linux/README.md
+	curl -L -o elm.gz https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz
+	gunzip elm.gz
+	chmod +x elm
+	sudo mv elm /usr/local/bin
+	elm --help
+
+新建项目
+	start an Elm project 
+	elm init
+
+启动服务器
+	elm reactor
+
+编译文件
+	compile Elm code to HTML or JavaScript
+	elm make
+	elm make src/Main.elm
+	elm make src/Main.elm --optimize --output=elm.js
+
+安装模块
+	elm install
+	Elm packages all live at package.elm-lang.org
+
+elmdev
