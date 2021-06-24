@@ -1,0 +1,408 @@
+# 1. Introduction
+
+Haskell is a purely functional programming language.
+
+lazy (default)
+
+statically typed
+
+elegant and concise
+
+ghci 中载入 file.hs
+
+  :l file
+
+重新载入
+
+  :l file 或 :r reloads the current script
+
+GHCi
+  :q :quit 退出
+  :? help
+  :cd
+  :cmd
+  :t 显示类型
+
+# 2. Starting out
+
+布尔值
+
+True && False  
+
+False || True 
+
+not True
+
+不等于 5 /= 4
+
+"Hello" == "Hello" 字符串
+
+5 可以用作浮点数，4.0 不能用作整数
+
+5 + 4.0 => 9.0
+
+infix function: 4 * 8.0 
+
+其中 * 就是一个 infix function
+
+不涉及数值计算的函数通常是 prefix 
+
+succ 8
+
+min 3.4 3.2
+
+Haskell 中函数和参数，参数和参数用空格分隔
+
+Function application 函数调用有最高优先级
+
+succ 9 * 10 ==> 100
+
+succ (9*10) ==> 91
+
+In Haskell, functions are called by writing the function name, a space and then the parameters, separated by spaces
+
+div 92 10 可以写成 (两个参数的函数，可以写成 infix 形式)
+
+92 `div` 10 更清楚哪个是被除数
+
+C 语言里的 foo(), bar(1) or baz(3, "haha")
+
+对应 Haskell 的 foo/ bar 1/ baz 3 "haha"
+
+空格表示 Function application 
+
+括号表示先调用哪个函数而非函数调用
+
+bar (bar 3) 对应 C 的 bar(bar(3))
+
+- 自定义函数
+
+doubleMe x = x + x  
+
+add x y = x + y
+
+add 30 40 === 30 `add` 40
+
+:l ch02 编译并加载 ch02.hs 文件
+
+doubleMe x = x + x
+
+doubleUs x y = doubleMe x + doubleMe y
+
+11.9 `doubleUs` 29
+
+Making basic functions that are obviously correct and then combining them into more complex functions. 
+
+可以用任意顺序定义函数
+
+if statement: Haskell 的 else 部分是强制必须有的
+
+if 语句是表达式，即有返回值
+
+doubleSmallNumber x = if x > 100
+                         then x
+                         else x * 2
+
+函数名不能以大写字母开头
+
+apostrophe ' 在函数名中合法，一般表示该函数是
+  strict 版本
+  或是进行略微修改的版本
+
+没有参数的函数也被称作定义 definition
+
+john = "John Wick"
+
+- Lists
+
+保存相同数据类型元素
+
+let lostNumbers = [4,8,15,16,23,42]
+
+其中字符串是字符列表，即 string 是 list 可以使用 list 的函数
+
+++ 合并两个 list
+
+[1,2,3] ++ [4] 相当于对左侧逐个进行 ++
+
+5:[1,2,3,4,5] 更快速
+
+[1,2,3] 相当于 1:2:3:[]
+
+根据索引获取元素 !! 0-based
+
+"Steve Buscemi" !! 6  
+
+嵌套 list 也要求是相同元素类型
+
+list 元素如果可以比较，那么 list 就可以比较
+
+list 一些函数
+
+  head 
+
+  tail
+  
+  last
+  
+  init 返回除去末尾元素的剩余部分
+  
+  (以上不能用于 空 list)
+  
+  lenght
+
+  null 检查 list 是否为空
+
+  reverse
+
+  take 从开头取出元素 take 5 [1,2]
+
+  drop 从开头移除部分元素 drop 100 [1,2,3]
+
+  maximum
+
+  minimum
+
+  sum
+
+  product 求列表的积
+
+  elem 判断元素是否在列表中 4 `elem` [3,4,5]
+
+- Ranges
+
+是创建 list 的方法
+
+Ranges are a way of making lists that are arithmetic sequences of elements that can be enumerated
+
+可以是数字或字符
+
+[1..20]
+
+['a'..'z']
+
+可以指定步数 [3,6..20]
+
+倒排必须指定步数 [20, 19 .. 3]
+
+[19 .. 3] => []
+
+避免在 range 中使用浮点数
+
+其他生成list函数
+
+cycle 重复整个列表
+
+repeat 重复单个元素
+
+replicate 3 10 => [10,10,10]
+
+- 列表解析 list comprehension
+
+[x * 2 | x <- [1..10], x * 2 >= 12]
+
+odd 10 => False
+
+even 10 => True 
+
+boomBangs xs = [ if x < 10 then "BOOM!" else "BANG!" | x <- xs, odd x]
+
+[ x | x <- [10..20], x /= 13, x /= 15, x /= 19] 
+
+[ x*y | x <- [2,5,10], y <- [8,10,11]]  
+
+同样可以用于 string
+
+嵌套的 comprehension 也存在
+
+Nested list comprehensions
+
+[ [ x | x <- xs, even x ] | xs <- xxs]  
+
+- tuple
+
+a tuple of size two (also called a pair)
+
+[(1,2),(8,11),(4,5)]
+
+(1,2) 和 (1,2,3) 是两种类型
+
+tuple 元素类型可以不同，适合于已知元素数据的情况
+
+fst 返回 pair 第一个元素
+
+snd 返回 pair 第二个元素
+
+zip 根据 list 产生 list of pair
+
+zip [1..] ["apple", "orange", "cherry", "mango"]  
+
+计算直角三角形 三边和为 24 最长边小于 10
+
+
+use TemplateHaskell or TemplateHaskellQuotes
+
+https://www.tweag.io/blog/2019-09-06-why-haskell-is-important/
+
+https://www.haskell.org/ghc/
+https://ocaml.org/learn/tutorials/compiling_ocaml_projects.html
+
+https://mirage.io/
+https://en.wikipedia.org/wiki/Unikernel
+
+https://blog.regnat.ovh/posts/ocaml-vs-haskell/
+https://markkarpov.com/post/haskell-vs-ocaml.html
+
+
+
+
+
+
+Elixir 
+https://experimentingwithcode.com/phoenix-authentication-with-phx-gen-auth-part-1/
+https://experimentingwithcode.com/phoenix-api-authentication-with-pow/
+https://elixirschool.com/blog/live-view-with-pub-sub/
+https://hexdocs.pm/ecto/polymorphic-associations-with-many-to-many.html#content
+https://elixirforum.com/t/help-me-understand-the-associations-on-replace-delete-example-in-the-docs/11837/2
+http://blog.plataformatec.com.br/2015/08/working-with-ecto-associations-and-embeds/
+https://til.hashrocket.com/posts/e0754031e3-counting-records-with-ecto
+https://www.coletiv.com/blog/many-to-many-relationships-with-ecto/
+
+Docker Elixir
+  https://scoutapm.com/blog/elixirs-genservers-overview-and-tutorial
+  https://dev.to/hlappa/development-environment-for-elixir-phoenix-with-docker-and-docker-compose-2g17
+  https://www.poeticoding.com/running-elixir-in-docker-containers/
+    Running Containers
+      docker image pull elixir:alpine (:1.7.4-alpine )
+      docker image inspect elixir:alpine --format '{{ .Size}}'
+      docker run -it --rm elixir:alpine
+      docker run -it --rm elixir:alpine -sname node1
+      https://erlang.org/doc/man/erl.html
+      iex --erl "-kernel shell_history enabled"
+      https://hexdocs.pm/iex/IEx.html#module-remote-shells
+
+      create a local volume
+      docker volume create elixir-mix
+      docker container run --rm -v elixir-mix:/root/.mix -v $PWD:/app -w /app -it  elixir:1.7.4 mix deps.get
+
+    Running Multiple Containers
+      docker network create elixir-net
+      docker network inspect elixir-net
+      docker run -it --rm --network elixir-net elixir:alpine
+      docker container ls
+      docker container inspect <id> | jq '.[] .NetworkSettings .Networks ."elixir-net" .IPAddress'
+      docker run -it --rm --network elixir-net elixir:alpine bash
+        ping ''
+
+      COOKIE=$(date +%s | md5 | base64 | head -c 15)
+      COOKIE=$(date +%s | md5sum | base64 | head -c 15)
+      docker run -it --rm --network elixir-net --name elixir-1 -h elixir-1 elixir:alpine iex --sname docker --cookie '$COOKIE'
+        Agent.get({:global, DockerAgent}, fn state-> state end)
+      docker run -it --rm --network elixir-net --name elixir-2 -h elixir-2 elixir:alpine iex --sname docker --cookie '$COOKIE'
+        Agent.start_link(
+          fn -> {:hello, :world} end, 
+          name: {:global, DockerAgent})
+
+        $HOME/.erlang.cookie
+
+    :erlang.node
+    :erlang.nodes
+
+- dbless stack
+
+Frontend Data Layer
+  state management
+    redux
+    mobx
+    recoil
+  frontend database
+  backend api/database
+    rpc
+    restapi
+    graphql
+      prisma
+    SaaS
+      Firebase
+      Amplify
+      Cloudbase
+    database
+      SQL
+      NoSQL
+      
+state management <-> backend api/database
+  直接
+  后台更新快速
+
+state management <-> frontend database <-> backend api/database
+  UI 响应快
+  无后端api/database模式 no-api/database
+
+offline mode
+  state management <--> frontend database
+
+online mode
+  query 渐进更新（先返回本地数据库的结果，再返回远端结果 patch）
+  update/delete/create
+
+state management
+  -> online
+  -> offline
+  -> remote
+    -> api
+    -> saas
+  -> local
+    -> frontend database
+
+https://cushiondb.github.io/
+https://github.com/CushionDB/CushionClient
+https://github.com/CushionDB/CushionServer
+
+https://couchdb.apache.org/
+https://docs.couchdb.org/en/stable/
+
+https://hackernoon.com/use-indexeddb-with-idb-a-1kb-library-that-makes-it-easy-8p1f3yqq
+
+https://www.npmjs.com/package/idb
+  npm install idb
+
+https://dev.to/ivandotv/simplify-your-browser-fetch-calls-15bp
+https://dev.to/ivandotv/mobx-server-side-rendering-with-next-js-4m18
+
+https://github.com/mebjas/html5-qrcode
+https://blog.minhazav.dev/research/html5-qrcode
+
+Payment (payoneer, ethereum)
+  https://www.wpbeginner.com/showcase/5-paypal-alternatives-for-freelancers-to-collect-payments-in-wordpress/
+
+  https://stackoverflow.com/questions/56388807/payoneer-integration-in-laravel
+
+  https://developer.payoneer.com/docs/OpenAPI/GettingStartedGuide/overview
+
+  https://ethereum.stackexchange.com/questions/58627/subscribe-to-eth3-transactions-to-a-particular-address
+
+  https://web3js.readthedocs.io/en/v1.2.11/web3-eth-subscribe.html
+
+  https://ethereum.stackexchange.com/questions/42929/send-payment-from-wallet-using-web3
+
+  https://hiddentao.com/archives/2020/07/17/my-first-smart-contract-in-rust-on-elrond-vm
+
+  https://www.algorand.com/technology/algorand-protocol
+
+  https://docs.solana.com/developing/on-chain-programs/developing-rust
+
+  https://solana.com/ Solana is a fast, secure, and censorship resistant blockchain providing the open infrastructure required for global adoption.
+
+  https://techcrunch.com/2021/05/14/solana-a-blockchain-platform-followed-by-top-crypto-investors-says-its-a-lot-faster-than-ethereum/
+
+
+
+https://erlang.org/doc/reference_manual/data_types.html#list
+https://erlang.org/doc/man/lists.html#foldl-3
+
+Elixir/Erlang graphql parser
+
+parser combinator
+
+parser generator
+
+property Test
