@@ -1,0 +1,19 @@
+https://docs.racket-lang.org/guide/
+
+- repl 
+
+racket -e '(display "hi\n")' -i
+
+racket -l racket/base -i
+
+racket -l racket/date -i (fail)
+
+racket -i -l racket/date (ok)
+
+,help ,h ,?
+
+,load ,ld
+
+,exit ,quit ,ex
+
+https://github.com/khakimme/sicp-racket

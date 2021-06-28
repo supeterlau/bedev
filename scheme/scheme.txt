@@ -1,12 +1,35 @@
-racket
+# Doc
+~/Library/Racket/8.0/doc/index.html
+
+# Install
+# Usage
+# Pkg Source
+# Tours
+https://cs.wellesley.edu/~cs251/s20/topics/racket.html
+  How to programe
+
+tyscheme
+  
+  https://ds26gte.github.io/tyscheme/index-Z-H-3.html
+
+SICP 
+
+  https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-10.html#%_sec_1.1
+
+# Refs
+
+https://schemers.org/Documents/Standards/R5RS/HTML/r5rs.html
+  Revised5 Report on the Algorithmic Language Scheme
+
+- Racket
   https://docs.racket-lang.org/guide/cmdline-tools.html
   https://docs.racket-lang.org/sicp-manual/SICP_Language.html
   
-Chez Scheme
+- Chez Scheme
 
-gerbil https://github.com/vyzo/gerbil
+- Gerbil https://github.com/vyzo/gerbil
 
-command line
+## CommandLine:
 
 /Applications/Racket\ v7.7/bin
 
@@ -14,6 +37,11 @@ export PATH=$PATH:/Applications/Racket\ v7.7/bin
 
 REPL: racket
   https://docs.racket-lang.org/guide/racket.html
+
+> (display "OK")
+OK
+> (exit)
+
 racket -e '(display "hi\n")' -i
 
 initialize the REPL’s environment with a different language
@@ -49,351 +77,3 @@ raco pkg install sicp
 #lang sicp
 (inc 42)
 
-Teach Yourself Scheme in Fixnum Days
-https://ds26gte.github.io/tyscheme/index-Z-H-1.html#node_toc_start
-
-chapter 1
-
-注释
-
-; This is a comment
-
-(begin ...)
-
-begin-form 引入后续的 subforms
-
-display-procedure 输出参数到标准输出
-
-newline-procedure 输出换行 carriage return
-
-直接运行 racket 进入 REPL 模式 read-eval-print-loop
-
-REPL 模式载入文件代码
-
-(load "file.scm") * 对 racket 无效，不执行代码
-
-退出 (exit)
-
-Chapter 2
-
-1. 简单数据类型
-
-1.1 Booleans
-
-#t #f
-
-检查变量是否为 布尔类型 的 procedure
-
-(boolean? #t)
-
-not-procedure negates 参数
-
-(not "Word") => #f
-
-任何不是 #f 的值都作为 #t
-
-1.2 数值类型
-
-integer rational real complex
-
-(number? a)
-(complex? a)
-(real? a)
-(rational? a)
-(integer? a)
-
-integer 可以是任意进制
-
-十进制   42 (可选前缀 #d)
-二进制   #b1100
-八进制   #o
-十六进制 #x
-
-通用的 equality predicate 相等检测 eqv?
-
-可以比较任意类型
-
-如果特定地比较两个数值类型的值可以用 number-equality preicate: =
-
-(= 42 42.0)
-
-(= 42 #f) 会报错
-
-其他数值间比较运算符
-
-< <= > >=
-
-数值运算
-
-+ - * / expt
-
-(expt 2 3) => 2^3 = 8
-
-一元运算
-
-(- 4) => -4
-
-(/ 4) => 1/4
-
-最大值 最小值
-
-(max 1 2 3 5 -1)
-
-(min 3 45 32)
-
-Scheme 提供大量 arithmetic 和 trigonometric 三角运算。支持 atan exp sqrt
-
-查看 http://www.schemers.org/Documents/Standards/R5RS/HTML/r5rs.html
-
-1.3 字符
-
-在字符前添加 #\
-
-'c' 表示为 #\c
-
-不可见字符
-
-#\newline
-
-#\tab
-
-#\ (空格) 或 #\space
-
-类型检查
-
-(char? #\;)
-
-* 一个 ; 字符不表示注释
-
-字符比较 comparision predicates
-
-(char=? #\a #\A)
-
-(char<? #\a #\A)
-
-(char>? #\a #\A)
-
-如果要区分大小写需要用 char-ci
-
-(char-ci=? #\a #\A)
-
-大小写转换 procedure
-
-(char-downcase #\A)
-
-(char-upcase #\a)
-
-1.4 Symbols
-
-以上的简单类型属于 self-evaluating 类型。即将以上类型输入 repl 输入值和求值后输出一样
-
-#t => #t
-
-Symbols 的行为与它们不同。Symbols 被 Scheme 用作变量标识，求值结果为变量 hold 的值。
-
-identifiers for variables
-
-为了让 Scheme 不对 symbol 求值，我们要 quote 这个 symbol
-
-(quote xyz)
-=>'xyz
-
-(quote xyz) 简写为 'xyz
-
-symbols 就是字符序列，唯一要求是不能符合其他类型
-
-合法 symbols: <=> i18n $!#*
-
-不合法 symbols: #t "a-string" (barf)(这是 list)
-
-predicate:
-
-(symbol? 42) => #f
-
-(symbol? 'xyz) => #t
-
-symbol 不区分大小写，可以用 eqv? 测试
-
-(eqv? 'Calorie 'calorie) => #t
-
-通过 define-form 可以将 symbol 作为 global variable
-
-(define xyz 99)
-
-这样 xyz 就 hold 了值 99
-
-修改变量绑定
-
-(set! xyz #\c)
-
-2. 复合数据类型
-
-2.1 字符串
-
-character 序列。和 symbol 不同。symbol 是用字符序列做 name。
-
-double-quotes
-
-"a simple string"
-
-求值结果为自身
-
-string procedure 将多个字符变为字符串
-
-(string #\h #\e #\l #\l #\o) => "hello"
-
-字符串中的分号 semicolon 不表示注释
-
-获取字符串某个位置的字符 0-based
-
-(string-ref greeting 1)
-
-给字符串添加其他字符串
-
-(string-append "Who" " " "are" " " "you")
-
-设置字符串长度 (make-string 3)
-
-(define 3-char-long-string (make-string 3))
-
-检查是否为 string
-
-string?
-
-string make-string string-append 的结果是可变的
-
-string-set! 替换给定位置的字符
-
-(string-set! some-string 1 #\a)
-
-2.2 Vectors
-
-也是序列，但是元素为任意类型
-
-(vector 0 1 1 2 3 4)
-
-make-vector 类似 make-string
-
-同样有 vector-ref vector-set! vector?
-
-2.3 Dotted pairs 和 lists
-
-dotted pair 两个 任意类型 值组成有序对
-
-第一个元素叫 car 第二个叫 cdr
-
-组 procedure 叫 cons
-
-(cons 1 #t)
-
-它不是 self-evaluating 所以写字面量必须用 quote
-
-'(1 . #t)
-
-获取元素
-
-(car x)
-
-(cdr x)
-
-修改元素
-
-(set-car! x 2)
-
-(set-cdr! x #f)
-
-dotted pair 可以包含其他 dotted pair
-
-对于 '((1 . 2) . 3)
-
-(car (car y)) => 1
-
-缩写为 caar
-
-(cdr (car y)) => 2
-
-缩写为 cdar
-
-c ... r 风格缩写支持到 4 级
-
-最多形式 cdaddr 再多不一定支持 might be pushing it
-
-当嵌套 dotted pair 为第二个元素时。Scheme 表示为特殊形式 special notation
-
-(cons 1 (cons 2 (cons 3 (cons 4 5))))
-
-=> (1 2 3 4 . 5)
-
-即为 (1 . (2 . (3 . (4 . 5))))
-
-缩写
-
-如果最后一项为 empty list ()
-
-那么 (1 . (2 . (3 . (4 . ()))))
-
-简写为 (1 2 3 4) 这种形式叫 list
-
-创建 list
-
-(list 1 2 3 4)
-
-字面量 '(1 2 3 4)
-
-获取元素
-
-list-ref
-
-list-tail 返回给定 index 后的元素
-
-pair? 检查是否为 dotted pair
-
-list? 检查是否为 list
-
-null? 检查是否为 empty list
-
-2.4 类型转换
-
-(char->integer #\d) => 100
-
-integer->char
-
-string->list
-
-list->string
-
-vector->list
-
-list->vector
-
-number->string 成功返回字符串，失败返回 #f
-
-string->number 第二个参数为 radix
-
-Symbol 和 string 互转
-
-symbol->string
-
-string->symbol
-
-3. 其他数据类型
-
-- procedure
-
-display + cons 为保存 procedure 值的变量
-
-以上都是 primitive procedure 保存在 standard global variables
-
-- port
-
-与文件和命令行有关
-
-display 的第二个参数是用于指定在哪里显示的 output port
-
-current-output-port 获取当前标准输出
-
-#<output-port:stdout>
-
-4. S-expression
-
-本章全部表达式都是 S-expression
