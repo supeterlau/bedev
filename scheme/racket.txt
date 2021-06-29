@@ -16,4 +16,10 @@ racket -i -l racket/date (ok)
 
 ,exit ,quit ,ex
 
+运行文件
+(enter! "file.scm")
+
+退出运行文件
+(enter! #f)
+
 https://github.com/khakimme/sicp-racket
