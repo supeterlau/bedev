@@ -1,0 +1,35 @@
+- file stream
+
+https://medium.com/learning-the-go-programming-language/streaming-io-in-go-d93507931185
+
+input and output operations -> model data as streams of bytes that can be read from or written to
+
+interfaces io.Reader and io.Writer
+
+streaming IO from resources like in-memory structures, files, network connections 等
+
+要能作为 reader 需要实现 io.Reader 的 Read([]byte)
+
+type Reader interface {
+  Read(p []byte) (n int, err error)
+}
+
+结束时返回 io.EOF
+
+- download file
+
+https://golangcode.com/download-a-file-from-a-url/
+
+- crawler
+https://golangcode.com/basic-web-scraper/
+- s3 
+https://golangcode.com/mocking-s3-upload/
+
+- go mod 
+
+go mod init <YOUR_PROJECT_NAME>
+go mod tidy 自动下载 mod
+
+gofeed
+  download to vps
+  generate rss
