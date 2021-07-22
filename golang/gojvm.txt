@@ -1,0 +1,125 @@
+Go JVM 
+
+java 命令以下四种形式
+
+java [-option] class [args]
+java [-option] -jar jarfile [args]
+
+javaw [-option] class [args]
+javaw [-option] -jar jarfile [args]
+
+选项 - 开头
+第一个非选项参数 class 为主类完全限定名
+如果提供 -jar 则第一个为 jar 文件名
+
+选项分
+  - 标准选项
+  -X 非标准选项，可能变动
+  -XX 高级选项
+
+-version
+-? / -help
+-cp / -classpath
+-Dproperty=value
+-Xms<size> 初始堆空间大小
+-Xmx<size> 最大堆空间大小
+-Xss<size> 线程栈空间大小
+
+命令行工具
+
+结构体表示命令行选项，参数
+
+os 包有 Args 变量，存放传递给命令行的参数
+flag 包帮助处理命令行选项
+
+chapter2 
+
+Java 虚拟机启动，
+加载目标类前，先加载超类 java.lang.Object
+调用 main() 前，需要加载 java.lang.String 和 java.lang.String[] 处理参数数组
+要打印出结果，还要加载 java.lang.System
+
+首先寻找到类
+
+类路径
+  启动类路径 bootstrap classpath
+    jre/lib 
+      Java 标准库rt.jar 在这里
+    -Xbootclasspath 可以修改启动类路径
+  扩展类路径 extension classpath 
+    jre/lib/ext 
+  用户类路径 user classpath
+    默认是 . 通过 CLASSPATH="" 修改，或 -cp 参数修改
+
+    java -cp path1;path2;path3;
+    java -cp path1;path2/* 
+
+给我们的虚拟机增加 -Xjre 参数指定 jre 目录位置
+
+给 Cmd 增加 field XjreOption
+
+类路径 
+  启动类
+  扩展类
+  用户类
+    ... 更小路径
+
+用 组合模式 设计实现
+
+类路径接口 Entry
+
+readClass
+
+寻找加载 class 文件
+参数为 class 文件相对路径，后缀 .class
+eg. java/lang/Object.class 
+返回 字节数据，Entry，错误信息
+
+String 
+返回 Entry 字符串显示（实现 string 接口
+
+newEntry 根据参数创建不同类型的 Entry 实例
+
+newCompositeEntry 多个类路径组合
+
+newWildcardEntry 包含通配符的类路径
+
+newZipEntry jar/zip 表示的类路径
+
+newDirEntry 目录形式表示的类路径
+
+（约定 new 开头的表示构造函数
+
+返回值类型
+
+  ([]byte, Entry, error)
+
+  ([]byte, *Entry, error)
+
+ZipEntry 中
+
+readClass 每次都打开关闭 zip 文件，此处可优化
+
+Entry 接口的 4 个实现完成后，开始实现 Classpath 结构体
+
+field 
+
+bootClasspath
+extClasspath
+userClasspath
+
+parseBootAndExtClasspath
+  优先使用用户参数
+
+  当前目录下找 jre 
+
+  从 JAVA_HOME 中找 jre 
+
+
+测试 
+
+./main -Xjre "./fakejre" java.lang.Object
+
+
+沉心静气，认真学习就会明白怎么回事。都能学会的。Go
+ 
