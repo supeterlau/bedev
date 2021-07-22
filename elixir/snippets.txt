@@ -1256,7 +1256,66 @@ average 平均运行时间 越小越好
 99% 大于的运行时间 最差性能 越小越好
 
 
+
+
+
+- random integer
+
+https://stackoverflow.com/questions/38778054/how-to-generate-a-random-number-in-elixir
+
+random_number = :rand.uniform(n)
+
+&Enum.random/1
+
+Enum.random(0..n) will generate 0 to n randomly
+
+- timestamp
+
+http://erlang.org/doc/man/os.html#timestamp-0
+
+System.os_time() |> Integer.to_string() |> String.split("") |> Enum.reject(& &1=="") |> Enum.map(& String.to_integer(&1)) |> Enum.sum()
+
+System.os_time() |> Integer.to_string() |> String.slice(-4,4)
+
+- module
+
+Phoenix.__info__(:functions)
+
+https://stackoverflow.com/questions/53059471/where-is-info-1-documented
+https://hexdocs.pm/elixir/1.12/Module.html#c:__info__/1
+
+__info__(:attributes) :: keyword()
+__info__(:compile) :: [term()]
+__info__(:functions) :: keyword()
+__info__(:macros) :: keyword()
+__info__(:md5) :: binary()
+__info__(:module) :: module()
+
+- priv dir 
+
+:code.priv_dir/1
+:code.priv_dir(APP_NAME)
+
+Application.app_dir(APP_NAME, "priv/path/to/file")
+
+https://elixirforum.com/t/accessing-the-priv-folder-from-mix-release/24403/2
+
+- sigil
+
+macro
+
+https://hexdocs.pm/elixir/1.12/Macro.html#module-custom-sigils
+
+- IEx
+
+https://hexdocs.pm/iex/IEx.html#module-the-iex-exs-file
+
+IEx looks for a local .iex.exs file (located in the current working directory), then a global one (located at ~/.iex.exs) and loads the first one it finds (if any)
+
+- more
+
 https://elixir-examples.github.io/examples/get-a-nested-map-value
+
 
 
 https://elixirschool.com/en/lessons/basics/control-structures/#with
