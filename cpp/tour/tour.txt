@@ -145,14 +145,165 @@ while( condition );
 
 goto 可用于跳出嵌套循环
 
+## 13. Decision
+
+https://www.tutorialspoint.com/cplusplus/cpp_decision_making.htm
+
+if() {
+
+} else {
+
+}
+
+switch(variable) {
+  case Test1:
+    expr;
+    break;
+  case Test2:
+    expr;
+    break;
+  case Test3:
+  case Test4:
+    expr;
+    break;
+  default:
+    expr;
+}
+
+switch(ch1) {
+  case 'A': 
+    cout << "This A is part of outer switch";
+    switch(ch2) {
+        case 'A':
+          cout << "This A is part of inner switch";
+          break;
+        case 'B': // ...
+    }
+    break;
+  case 'B': // ...
+}
+
+三元操作符 Exp1 ? Exp2 : Exp3;
+
+## 14. Functions
+
+return_type function_name( parameter list ) {
+   body of the function
+}
+
+main 后出现的函数需要有 function definition
+
+int max(int, int);
+
+三种调用形式
+  call by value
+
+  call by pointer
+
+  call by reference
+
+https://www.geeksforgeeks.org/pointers-vs-references-cpp/
+
+int i = 3; 
+
+pointer 保存其他变量的地址
+  内容可能改变，（保存其他同类型数据的地址）
+  int *p = &i;
+
+  可以声明初始化分开
+
+  A pointer can be re-assigned
+  A pointer has its own memory address and size on the stack
+
+  Pointer can be assigned NULL directly, whereas reference cannot.
+    因为 ref 必须现有变量才有 alias (do not run into exception situation)
+  
+  可以有指向指针的指针，二次转发；不能有 ref 的 ref
+
+reference 是其他变量的别名，编译器自动进行 dereferencing
+  A reference can be thought of as a constant pointer
+    对应内存地址不变
+  int &p = i;
+
+  必须声明同时初始化
+
+  a reference cannot be re-assigned, and must be assigned at initialization.
+  a reference shares the same memory address (with the original variable) but also takes up some space on the stack
+
+  The performances are exactly the same, as references are implemented internally as pointers. 
+
+尽可能用 reference 直到必须使用 pointer (NULL-pointer, 数据结构需要改变指针时)
+
+swap_via_r(a1, a2)
+
+自动完成 dereferencing
+
+void swap_via_r(int &num1, int &num2) {
+  int temp;
+  temp = num1;
+  num1 = num2;
+  num2 = temp;
+}
+
+## 15. Numbers
+
+#include <cmath>
+
+sin(a)
+abs(a)
+sqrt(a)
+pow(a)
+floor(a)
+
+#include <ctime>
+#include <cstdlib>
+
+rand() 伪随机数
+
+需要先设置 seed
+
+// set the seed
+srand( (unsigned)time( NULL ) );
+
+## 16. Arrays
+
+传递数组到函数
+
+void func(int *array) {}
+
+void func(int array[10]) {}
+
+void func(int array[]) {}
+
+返回数组
+
+int * func() {}
+
+cpp 不允许返回指针到函数外部，必须声明数组为 static
+  C++ does not advocate to return the address of a local variable to outside of the function so you would have to define the local variable as static variable.
+
+## 17. Strings
+## 18. Pointers
+## 19. References
+## 20. Date & Time
+## 21. Input/Output
+## 22. Struct
+
+## 23. Classes Objects
+## 24. Inheritance
+## 25. Overloading
 
 
 ## 10. Constants Literals
 
-
 ## 10. Constants Literals
 
-## 10. Constants Literals
+引入其他模块
+
+#include <stdio.h>
+
+#include <iostream>
+
 
 Refs:
 
