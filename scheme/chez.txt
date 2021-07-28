@@ -1,0 +1,19 @@
+- User Guide
+
+http://cisco.github.io/ChezScheme/csug9.5/csug.html
+
+- Build
+
+./configure
+
+sudo make install
+
+scheme (start repl)
+
+- Repo
+
+github: cisco/ChezScheme
+
+- REPL
+
+(exit)

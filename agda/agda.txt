@@ -87,7 +87,14 @@ mkdir myproject && cd myproject
 cabal init
 cabal run
 
+# Emacs Mode
+
+https://agda.readthedocs.io/en/latest/tools/emacs-mode.html
+
 # LYA 
+http://learnyouanagda.liamoc.net/toc.html
+
+高亮语法: c-c c-l (load 文件)
 
 To enter ℕ into emacs, type \bn
 
@@ -114,6 +121,20 @@ zero : ℕ
 
 Agda 中 _ 作为参数占位符
 
+fun : type -> type -> type
+
+函数声明
+
+多个函数实现 / 证明
+
+Agda 支持 mixfix syntax
+
+例如定义
+
+if_then_else_ : ∀ { a } → Bool → a → a → a 
+
+然后
+
 if a then b else c 会被解析为 if_then_else_ a b c
 
 use \' to input ′.
@@ -121,6 +142,10 @@ use \' to input ′.
 run a check, type C-c C-l into emacs or choose Load from the Agda menu
 
 type C-c C-n into emacs, or select “Evaluate term to normal form” from the Agda menu.
+  输入 3+2 形式 (suc (suc (suc zero))) + (suc (suc zero))
+  得到 5 (suc (suc (suc (suc (suc zero)))))
+
+
 
 https://stackoverflow.com/questions/7238147/can-i-get-cabal-install-to-use-multiple-cores haskell - Can I get `cabal install` to use multiple cores? - Stack Overflow
 

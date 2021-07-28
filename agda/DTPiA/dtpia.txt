@@ -1,0 +1,22 @@
+Agda is a dependently typed language based on intuitionistic type theory
+
+AgdaBasics.lagda (Literate Agda files 后缀 lagda， 常规后最 agda)
+
+module AgdaBasics where
+
+Agda02.lagda
+
+algebraic datatypes
+
+基于 algebraic datatypes 的模式匹配
+
+使用 data 声明引入 datatypes
+
+
+https://agda.readthedocs.io/en/latest/tools/emacs-mode.html#unicode-input
+
+https://agda.readthedocs.io/en/v2.6.2/tools/literate-programming.html
+
+hello-world-dep.agda
+
+C-x <left> and C-x <right> : switch buffer
