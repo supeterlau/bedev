@@ -1,0 +1,1796 @@
+启动 REPL: kotlinc-jvm
+运行 Script: kotlinc -script file.kts
+编译运行:
+    kotlinc hello.kt -include-runtime -d hello.jar
+    java -jar hello.jar
+
+$ brew update && brew install kotlin
+======================================================================
+
+Programming Kotlin
+
+chapter 1
+getting started with kotlin
+
+1. command line run Kotlin
+javap -c HelloWorldKt.class
+注意文件名有后缀 Kt，加不加 class 都可以
+
+java -cp /path/to/kotlin-runtime.jar:HelloWorld.jar HelloWorldKt 需要 kotlin-runtime 来运行
+
+开发给其他 Kotlin lib 用的 lib 不需要运行时 
+
+kotlinc hello.kt -include-runtime -d hello.jar
+
+Kotlin 有自己的与 Java 不同的标准库
+
+2. REPL
+
+kotlinc-jvm
+
+添加额外的 library
+kotlinc-jvm -cp joda-time-2.9.4/joda-time-2.9.4.jar
+
+3. Scripting
+
+kotlinc -script 1-scripting.kts . 0
+
+args[0] -> .
+args[1] -> 0
+
+4. with Gradle
+
+modern open source polyglot build automation system
+
+SDKMAN
+sdk install gradle 3.0
+
+gradle help --task :init
+
+gradle init --type java-library (java project)
+
+delete: Library.java LibraryTest.java
+create folder: kotlin
+
+chapter2 kotlin basics
+
+1. val var
+
+declaring variables:
+
+var: mutable
+val: read-only variable
+
+2. Type inference
+
+Kotlin is a strongly typed language
+
+- values and variables
+- type of parameters inferred from function signature
+- single-line function, infer return value
+
+3. basic types
+
+kotlin compiler will map basic types back to JVM primitives for 性能因素。
+除了:
+    type is nullable
+    used in generics
+
+4. Numbers
+
+Long 64 需要后缀 L 100L
+Int 32
+Sort 16
+Byte 8
+Double 64
+Float 32 需要后缀 F 3.0F
+
+类型转换
+toLong()
+toDouble()
+toByte()
+toShort()
+toInt()
+toFloat()
+toChar()
+
+bitwise 位运算
+left shift : shl
+right shift : shr
+unsignedRigtShift : ushr
+logical and : and
+logical or : or
+logical xor : xor
+
+inverse operator : 1.inv() 倒转操作符
+
+5. Booleans
+
+true false
+
+6. Chars
+
+单引号包裹字符 支持转义符 \t \b \n \r \' \" \\ \$
+\u1234
+不做为数字对待， 与java不同。
+
+7. Strings
+和 Java 一样 immutable。
+
+double quotes 创建 escaped string
+" double quotes"
+triple quotes 创建 raw string
+"""
+raw String
+"""
+
+都支持 变量插值
+
+8. Arrays
+
+创建 数组要用 arrayOf library 函数
+
+val array = arrayOf(1,2,3)
+
+val perfectSquares = Array(10, {k -> k * k})
+
+arrays 在 kotlin 里只是普通的集合类，提供了
+
+size 获取大小
+get
+set
+
+get set 也可以用 C-风格来进行。
+
+alternative array classes: avoid boxing types
+
+ByteArray
+(Type)Array
+
+DoubleArray
+
+9. Comments
+
+no suprise: 
+
+// 
+/*** ***/
+
+10. packages
+将代码分离到不同的 namespace
+
+package com.packt.myproject
+class Foo
+fun bar(): String = "Bar"
+
+bar 的全路径 com.packt.myproject.bar
+
+11. imports
+
+为了在package外部使用，我们需要导入
+import com.packt.myproject.Foo
+
+12. 通配符导入
+
+package com.packt.myproject
+import com.packt.myproject.constants.*
+
+13. 导入后重命名
+
+import com.packt.otherproject.Foo as Foo2
+
+14. 字符串模板
+
+val str = "Hello ${yourname}"
+val str = "Hello ${yourname.length}"
+
+15. Ranges
+任何 comparable 的类型都可以形成 range
+定义 start_value 和 end_value
+
+"a".."z"
+1..9
+
+"c" in "a".."z"
+val oneToNine = 1..9
+val isFalse = 11 in oneToNine
+
+Integer range: ints longs chars 都可以被用在 for loop 中。
+
+其他可以形成 range 的方法: library funcitons downTo rangeTo
+这两个方法被定义为 numerical types 的 extension
+
+val countingDown = 100.downTo(0) :down to a value
+val rangeTo = 10.rangeTo(20) :up to a value
+
+修改 range 返回一个新 range
+.step(number) number 不能为负数
+
+.reversed() 翻转 range
+
+16. Loops
+
+while (true) {
+    println("...")
+}
+
+for 用于迭代定义了 被称作 iterator 的函数或 extension 的对象。所有的 collections 定义了这个函数
+iterator 函数需要返回一个对象，这个对象提供两个函数 
+fun hasNext(): Boolean
+fun next(): T
+
+range 被编译器特殊处理为 index-based for loops，避免创建 iterator 对象
+
+for (k in 1..5) {
+    print(k)
+}
+
+for 可以用于 字符串
+val string = "Print "
+for (char in string) {
+    println(char)
+}
+
+for(index in array.indices) {
+    println("$index ${array[index]}")
+} 编译器也会将这个实现为 index-based for loop
+
+17. exception handling
+
+try {
+    
+} catch (e: IOException) {
+    
+} finally {
+    
+}
+
+18. 实例化
+
+kotlin 将构造函数看作普通函数
+
+val date = BigDecimal(100) 不需要 new 来实例化
+
+19. 引用相等和 结构相等
+
+a === b  a b 指向同一个对象的话，为 true
+a == b a b 值相等 (nullsafe 的方法， 编译器会添加检测 null 的方法)
+
+19. this 表达式
+
+this 指向闭合的实例对象
+
+被称为 current receiver
+
+String.length 中 string instance 就是 一个 receiver
+
+20. scope
+
+在嵌套的 scope 里我们通过 labels 来 qualify the usage of this.
+这 label 就是外层 类的名字
+
+class Building(val address: String) {
+    inner class Reception(telephone: String) {
+        fun printAddress() = println(this@Building.address)  // label this@Building
+    }
+}
+
+this 指向最近的 containing class
+
+21 visibility modifiers
+
+public internal protected private 比 swift 还少点
+
+无修饰符就是 public 的，没有限制
+private 只能从 same file 里访问
+protected top-level functions/classes/interfaces/objects 不能设置为 protected. 只能从子类中访问 class/interface 的方法/属性
+internal module 层面的限制 对同module内其他class functions 可见
+
+22. 作为表达式的 control flow
+
+Java 的 控制语句是 statement 不返回值
+Kotlin 的 if...else... try...catch 可以直接赋值给其他变量
+
+val success = try {
+    readFile()
+    true
+} catch (e: IOException) {
+    false
+}
+
+表达式可以是多行，只需要最后一个是表达式，这个的值也是这几行代码的值。
+
+23. Null 语法
+
+Kotlin 引入一些机制使得避免 null 错误 更加简单。
+
+1) Kotlin 要求能够被赋值为 null 的值，在注释类型时要加上 ?
+
+var str: String? = null
+
+否则会编译错误
+
+2) Type cheking and Casting
+
+提供了 is/!is 操作符来检查 是否是一个特殊类型 any is String 等价于 Java 的 instanceof
+
+如果不是某个特殊类型，会在 runtime 报错 ClassCastException
+
+24. Smart casts
+
+如果 any is String 那么 any 的类型会自动从 Any 变为 String
+只有编译器能保证在type check 和被用到时，类型不会改变的变量才能用在 smart cast 里
+var field 和 local vars (have been closed over and mutated) 无法被用在 smart cast 中
+
+any is String && any.length == 0
+
+any !is String || any.length == 0
+
+25. 显式转换
+
+as 操作符 和在 Java 里一样。
+
+如果转换失败 ClassCastException
+
+null 值不能被转为非 nullable 的类型。需要如下设置
+
+val string : String? = any as String
+
+为了防止报错可以用 as? 这样在失败时 返回 null
+
+26. When 表达式
+
+1) when(value) 类似 switch
+
+fun whatNumber(x: Int) {
+    when (x) {
+        0 -> println("X is zero")
+        1 -> println("X is one")
+        else -> println("X is $x")
+    }
+}
+
+如果编译器可以确定所有情况都被 handle 了。 else 才可以省略
+
+when 条件的结果是 when 表达式的结果
+
+可以合并多个条件一起处理 0, 1 -> println("X is 1 or 0")
+
+匹配条件可以是 函数，只要结果和 when 里的结果类型一致就行。
+
+可以在条件里用 range : in 1..9 -> dosomething
+
+可以在条件里用 collections : in listOf(1,2,3,4) -> dosomething
+
+可以用 is String -> dosomething
+
+2) 无参数的 when
+
+when {
+    condition1 -> ...
+    condition2 -> ...
+    else -> ...
+}
+
+替代多条件选择。
+
+27. Function Return
+默认情况下 从 innertmost 函数返回
+如果你想从一个闭包 closure 里返回值，你需要指明return 哪个函数，还是用 label
+
+fun printUntilStop() {
+    val list = listOf("a", "b", "stop", "c")
+    list.forEach stop@ {
+        if (it == "stop") return@stop
+        else println(it)
+    }
+}
+可以用 隐式 label return@forEach
+
+28. type hierarchy
+
+Kotlin 里 一切类型的最上层是 Any， 其中定义了 toString, hashCode, equals 等方法，还定义了扩展 apply let to 
+
+Unit 类型 等价于 Java 的 void.
+
+Void 不是一个类型， but a special edge case -> return no value
+
+Unit 有个单实例 Unit 或 (). 这样无返回值的函数返回 Unit 类型。 无参数的函数参数类型为 Unit
+
+Kotlin 增加了一个 最底层类型 Nothing, 没有实例 no instance, is the subclass of all type.
+
+好处 1) 告知编译器 一个函数没有正常结束。 2) Nothing 组成的 空 list 可以被赋值给 接受 list of String 的变量。由于 list 是不可变的。一个 string 可以没危险地添加到这个 list 里 ??? 这是 emptyList() emptySet() 的实现基础。
+
+chapter 3 Object-Oriented programming in Kotlin
+
+Kotlin: an object -oriented progamming language , support for higher-order funtions and lambdas.
+
+- Everything is an object
+- Objects communicate by sending and receiving messags (in terms of objects)
+- objects have their own memory (in term s of objects)
+- Every object is an instance of a class (which must be an object)
+- class holds the shared behavior for its instances (int the form of objects in a program list)
+
+encapsulation 封装
+inheritance 继承
+polymorphism 多态
+
+simplicity 简化
+modularity 模块化
+modifiability 易修改
+extensibility 可扩展
+reusability 可复用
+
+1. Classes
+
+Aristotle 亚里士多德
+
+class Deposit {}
+
+class 的默认权限是 public 任何地方的代码都可以创建它的 实例
+
+class 的主体部分是 fields properties methods
+
+class 用于实现封装，即无论如何修改 class 内部，都不会影响使用它的代码。
+
+区分 class object
+
+object 是 一个 class 定义的 runtime 实例
+
+Deposit 的构造函数是编译器自动添加的。如果要实现自己的构造函数需要这么写:
+
+class Person constructor (val firstName: String, val lastName: String, val age: Int?) {}
+
+constructor 不能省略除非你 specify access modifiers or annotations
+
+class Person (val firstName: String, val lastName: String, val age: Int?) {
+    init {
+    // 检查参数
+        require(firstName.trim().length>0) {
+            "invalid firstName"
+        }
+
+        if (age != null) {
+            require(age >=0 && age < 150) { "..." }
+        }
+    }
+}
+
+require 检查参数 如果不满足要求，抛出 IllegalArgumentException 错误
+firstName lastName age 不是 public fields, 而是 properties
+
+Person 可以有第二个构造函数
+
+constructor (firstName: String, lastName: String):this(firstName, lastName, null)
+
+如果你不希望 构造函数被直接访问 可以用 private 修饰符
+
+class Database internal constructor (conn: Connection) {}
+
+constructor 里边的 val var 的前缀不是必须的，如果你不需要生成 getter/setter(for var) 的话。
+
+class Person(firstName, String, lastName: String, age : Int?) {
+    private val name: String
+    private val age: Int?
+
+    init {
+        this.name = "$firstName, $lastName"
+        this.age = age
+    }
+
+    fun getName(): String = this.name
+    fun getAge(): Int? = ths.age
+}
+这样三个参数 就不会被转为 fields. 只会显示 getName getAge
+
+1.1 Access Level
+
+internal: in module ， everywhere
+private: only in defined file
+protected: for subclasses not available for file-level type of declaration
+
+1.2 Nested Classes
+
+class OuterClassName {
+    class InnerClassName {
+
+    }
+}
+
+如果 inner 是 private , 只能从 OuterClassName 内部创建实例
+只有 inner 是 internal 时， 才能在 module 里使用 inner
+如果 inner 是 protected 只有 outer 的子类可以创建 inner 实例
+
+默认的 nested classes 类似 Java 的 non-static 类 只能访问 outer class 的 public 成员
+
+加 inner 关键字 的 classes 类似 Java 的 static 类 可以访问 private 成员
+
+inner class InnerLine() {
+    ...
+}
+
+More powerful this.
+
+可以用 this@.OuterClassName 来引用外部类 this@.InnerClassName -> this
+
+anonymous inner class 可以获取外部的变量(可以是 private 变量)
+
+class Controller {
+private var clicks : Int = 0
+
+fun enableHook() {
+button.addMouseListener(object: MouseAdapter () {
+    override fun mouseClicked(e: MouseEvent) { clicks++}
+})}
+}
+
+1.3 Data classes
+
+classes for the sole purpose of holding data.
+
+data class Coustomer(val id: Int, val name:String, var address:String) {}
+
+编译器会帮我们做很多事情。
+
+1.4 Enum classes
+
+限制一个类型的变量值在一组预定义的常量中。
+
+enum class Day { MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY}
+
+public enum class Planet(val mass: Double, val radius: Double) {
+    MERCURY(..., ...),
+    VENUS(..., ...),
+}
+
+mass radius 被创建为 properies
+
+可以通过名字获得一个 enum 值
+
+Planet.valueOf("VENUS")
+Planet.values()
+
+可以继承一个 interface 并在每个值里实现接口
+
+interface Printable {
+    fun print():Unit
+}
+
+public enum class Word: Printable {
+    HELLO {
+        override fun print() {
+            println("HELLO")
+        }
+    }, // HELLO {} 可以写方法
+    BYE {
+        override fun print() {
+            pritnln("BYE")
+        }
+    }
+}
+
+val w = Word.HELLO
+w.print
+
+1.5 静态方法和 companion objects
+
+Kotlin 没有 java 的静态方法。 Kotlin中建议在 package 层面定义 方法实现 static methods.
+
+object keyword <https://kotlinlang.org/docs/reference/object-declarations.html>
+
+Sometimes we need to create an object of a slight modification of some class, without explicitly declaring a new subclass for it. 
+Java 里是 anonymous inner class. Kotlin : object expression / object declarations
+
+单例模式是一种常用的软件设计模式。在应用这个模式时，单例对象的类必须保证只有一个实例存在。许多时候整个系统只需要拥有一个的全局对象
+
+object DataProviderManager {
+    fun registerDataProvider(provider: DataProvider) {
+        // ...
+    }
+
+    val allDataProviders: Collection<DataProvider>
+        get() = // ...
+}
+
+This is called an object declaration, and it always has a name following the object keyword. Just like a variable declaration, an object declaration is not an expression, and cannot be used on the right hand side of an assignment statement.
+
+object 可以有 supertypes
+
+object DefaultListener : MouseAdapter() {
+    override fun mouseClicked(e: MouseEvent) {
+        // ...
+    }
+
+    override fun mouseEntered(e: MouseEvent) {
+        // ...
+    }
+}
+object declarations can't be local (i.e. be nested directly inside a function), but they can be nested into other object declarations or non-inner classes.
+
+companion object
+An object declaration inside a class can be marked with the companion keyword
+
+class MyClass {
+    companion object Factory {
+        fun create(): MyClass = MyClass()
+    }
+}
+
+val instance = MyClass.create()
+
+Factory 可以忽略
+
+lass MyClass {
+    companion object {
+    }
+}
+
+val x = MyClass.Companion
+
+看起来像静态方法，但在 runtime 还是 instance member of real objects, 可以实现接口
+
+interface Factory<T> {
+    fun create(): T
+}
+
+
+class MyClass {
+    companion object : Factory<MyClass> {
+        override fun create(): MyClass = MyClass()
+    }
+}
+
+
+2. interface
+
+just a contract
+
+定义一系列 相关函数， 实现接口的一些 required 方法， 包括 抽象方法
+
+与 抽象类不同， 接口不包含 state 但可以包含 properies 类似 Scala traits
+
+properies 首字母需要大写
+
+实现接口要用 override
+
+3. inheritance
+
+open : 表明这个类可以被继承
+Kotlin 默认类是 sealed 的, final ?
+
+: 实现了 Java 里的 externed
+
+Kotlin 受 JVM 限制 不可以同时继承多个类 
+
+class SomeCar(val name: String) : Dirvable, Sailable {
+    ...
+}
+
+如果同时用 接口和继承呢?
+
+class TextDoc(title: String) : InterfaceName1, ClassName(title), InterfaceName2 {
+    ...
+}
+
+4. Visibility modifiers <hard>
+
+protected 修饰的 field 必须标注为 open 才能在子类中修改 (open 表示可以 修改)
+子类要用 override 修饰
+
+open class Container {
+    protected open val fieldA: String = "Some value"
+}
+
+class DerivedContainer : Container {
+    public override val filedA: String = "Some new value"
+}
+
+Liskov substitution principle???
+
+5. Abstract classes
+
+部分定义的类， 未实现的 properties 和 methods 必须在派生类中实现， 除非子类也是 抽象类
+
+如果某个成员被标注为 abstract， 那么抽象类才可以不提供定义
+
+无法实例化抽象类
+
+为了提供一系列子类共享的 properties methods
+
+6. Interface or abstract class
+
+Is-a vs Can-Do
+code reuse
+接口更新必须更姓全部继承接口的类
+
+7. Polymorphism <hard>
+
+8. override rule
+
+可被重写的方法要加 open
+重写的方法前要加 override
+不希望重写的方法 final
+
+同样规则可用于 properties
+
+但是 var 可以重写 val ， val 不能重写 var
+
+9. inheritance vs composition ?
+
+association: 在一个类内部放另一个类
+
+包括 : aggregation & composition (specialized type of aggregation)
+
+不能到处用 inheritance 要结合 association
+
+10. class delegation
+
+语法
+class Panel(val rectangle: Rectangle) : UIElement by rectangle
+val panel = Panel(Rectangle(10, 100, 20, 30))
+
+rectangle 直接委托了 UIElement 的方法
+
+allow a type to  forward one or more of its methods call to a different type.
+
+proxy pattern: provide a placeholder for an instance to get full control while accessing it.
+
+class delegation: 用 composition 替代 inherihance
+
+type coupling ?
+
+11. Sealed class
+
+is an abstract class
+
+通过 定义为 nested class 的 subclass 来扩展。
+
+a rather more powerful enumeration option. 1) contains a fixed set of possible choices. 2) derived class of sealed class can have many instances, 而 Enum 的option 是由一个 实例表现。
+
+ideal for 定义 algeraic data types.
+
+an algebraic data type is a kind of composite type, i.e., a type formed by combining other types.
+https://en.wikipedia.org/wiki/Algebraic_data_type
+
+sealed 使得继承关系必须在 这个 class 内部...
+
+用在 when 表达式里有用处，编译器可以推断语句并覆盖全部可能性。
+
+chapter 4 Functions in Kotlin
+
+1. define function
+
+fun hello(): String = "Hello"
+
+参数形式:  name: type
+
+无返回值就返回 Unit (类似 Java C# 的 void)，可以 忽略 Unit
+
+2. single expression functions
+
+fun square(k: Int) = k * k
+
+只有这种形式可以忽略 return 类型
+
+3. 成员函数
+
+定义在 class object interface 内的函数
+
+成员函数之间调用不需要 instance name
+
+4. Local functions
+
+嵌套函数中的内部函数
+
+好处:     1> 隐藏细节 private 可以做到类似的 2> 内部函数可以访问外部函数的 parameters 和 variables
+
+5. top-level functions
+
+常用于定义 helper or utility funcitons
+
+例如用于 assert 的
+
+require(condition, {"message"})
+
+check , error , requireNotNull (assertions.kt)
+
+6. Named Parameters
+
+规则: named parameter 在最后
+
+7. default parameters
+
+如果一个参数使用默认值，那么后边的全部都要用默认值，除非用 named parameter
+
+8. extension functions
+
+可以实现 lsit.drop(2).take(3).reverse() 的样子
+
+在 top-level 声明， intended type prefixed before the function name : receiver type
+
+这个 receiver type 被 extension function 扩展
+
+
+8.1 precedence of extension functions
+
+无法重写 class interface 定义的函数，同 signatures 的 extension funciton 会被覆盖
+
+8.2 on null
+
+Any? -> 可能为 null
+
+fun Any?.safeEquals(other: Any?): Boolean {
+    if(this==null && other == null) return true
+    if (this == null) return false
+    return this.equals(other) 
+}
+
+8.3 成员 extension functions
+
+extension functions 一般在 top-level, 用于限制 scope of an extension
+
+要注意 this 指向的实例 用 this@Mappings 来区分.
+
+8.4 override member extension funtions <hard>
+
+8.5 companion object extensions <hard>
+
+9. multiple return values
+
+1) arrayOf(a, b) 2) define a class 3) use Pair(a, b): val (a, b) = Pair(a, b)
+
+three-value pair -> Triple(a, b, c)
+
+10. Infix functions
+
+to "function" 用于创建 Pair, 等价于 Pair(a, b)
+
+定义自己的 infix functions 用 infix
+
+好处: 1. 简单常用的函数
+    2. bitwish operation and custom DSLs (KotlinTest)
+
+11. Operators
+
+a function use a symbolic name.
+
+eg. array acces 
+
+array[0]
+被 translate into a call : get(index: Int)
+
+Kotlin 将 basic type 的操作看作 函数， 但会被编译为 appropriate byte code (avoid function overhead 和 性能)
+
+11.1 operator overload
+
+operator 只能被用于 member functions 和 extension funcitons
+
+> Kotlin 中只有 fixed list 的 operator 可以 override
+> 有确定的对应英文名 例如:  + -> plus
+
+plus minus times div mod rangeTo(..) unaryPlus unaryMinus not(!a)
+
+in -> contains
+
+a[0] -> get/set
+
+() -> invoke
+
+< > <= >= -> compareTo (负值表示 小于 正值表示 大于 0 表示相等)
+
+赋值操作符 += 结合 基本操作符 或者用 plusAssign override
+
+11.2 Java interop
+
+满足签名的 Java 方法可以在 Kotlin 中用:
+
+变量类型 和 操作符名字
+
+12. Funciton literals
+
+用大括号包裹 {printn("Hello")}
+
+常用于  high order functions / single abstract methods
+
+13. tail recursive functions <hard>
+
+an invocation of a recursive function is the last operation in a particular function, 结果也是简单地返回。
+系统不需要 keep the previous stack frame,仅从递归中返回值。 -> tail recursive
+
+tailrec 关键字通知 Kotlin 使用尾递归, 你的函数必须是尾递归的， 否则报错
+
+fun fact(k: Int): Int {
+    if (k == 0) return 1
+    else return k * fact(k -1)
+}
+
+上述代码 NOT tail recursive
+
+fun fact(k: Int) : Int {
+    fun factTail(m: Int, n: Int) : Int {
+    tailrec fun factTail(m: Int, n: Int): Int {
+        if(m == 0) return n
+        else return factTail(m -1, m * n)
+    }
+    return factTail(k, 1)
+}
+
+14. Varargs
+
+接受不定数目的参数
+
+varargs 一般是最后的参数， 否则后边的参数都要用 named parameter 形式传入
+
+varargs string: String 最多一个参数被标记为 可变的。
+
+15. spread operator
+
+将多个参数以 array 形式传入 *strings 可以解开 unwrap and pass them in as individual arguments.
+
+暂时只能用在 array 上
+
+16. standard library functions <hard>
+
+Apply
+
+Let
+
+With
+
+Run
+
+Lazy
+
+Use
+
+Repeat
+
+Require assert check
+
+17. generic functions
+
+fun <T> choose(t1: T, t2: T, t3: T):T {
+    return when (Random().nextInt(3)) {
+        0 -> t1
+        1 -> t2
+        else -> t3
+    }
+}
+
+18. pure function
+
+19. Java from Kotlin <hard>
+
+call Kotlin 关键字 `when`
+
+20. Kotlin from Java <hard>
+
+chapter 5
+
+HOF and FP
+
+1. Higher order functions
+
+fn: (String) -> String 可以传入 function literal { str: String -> str.reversed() } OR { it.reversed() }
+
+filter { it % 2 == 0} 
+
+1.1 return function
+
+fun modulo(k: Int) : (Int) -> Boolean = { it % k == 0}
+
+1.2 function assignment
+
+val isEven: (Int) -> Boolean = { it % 2 == 0}
+
+或者 
+
+val isEven = { k : Int -> k % 2 == 0}
+
+2. Closures
+
+> 获取周围环境里的 variable 和 parameters
+> 也可以获取 Local variable
+> 可以改变 close over 的变量
+
+3. Anonymous functions
+
+使用 literals 有个问题，无法 specify return value
+匿名函数和正常函数定义类似，但是忽略掉名字:
+
+fun (a: String, b: String): String = a + b
+
+4. Function reference 函数引用
+
+把函数作为参数传递的方法: 创建 function literal 或者 return function 的 function
+
+4.1 top-level 引用
+
+ints.filter{isEven(it)}
+
+用引用写作 ints.filter(::isEven)
+
+4.2 成员函数和扩展函数引用
+
+指向这些函数的引用默认有个参数即 调用函数的 instance 或 receiver 
+
+可以减少 boilerplate
+
+foo(1, 2, {a, b -> Math.pow(a, b)}
+=>
+foo(1,2, Math::pow)
+
+4.3 bound references <hard>
+
+
+5. Funtion-literal receivers
+
+一个 function 的 receiver 是 funtion 内 this 指向的实例。
+函数参数可以被要求接受一定类型的 receiver
+
+fun foo(fn: String.()->Boolean):Unit {
+    "something".fn()
+}
+
+6. Functions in the JVM <hard>
+bytecode in JVM
+
+7. Function composition
+结合多个操作 类似管道
+
+8. inline - noinline
+<hard>
+
+9. currying and partial application <hard>
+
+FP 常见概念 currying: 将多参数的函数变为每次消耗一个参数的多次函数调用
+
+partial application 在部分参数确定时返回一个新函数，将不确定的参数作为新函数的参数
+
+> 并非全部的参数都在这个 scope 可用
+> 用于匹配较少参数的情况
+
+9.1 currying in action
+
+9.2 add currying support
+
+10. memoization <hard>
+
+speed up function calls by caching and reusing the output 而不是重新计算
+
+例如 计算递归过程的 计算密集型任务
+
+可以为非递归过程添加通用 memoize
+
+11. type alias
+
+typealias Cache = HashMap<String, Boolean>
+
+typealias 无性能优势也无法保证 type safe
+
+12 either
+
+展示一个可以有两种类型的值 
+
+常用于表示 success value / failure value
+
+标准库中没有这个部分。
+
+sealed class Either<out L, out R>
+
+class Left<out L>(value: L): Either<L, Nothing>()
+class Right<out R>(value: R): Either<Nothing, R>() ---> by convention Right 表示 success type
+
+12.1 fold
+
+two functions:
+    first for Left type
+    second for Right type
+
+
+12.2 projection funtions <hard>
+
+13. Custom DSLs <hard>
+
+工具:
+    functions-named parameters
+    default parameters
+    operator overloading
+    infix funtions
+
+
+14. error accumulation / validation <hard>
+
+
+chapter 6 
+properties
+
+1. properties 意义
+
+允许用简单语法调用方法的语法糖，因为是方法可以从外部调用，需要设置为 public 并且一般大写开头
+
+在 Java 里很罗嗦，需要设置 getter setter
+
+init 代表 初始化函数 非 构造函数
+
+如果在 Java 中使用 Kotlin 需要用:
+
+getName getAge
+
+2. 语法和变体
+
+val/var<propertyName>:<PropertyType>[=<初始值>]
+[<getter>]
+[<setter>]
+
+类型可以推断出，最好还是加上类型
+
+只读属性只有 getter
+
+3. 可见性
+
+可见性访问权限和 field 一致，可以有 private protected public(默认) 属性
+
+而 setter 可以有更多可见性设置。 getter 一般自动产生。
+
+在继承中，父类的属性 setter 至少被设置为 protected 是合适的
+
+4. 延迟初始化
+
+每个 non-null 的属性都要在构造器中被初始化。 如果你想通过 dependency injection inject 属性值，而且不想每次检查属性是否为 null 或者 你 仅仅设置属性值为 the methods exposed by your type.
+
+用 lateinit:
+
+lateinit var delayedInitProperty: DelayedInstance
+
+限制:
+    1. 属性类型不能是 primitive 类型
+    2. 不能用 setter getter
+    3. 在初始化前访问这个属性会报错
+
+5. delegated properties
+
++ 属性值在第一次访问时才被计算
++ 提醒响应属性变化的方法
++ 用 map 来存储 fields 而不是用 materialized field
+
+delegate 可以不需要实现 interface。从而我们可以避免 inheritance 而仅仅依赖 composition.
+
+operator fun getValue(ref: Any?, property: KProperty<*>):Long{
+    return timestamp
+}
+
+第一个参数是 ref 表示从哪里访问这个属性
+第二个参数是 表示一个属性 KProperty
+
+6. Lazy initializations <hard>
+
+在用到实例时才创建实例的方法。提高性能和减少内存占用。
+
+有三种类型的 Lazy initializations
+
+7. Lateinit vs lazy
+
+lateinit 变量和 lazy {...} 看起来很相似. 但有些微不同:
+
+- 1. lazy 只能用于 val properties; lateinit 只能用于 var properties
+- 2. lateinit 不能编译为 final field, 也就是不能得到 immutability
+- 3. lateinit 有个 backing field 来存储值, lazy 创建一个 delegate object 来作为 value 的 container. 如果需要在 class 中显示, 必须用 lateinit
+- 4. lateinit 不能用于 nullabl 和 java primitive types
+- 5. 当可以初始化时, lateinit 更加 flexible, 可以在任意位置初始化. lazy, 只能在 initializer 处初始化, 必须用 overriding 修改
+
+8. Observables
+
+import kotlin.properties.Delegates
+import kotlin.reflect.KProperty
+
+fun <T> observable(initialValue: T, crossinline onChange: (property: KProperty<*>, oldValue: T, newValue: T) -> Unit):
+    ReadWriteProperty<Any?, T>
+
+9. A non-null property delegate
+
+Kotlin 提供了对 non-null value 的 delegated property 支持. 要使用 Delegates.nonNull
+
+访问未初始化的值导致 IllegalStateException
+
+10. Properties or Methods?
+
+method 表示 动作, property 表示 数据.
+
+
+- 1. 在 getter 中避免复杂代码: 数据库连接等
+- 2. getter 不应引起 side-effects; 不应抛出错误
+- 3. 设置 setter 为 private/protected
+- 4. 确保可以在任意顺序 设置 property
+- 5. 如果 setter 要抛出错误, 确定保留前一个 property value
+
+Chapter 7: Null Safety, Reflection and Annotations
+
+dreaded 令人恐惧的
+
+null pointer 是由于错误地处理了 null reference 导致的
+解决这个问题有多个方法:
+在 C 里，就直接 crash 代码
+Java 多了个 NullPointerException 使得 JVM 不会 crash，只需要用 try-catch 处理它，但人们不容易记住
+groovy 和 csharp 引入特性让人们可以捕获到可能为 nullable 的代码
+scala haskell 提供了 Maybe Option monads
+
+Kotlin 的类型系统以 null safety 为核心。即不是作为一个 monads 类的 null 容器出现，而是直接在类型系统和编译器中提供支持。
+
+1. Nullable types
+
+Kotlin 的类型系统可以追踪可以 null 的类型和不能为 null 的类型。
+
+普通情况无法用 null 初始化类型或给变量赋值；要用 null 赋值需要变量后边添加一个 ?
+
+val name: String? = null
+
+fun name1(): String = ...
+fun name2(): String? = ... 可以返回 nullreferrence
+
+2. Smart cast
+
+编译器会追踪 if 语句中的条件，如果条件可以保证变量不为 null。那么就可以在 if 的执行代码中使用这个非 null 变量。
+
+3. Safe null access
+在 chained operation 中 smart cast 不好用，每一步都进行检查很麻烦。此时可以用 safe null access
+
+address?.name
+
+4. Force operator
+
+忽略编译器检查，强制将一个可 null 变量转为非空变量
+
+val nullableValue: String? = "george"
+val name: String = nullableValue!!
+
+5. Elvis operator
+
+如果值非空就使用这个值，如果值为空就使用默认值。
+
+kotlin 提供了 elvis operator 
+
+?: 
+
+可以和 Safe null access 一起使用
+
+6. Safe casting
+
+在类型转换 as 中可能失败，如果我们想失败时赋值为 null 可以用 as?
+
+7. Optionals
+
+另一种处理 nullable 的方法。
+
+Haskell 称其为 Maybe 类型
+Scala 称其为 Option 类型
+Java8 称其为 Optional 类型
+
+他们使用这个类型来表示一个函数或表达式可能没有返回值
+
+一般会用一对类型
+
+Haskell (Just Nothing)
+Scala (Some None)
+Java8 只有一个值
+
+Kotlin 编译为 Java8 时可以使用 optional
+
+Optional.of(value)
+Optional.emtpy()
+Optional.ofNullable(value)
+.orElse(value)
+
+Optional 支持 map 和 flatMap
+
+8. Reflection
+
+Reflection is the name given to inspecting code at runtime instead of compile time.
+在运行时查看代码行为
+
+可以用于
+    创建 类实例
+    查看函数，并调用函数
+    查看注解
+    查找 field
+    发现参数和泛型
+
+例子
+    在数据库中持久化类型
+    插件系统
+
+KClass
+
+<文档补充>
+
+9. Constructors
+
+<文档补充>
+
+Chapter 8: Generics
+
+泛型又叫泛型编程，是一种不需要指定函数中数据类型，可以用于处理多种数据类型的技术。
+泛型是 Java 和 Kotlin 的叫法，但在其他语言中被称为 参数多态或模板(template)。
+
+本章介绍
+  类参数化
+  类约束和递归类约束
+  invariance covariance contravariance
+  代数数据类型
+
+1. Parameterised functions
+
+假定有个函数叫 random() 我们想要的是从一些元素中选择一个元素返回。我们不关心类型，只需要返回一个值。
+
+为了能容纳任意类型，我们可以用 Any 来完成。但用 Any 有一些问题， 选取数据后还要把 Any  转换为目标类型，这很容易出错。
+
+fun <T> random(one: T, two: T, three: T) : T
+
+random 的三个参数可以是同一个类型，也可以是不同类型（不同类型会推断为和三者都兼容的类型）
+
+可以有多个类型参数
+
+fun <K, V> put(key: K, value: V) : Unit
+
+（函数名左侧）
+
+2. Parameterized types
+
+类型也可以有类型参数
+
+class Sequence<T>
+
+class Dictionary<K, V>
+
+val dict = Dictionary<String, String>()
+
+（类型名右侧）
+
+Note that there's no reason the different type parameters cannot actually refer to the same
+concrete type. They don't have to, that's the point of allowing them to be different types, but
+the choice is up to the user.
+
+3. Bounded polymorphism
+
+帮助我们写针对一部分类型适用的函数。即作为参数的类型必须满足一定限制条件。
+
+3.1 Upper bounds
+
+即参数类型是指定类型的子集。不指定编译器默认设置为 Any
+
+fun <T : Comparable<T>>min(first: T, second: T) : T {
+    val k = first.compareTo(second)
+    return if (k <= 0) first else second
+}
+
+此外要注意 min 这个函数和 random 不同，min 无法比较 Int 和 String。因为这两个类型的公有 supertype 是 Any 而 Any 不满足 Comparable。编译器会报错。
+
+3.1.1 Multiple bounds
+
+有时会使用多个约束
+
+fun <T>minSerializable(first: T, second: T): T
+where T : Comparable<T>, T : Serializable {
+    val k = first.compareTo(second)
+    return if (k <=0 ) first else second
+}
+
+这个函数要求参数类型必须实现 Comparable 和 Serializable
+
+class SerializableYear(val value: Int) : Comparable<SerializableYear>, Serializable {
+    override fun compareTo(other: SerializableYear): Int = this.value.compareTo(other.value)
+}
+
+4. 类型变化
+
+type variance 是指使用允许在参数类型中使用子类型。
+
+例如如果 Apple 是 Fruit 的子类型，那么 Crate<Apple> 和 Crate<Fruit> 是什么关系？这取决于使用哪种 type variance
+
+4.1 Invariance 不可变
+
+M<T> 不是 M<U> 的 子类型，不管 T 和 U  之间是什么关系
+
+4.2 Covariance
+
+试图调用父类中必定存在的方法时可以让编译器认为 Crate<Apple> 是 Crate<Fruit> 的子类型。
+
+需要做以下事情，将 T 设置为 out 参数，并且类中的方法不将 T 作为参数，（可以将 T 作为返回值）
+
+Covariance 被用在 不可变集合中 Sets lists maps iterators collections
+
+Pair Triple Lazy 等
+
+4.3 Covariant return 
+
+如果父类中方法返回一个类型，那么它的子类中可以返回这个类型的子类。
+
+4.4 Contravariance
+
+Covariant 的反面是 contravariance
+
+即 String 是 Any 的子类，但 Box<String> 是 Box<Any> 的父类。
+
+此时的类型参数前缀为 in 
+
+
+
+
+Chapter 9: Data Classes
+
+Chapter 10: Collections
+
+Chapter 11: Testing in Kotlin
+
+Chapter 12: Microservices with Kotlin
+
+Chapter 13: Concurrency
+
+
+
+
+kotlinc-jvm REPL
+
+
+
+
+
+
+
+
+
+
+
+
+The type of the throw expression is the special type Nothing. The type has no values and is used to mark code locations that can never be reached.
+
+
+
+
+
+
+
+
+
+疑问:
+
+> object (keyword)
+> open (keyword) access modifier?
+> parameters 的 var 还是 val
+> data classj
+> out T ?
+
+批评:
+1. Kotlin Java Scala 混乱
+2. 结构混乱
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+======================================================================
+
+https://gist.github.com/dodyg/5823184
+part 1
+
+0x00 
+
+1. Basic
+
+无结尾分号
+函数 fun
+字符串 "" 用双引号
+print 中可以使用 转义字符
+not need to match your file name to your class name <比心>
+can create functions outside classes
+string templates $firstVariable ${someone.name} + 连接字符串很蠢
+
+2. Variables
+
+var 可变量 val 常量
+
+val 类似 C# 的 readonly，java 的 final
+
+val 必须在声明时初始化
+
+var a : Int (类型在变量名后边 Go Swift Rust)
+
+变量可选类型: 类型之间不能隐式转换必须写明类型
+  Number:
+    Double
+    Float
+    Long
+    Int
+    Short
+    Byte
+
+  Char
+  String
+  Boolean true false
+  Unit (void in C# and Java)
+
+3. Null
+
+可为 null 的类型 -> Int? String?
+非 null 值可以赋值给 可能为 null 的值，反过来不行
+
+确定不会为 null -> value!! 需要加两个 !
+
+4. 类型推断
+
+5. Functions
+
+
+    Single expression function.
+    Optional parameter.
+    Positional argument and named argument.
+    Variable argument.
+    Single expression function.
+    Function type.
+    Function literals.
+    Callable references.
+    Extension functions.
+    Infix function call.
+    Local function.
+    Closure.
+    Generic function.
+    Operator overloading.
+
+- 函数可以独立存在
+- 关键字是 fun
+- 如果函数返回值 在函数名后加 类型声明 fun functionName(paraName: T, ) : returnType { return ...}
+- 无返回值 void -> Unit 类型
+- All parameters in a Kotlin function are read only. 
+
+必要参数和可选参数可以混合， 要先写必要参数
+
+先写 positional 参数， 后写 named 参数 
+
+可变参数 funcName(arg1, arg2, arg3) 
+* 如果vararg 不是最后一个参数，那么在调用函数时，必须用 named argument 
+* vararg 生成参数的数组 
+* 用数组传递变长参数时候要用 * 解包
+
+fun funcName(vararg names: String) {
+    println(names.size)
+    for (n in names) {
+        println("$n")
+    }
+}
+
+### Function Types
+
+(String, Float) -> Unit
+
+### Function Literals
+
+ a function type is just a type, it means that you can assign it to a variable, you can pass it as a function argument and you can return it from a function.
+
+ val o : (String) -> Unit = { (x : String) -> println("$x") }
+
+
+
+
+
+
+https://gist.github.com/dodyg/5616605
+part 2
+https://gist.github.com/dodyg/5823756
+part 3
+======================================================================
+
+0x00 Basic Syntax
+
+0. 包定义
+
+package my.demo
+
+import java.util.*
+
+欢呼 ByeBye class 必须和文件名一致 HaHa Scala
+
+1. 函数定义
+
+fun sum(a: Int, b: Int): Int {
+    return a + b
+}
+
+推断返回类型
+
+fun sum(a: Int, b: Int) = a + b
+
+返回无意义的内容 返回类型可以忽略
+
+fun printSum(a: Int, b: Int): Unit {
+    print(a + b)
+}
+
+2. 变量
+
+只读变量
+
+val a: Int = 1
+val b = 3 类型推断
+
+可变变量
+
+var x = 5
+x += 5
+
+3. 注释
+// one line
+
+/* multiple line
+和 Java 不一样 块注释可以嵌套
+*/
+
+4. string templates
+
+
+
+
+
+
+tips
+
+无结尾分号
+函数 fun
+字符串 "" 用双引号
+print 中可以使用 格式符
+not need to match your file name to your class name <比心>
+can create functions outside classes
+string templates $firstVariable ${someone.name} + 连接字符串很蠢
+
+
+
+命名规则
+
+https://hltj.gitbooks.io/kotlin-reference-chinese/content/txt/coding-conventions.html
+
+接口: Autocloseable
+变量名 firstVariable
+文件名 SAMConversions.kt
+函数名 printSum
