@@ -26,26 +26,112 @@ class ContactInfo(val bitmap: Bitmap, val title: String, val detail: String) {}
   Java fab.setOnClickListener(view -> Snackbar.make(view, "", Snackbar.LENGTH_LONG))
   Kotlin fab.setOnClickListener {view -> Sanckbar.make(view, "", Snackbar.LENGTH_LONG)}
 
-类型必须可以推导 val bStr = null 就不行，需要是 val bStr: String? = null
-  防止空指针异常
-
 变量插入字符串
   String.format("Hi, ${yourName}")
 
-没有基础数据类型，都是对象
+类型必须可以推导 val bStr = null 就不行，需要是 val bStr: String? = null
+  空和非空为两种类型
+  防止空指针异常
+  !! 将空类型转为非空类型。空类型变量无法赋值给非空类型变量
+  预先判断确保为非空时，编译器才可以自动转换
+
+表示范围的语法 
+
+for (i in 1..4 step 2)
+
+没有基础数据类型，都是对象。所有类型都在箱子里
   110.equals(33)
 
 == 是比较值，=== 比较指针
 
 没有自动类型转换
 
-创建对象直接用构造方法
+创建对象直接用构造方法 不需要 new 
 
 if ... else ... 是表达式
+  val max = if () { 100  } else { 200  }
+  最后一行作为求值结果
 
 when 替代 switch ... case
 
+when (value) {
+  1 -> print(1)
+  2 -> {
+    print(1)
+    print(2)
+  }
+  in 1..10 -> {}
+  100,101 -> {}
+  !in 1..10 -> {}
+  else -> { print() }
+}
+
   不带目标变量时，检查每个分支是否为真，为真则执行对应分支
+
+类成员变量是属性，不是字段。属性的 getter setter 无法访问属性值。可以通过 field 获取
+var title: String = "TAB"
+  get() = field + ":"
+
+默认构造方法
+
+class Message(var title: String="NOTITLE", var content: String?) {
+  var timestampe: Long = 0
+}
+
+title content 也自动成为类属性
+
+init 中写构造函数体
+
+init {
+  title += ":"
+}
+
+非默认构造方法
+
+可以有多个，以参数区分，必须调用默认构造方法。名字固定为 constructor
+
+constructor(title: String, timestampe: Long): this(title, "default content") {
+  this.timestampe = timestampe
+  this.content = "Result: $title-$content"
+}
+
+枚举是类。不能实例化。可以有属性和方法
+
+enum class NUM {
+  ONE,TWO,THREE
+}
+
+enum class Color(val rgb: int) {
+  RED(0xFF0000),
+  GREEN(0x00FF00),
+  BLUE(0x0000FF)
+}
+
+属性是函数，可以被 Override
+
+接口中可以有属性，子类必须 Override 属性
+
+在不继承类前提下，为类添加方法
+
+类型转换 as 
+  val red: String = Color.RED as String 类型不匹配时返回 null
+
+同一对象连续调用
+
+with(dog) {
+  jump()
+  run()
+  eat()
+}
+dog.jump()
+dog.run()
+dog.eat()
+
+支持全局函数
+
+表达式作为函数主体 fun sum(a: int, b: int) = a + b 
+
+
 
   
 https://dev.to/cutiko/how-to-create-a-kotlin-project-using-gradle-and-run-it-with-android-studio-4hac
