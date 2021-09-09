@@ -1,0 +1,9 @@
+# 20210624
+
+https://blog.erlang.org/a-brief-BEAM-primer/
+
+code01.erl
+
+erlc -S code01.erl
+
+-S             generate assembly listing (Erlang compiler)
