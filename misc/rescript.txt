@@ -1,0 +1,11 @@
+ReScript is a robustly typed language that compiles to efficient and human-readable JavaScript. It comes with a lightning fast compiler toolchain that scales to any codebase size.
+
+https://rescript-lang.org/
+
+git clone https://github.com/rescript-lang/rescript-project-template
+cd rescript-project-template
+npm install
+npm run build
+node src/Demo.bs.js
+
+https://rescript-lang.org/docs/manual/latest/overview
