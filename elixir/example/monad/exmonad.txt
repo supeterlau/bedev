@@ -1,0 +1,101 @@
+https://shane.logsdon.io/writing/functors-applicatives-and-monads-in-elixir/
+
+Functor 可以为任意类型（包含 Maybe)实现 Enum.map 对 Enumerables 类型的操作
+
+Haskell 类型
+
+class Functor f where
+  fmap :: (a -> b) -> f a -> f b
+
+https://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html
+
+https://medium.com/@tzehsiang/javascript-functor-applicative-monads-in-pictures-b567c6415221#.rdwll124i
+
+2 + 3 => 5
+
+对单个 value 操作
+
+value with context: 对 context 中的值操作，context 可以看作一个 box 例如
+
+  数组 [2]
+
+  Maybe 类型 Just 2
+
+此时，操作结果取决于 context
+
+- Functors
+
+map knows how to apply functions to values that are wrapped in a box
+
+List 是 Functor 因为它支持 map 操作 (fmap in Haskell)
+
+map 从 box(context) 中取值，变换，再放入 box 中。如果 box 中没有值，则不进行操作
+
+Promise 可以看作一种 Functor
+
+apply a function to another function 函数组合
+
+add3 val = val + 3 等价于 (+3)
+
+add3 (Just 3) ❌ error
+
+fmap add3 (Just 3)
+
+add3 <$> (Just 3)
+
+对于 Haskell 来说就是实现 typeclass 的 fmap
+
+instance Functor Maybe where
+  fmap func (Just val) = Just (func val)
+  fmap func Nothing = Nothing
+
+instance Functor [] where
+  fmap = map
+
+import Control.Applicative (?)
+
+> let foo = fmap (+3) (+2)
+> foo 10
+15
+
+instance Functor ((->) r) where
+    fmap f g = f . g
+
+<$> is the infix version of fmap
+
+- Applicatives
+
+其中，不仅 value 有 context function 也有 context
+
+Just (+3) <*> Just 2
+
+[(+3),(*2)] <*> [1,2,3]
+
+结果数组有 2 * 3 个元素
+
+map (<$> in Haskell) and ap (<*> in Haskell)
+
+- Monad
+
+Functors apply a function to a wrapped value:
+
+Applicatives apply a wrapped function to a wrapped value:
+
+Monads apply a function that returns a wrapped value to a wrapped value.
+
+functors: you apply a function to a wrapped value using fmap or <$>
+
+applicatives: you apply a wrapped function to a wrapped value using <*> or liftA
+
+monads: you apply a function (that returns a wrapped value), to a wrapped value using >>= or liftM
+
+A functor is a data type that implements the Functor typeclass.
+
+An applicative is a data type that implements the Applicative typeclass.
+
+A monad is a data type that implements the Monad typeclass.
+
+A Maybe implements all three, so it is a functor, an applicative, and a monad.
+
+需要实现 flatMap (liftM in Haskell) (>>= in Haskell pronounced “bind”)
+
