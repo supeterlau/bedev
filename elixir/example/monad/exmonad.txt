@@ -1,15 +1,47 @@
 https://shane.logsdon.io/writing/functors-applicatives-and-monads-in-elixir/
 
-Functor 可以为任意类型（包含 Maybe)实现 Enum.map 对 Enumerables 类型的操作
+https://github.com/slogsdon/elixir-control
+
+Functor 
+
+可以为任意类型（包含 Maybe)实现 Enum.map 对 Enumerables 类型的操作
 
 Haskell 类型
 
 class Functor f where
   fmap :: (a -> b) -> f a -> f b
 
-https://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html
+instance Functor Maybe where
+    fmap _ Nothing  = Nothing
+    fmap f (Just a) = Just (f a)
 
-https://medium.com/@tzehsiang/javascript-functor-applicative-monads-in-pictures-b567c6415221#.rdwll124i
+Elixir f 作为 dispatch 依据
+
+def fmap(%{nothing: true} = f, _), do: f
+
+apply(Enum, :reverse, [[1, 2, 3]])
+
+mul3 = fn x -> x * 3 end
+
+mul3.(5) 等同 mul3 |> apply([3])
+
+Applicatives
+
+(or more specifically applicative functors)
+
+Monad
+
+think of a monad as an abstract data type of actions. A list monad represents actions on a list. An IO monad represents actions on IO.
+
+Functor.fmap/2 从 wrapped value 中取出 unwrapped value ，调用函数，返回 wrapped value
+
+Applicative.apply/2 类似 Functor.fmap/2 其中函数变成 wrapped 函数
+
+Monad.bind/2 类似 Functor.fmap/2 其中的函数返回 wrapped value
+
+https://adit.io/posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html (Haskell)
+
+https://medium.com/@tzehsiang/javascript-functor-applicative-monads-in-pictures-b567c6415221 (JavaScript)
 
 2 + 3 => 5
 
@@ -75,6 +107,10 @@ Just (+3) <*> Just 2
 
 map (<$> in Haskell) and ap (<*> in Haskell)
 
+(*) <$> Just 5 <*> Just 3
+
+liftA2 (*) (Just 5) (Just 3)
+
 - Monad
 
 Functors apply a function to a wrapped value:
@@ -85,9 +121,10 @@ Monads apply a function that returns a wrapped value to a wrapped value.
 
 functors: you apply a function to a wrapped value using fmap or <$>
 
-applicatives: you apply a wrapped function to a wrapped value using <*> or liftA
+applicatives: you apply a wrapped function to a wrapped value using <*> or liftA2
 
 monads: you apply a function (that returns a wrapped value), to a wrapped value using >>= or liftM
+
 
 A functor is a data type that implements the Functor typeclass.
 
@@ -95,7 +132,8 @@ An applicative is a data type that implements the Applicative typeclass.
 
 A monad is a data type that implements the Monad typeclass.
 
+
 A Maybe implements all three, so it is a functor, an applicative, and a monad.
 
-需要实现 flatMap (liftM in Haskell) (>>= in Haskell pronounced “bind”)
+成为 monad 需要实现 flatMap (liftM in Haskell) (>>= in Haskell pronounced “bind”)
 
