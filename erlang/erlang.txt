@@ -30,6 +30,9 @@ BEAM book
 
 https://adoptingerlang.org/
 
+Rebar
+  https://rebar3.readme.io/docs/basic-usage
+
 # 运行
 
 - REPL
