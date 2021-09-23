@@ -1,7 +1,13 @@
 https://erlang.org/doc/index.html
 
-Programming Examples
-  https://erlang.org/doc/programming_examples/users_guide.html
+OTP 23
+
+doc 11.4
+
+http://erlang.org/documentation/
+
+Getting Started with Erlang User's Guide
+  https://erlang.org/doc/getting_started/users_guide.html
 
 Erlang Reference Manual
   https://erlang.org/doc/reference_manual/users_guide.html
@@ -12,697 +18,32 @@ OTP Design Principles
 System Principles
   https://erlang.org/doc/system_principles/users_guide.html
 
+Programming Examples
+  https://erlang.org/doc/programming_examples/users_guide.html
+
 Interoperability Tutorial User's Guide
   https://erlang.org/doc/tutorial/users_guide.html
 
-URL: https://erlang.org/doc/getting_started/seq_prog.html
+BEAM book
+  https://blog.stenmans.org/theBeamBook/
+  https://github.com/happi/theBeamBook
 
-1 Introduction
+https://adoptingerlang.org/
 
-未涉及内容
+# 运行
 
-    References.
-    Local error handling (catch/throw).
-    Single direction links (monitor).
-    Handling of binary data (binaries / bit syntax).
-    List comprehensions.
-    How to communicate with the outside world and software written in other languages (ports); this is described in Interoperability Tutorial.
-    Erlang libraries (for example, file handling).
-    OTP and (in consequence) the Mnesia database.
-    Hash tables for Erlang terms (ETS).
-    Changing code in running systems. 热更新
+- REPL
 
-Everything in this section is true, but only part of the truth
+erl 
 
-See more in Erlang book or Erlang Reference Manual
+- File
 
-2 Sequential Programming
+#!/usr/bin/env escript
 
-2.1 Erlang Shell
+https://stackoverflow.com/questions/16302755/start-erlang-application-from-command-line
+https://stackoverflow.com/questions/23482613/how-i-compile-and-run-erlang-program
 
-erl
-
-tty - Erlang Run-Time System Application (ERTS)
-
-erlang.org/doc/apps/erts/tty.html
-
-两种模式
-
-normal mode : 输入字符，发送命令
-
-shell back mode : 允许用户 kill 当前 shell，启动多个 shell 等
-
-Normal mode 支持 Emacs 风格的编辑命令
-
-erl -man erl
-
-The Erlang emulator
-
-文档:
-
-https://erlang.org/doc/man/erl.html
-
-https://erlang.org/doc/man/shell.html
-
-输入表达式 (42+77)*66/3. 表达式用 . 结尾，回车执行表达式
-
-退出
-
-Ctrl-C 选择 a
-
-Type "a" to leave the Erlang system
-
-halt().
-
-或者: Ctrl-\
-
-2.2 Modules and Functions
-
-模块与函数
-
--module(tut1). 声明一个模块
--export([fac/1]). 导出可用函数
-
-fac(1) ->
-  %% 函数分支内部用逗号 ,
-  1;  %% 单个分支结束用分号 ;
-fac(N) ->
-  N * fac(N-1). %% 函数结束用句号 .
-
-函数名 fac 参数 1 / N ->
-  函数分支
-
-编译文件
-
-> c(tut1).
-
-> tut1:fac(10).
-
-tut1:fac 10. 需要有括号，否则报错
-
-N X Y 是 variables
-
-变量以大写字母开头
-  Number ShoeSize Age
-
-2.3 Atoms
-
-原子 小写字母开头
-
-centimeter inch logged_off
-
-不像变量有值，原子只有名字
-
-多用于函数签名
-
-函数多个部分被称为 clauses 子句
-
-shell command : v/1 可以查看错误信息（保存再 tuple 中）
-
-查看第 7 行错误信息 v(7).
-
-2.4 Tuples 元组
-
-为了 make things more understandable
-
-{inch, 3} 含义比 (3, inch) 更清晰
-
-tuple 可以有不止两项，可以嵌套
-
-{moscow, {c, -10}} 两个元素
-
-2.5 Lists
-
-表示一列数据 [{london, {f, 36}}, {cape_town, {f, 70}}]
-
-[First | Rest ] = [3,4,5,6,7]
-
-[First, Second | Rest ] = [3,4,5,6,7]
-
-按照位置匹配
-
-tut4 不满足尾递归 tail recursive 有更好的方法实现。
-
-tuple 可以用作 records structs (有 record)
-
-lists 可以用作 linked lists
-
-Erlang 没有 string 数据类型
-
-strings 用 lists of Unicode characters 表示
-
-因此 [97,98,99] 等价与 "abc"
-
-[97,98,99]=="abc".
-true
-[97,98,99]. => true
-
-2.6 Maps
-
-一组 key value 关联数据
-
-#{  }
-
-#{"key" => 42}.
-
-获取 更新 key 模块 maps
-
-  maps:get(key, SomeMap).
-
-  maps:update(key, SomeMap).
-
-大于等于 >=
-
-小于等于 =<
-
-函数中的 when 用于 gurad 分支
-
-update 存在的 key: SomeMap#{ existingKey := newValue }.
-
-update 不存在的 key 报错。
-
-查看 color.erl
-
-  define 定义 macro
-
-  -define(
-    is_channel(V),
-    (is_float(V) andalso V >= 0.0 andalso V =< 0)
-  ).
-
-  使用 macro ?is_channel(R) 带 ?
-
-  Module name 'color' does not match file name 'tut_map'
-  error
-
-  文件名和模块名必须一样
-
-2.7 标准模块和帮助文档 Manual Pages
-
-io 模块 formatted input/output
-
-erl -man io 可以查询帮助文档
-
-erl -man io
-No manual entry for io (ORZ)
-
-2.8 输出到 terminal
-
-io:format("hello world~n", []).
-
-io:format("this outputs one Erlang term: ~w~n", [hello]).
-
-io:format("two Erlang terms: ~w~w~n", [hello, world]).
-
-io:format("also two Erlang terms: ~w ~w~n", [hello, world]).
-
-~w term 占位
-
-~n newline 占位
-
-输出正常会返回 ok
-
-2.9 Example
-
-convert Celsius to Fahrenheit
-
-print data neatly
-
-测试 tut5
-
-tut5:format_temps([ {moscow, {c,-10}}, {cape_town, {f, 70}}, {stockholm, {c, -4}}]).
-
-2.10 Matching, Guards, Scope of Variables
-
-模式匹配 Guards 变量作用域
-
-find maximum 和 minimum (tut6)
-
-38> tut6:list_max([1,2,3,4,5,7,4,3,2,1]).
-
-不同参数数量的同名函数，在 Erlang 中是完全不同的函数
-
-使用 Name/Arity 区分函数
-
-when 后边的 gurad 条件如果失败，则跳过当前部分函数，执行下一个函数部分 next part
-
-用 match 操作符 = 赋值
-
-M = 5.
-
-如果在同一个 scope 内再次赋值 M = 6. 会报错
-
-模式匹配可以方便取得数据
-
-{X, Y} = {paris, {f, 28}}.
-
-2.11 More About Lists (Lists Again)
-
- | 可以取得 List 的 Head 也可以添加 Head
-
-L1 = [madrid | T1].
-
-
-自己实现一些功能前最好先查看标准库是否提供了相关功能
-
-https://erlang.org/doc/man/lists.html
-
-2.12 if 和 case
-
-if
-  Condition 1 ->
-    Action 1;
-  Condition 2 ->
-    Action 2;
-  Condition 3 ->
-    Action 3 (end 前的 Action 没有 分号)
-end
-
-Condition 类似 guard
-
-Condition 中可以包含多个子条件
-
-A=2,B=3 表示 and
-A=2;B=3 表示 or
-
-如果没有找到匹配的条件，则会报错（因此一般会提供 true 分支在最后）
-
-case 是另一个条件结构
-
-case Length of
-  {centimeter, X} ->
-    {inch, X / 2.54};
-  {inch, Y} ->
-    {centimeter, Y * 2.54}
-end.
-
-分支结尾也用 分号
-
-if 和 case 都有返回值
-
-  case 使用模式匹配匹配分支，可以使用 gurad (when other_condition)
-
-2.13 内置函数 Built-In Functions BIFs
-
-BIFs 通常实现一些在 Erlang 中实现起来 inefficient 的功能。
-
-例如 trunc (属于 erlang 模块的可以省略 erlang 部分)
-
-erlang:trunc -> trunc
-
-Erlang rem 操作符可以获取余数
-
-2004 rem 400. -> 4
-
-只有部分 BIFs 可以用于 guards (https://erlang.org/doc/reference_manual/expressions.html)
-
-其他 BIFs
-
-length([]).
-float(5).
-is_atom(hello).
-is_tuple({paris, {c, 30}}).
-
-以上可以用于 guards
-
-atom_to_list(hello).
-list_to_atom("goodbye").
-integer_to_list(22).
-
-这些函数很难或完全不可能在 Erlang 中实现。
-
-2.14 高级函数 Higher-Order Functions (Funs)
-
-Xf = fun(X) -> X * 2 end.
-
-Xf(5).
-
-Add_3 = fun(X) -> X + 3 end.
-
-anonymous 变量 "_" 可忽略变量
-
-3. Conccurrent Programming
-
-3.1 Processes
-
-Erlang 处理 concurrency 和 distributed programming 的能力是一大优势。
-
-concurrency 意味着同时处理多个线程 thread。
-
-例如现代操作系统中，每个 CPU 一次处理一个 thread，但它能在 thread 间快速切换。造成同时处理的样子。
-
-Erlang 可以让你很容易创建并行 parallel 线程，并允许它们之间通讯。在 Erlang 中 each thread of execution 被叫做 process.
-
-(由于 Erlang 中的 thread share no data，因此也被叫做 process)
-
-Erlang 内置函数 spawn 用来创建一个新 process
-
-spawn(Module, Exported_Function, List of Arguments).
-
-spawn(Module_Name, Function_Name, [Argument1, Argument2, ...]).
-
-spawn 中的函数必须被导出
-
-tut14 结果不是先打印三次 hello，再打印三次 world。而是每个一次。
-
-<x.x.x> 是 process identifier: pid 为 start() 函数的返回值，即 spawn 的结果。
-
-io.format 中 ~p 类似 ~w 但会 显示缩进 等
-
-3.2 Message Passing
-
-创建两个 processes 并互相发送信息
-
-发送消息
-
-Target_PID ! message
-
-接收消息
-
-receive
-   pattern1 ->
-       actions1;
-   pattern2 ->
-       actions2;
-   ....
-   patternN
-       actionsN
-end.
-
-receive
-  case1 ->
-    expression1,
-    expression2;
-  case2 ->
-    expression1,
-    expression2,
-    receive_again (loop to receive)
-end.
-
-Erlang Process 之间的消息可以是任何 simply Erlang terms. 即 lists tuples integers pids (and so on)
-
-每个 process 有自己的 input queue 存放接收到的 messages. 新 message 放到 queue 末尾。当 process 执行 receive 时，queue 中的第一个开始被用来匹配 receive 的模式，自上而下。如果有匹配，则从 queue 中删除 message 并执行对应的动作,
-
-如果一个 message 无法匹配任意模式，那么会跳过这个 message 去处理下一个 message
-
-到达 queue 末尾时，process 会 block 等待接收新消息。有新消息时，重复以上流程（还会从头消费 message 吗，还是从新的开始消费）
-
-self() 返回运行 self() 进程的 PID
-
-3.3 Registered Process Names
-
-tut15 中 pong 被首先创建，从而可以在启动 ping 时传递给 ping pong 的 PID。也就是说，ping 进程必须通过某种方法得到 pong 的 PID 从而向 pong 发送消息。但有时互相独立的进程也需要知道各自的 ID。Erlang 提供一种机制对 process 命名，从而用名字代替 PIDs。这种命名通过内置函数 register 实现。
-
-register(some_atom(Name), Pid).
-
-tut16 重写 tut15
-
-3.4 Distributed Programming
-
-分布式版本
-
-首先 distributed Erlang 有一个简单的认证机制 magic cookie
-
-$HOME/ 下的 .erlang.cookie
-
-chmod 400 .erlang.cookie (修改权限为只允许 owner 访问)
-
-如果只有一台机器，可以运行两个不同名字的 Erlang systems。每个 system 被称为一个 Erlang Node。
-
-erl -sname node_name
-
--sname 参数假定节点都运行在同一个 domain 上
-
--name 设置不同 domain 下 要提供完整 IP 地址
-
-Erlang pids 包含了 process 执行位置的信息。如果知道 process 的 pid，! 操作符就能发送给这个 process 消息，无论是否在同一台机器上。
-
-但是发送到不同 node 的 registered process 需要不一样的语法
-
-{Process_Name, Process_Node} ! {ping, self()},
-
-使用 {registered_name,node_name} 而不只是 registered_name
-
-spawn 可以启动其他节点上的进程
-
-(pong@localhost)>tut18:start(ping@localhost).
-
-输出结果返回到启动进程的节点上
-
-3.5 A Larger Example
-
-messager. messager 允许用户从不同节点登录并互相发送简单消息。
-
-- 只有消息传递逻辑，无 nice graphical user interface
-
-- 这种问题可以通过 OTP 更简单地解决。OTP 中还提供了即时更新代码功能。
-
-- 第一个程序里未处理 nodes 消失的异常。会在后续版本中修复。
-
-messenger.erl
-
-  logon(Name)
-
-  logoff()
-
-  message(ToName, Message)
-
-Erlang Nodes 中有一个运行 server 维护 logged on users 数据，这个 server 注册为 "messenger" "mess_server'"
-
-运行 client process 的 nodes 注册为 mess_client
-
-client 和 server 间协议
-
-To server:
-  {ClientPid, logon, UserName}
-
-Reply:
-  {messenger, stop, user_exists_at_other_node} : stops client
-  {messenger, logged_on} : logon was successful
-
-To server:
-  {ClientPid, logoff}
-
-Reply:
-  {messager, logged_off}
-
-To server:
-  {ClientPid, logoff}
-
-Reply:
-  no reply
-
-To server:
-  {ClientPid, message_to, ToName, Message} : send a message
-Reply:
-  {messenger, stop, you_are_not_looged_on} : stops the client
-  {messenger, receiver_not_found} : no user with the ToName logged on
-  {messenger, sent} : Message has been sent (no guarantee)
-
-To client:
-  {message_from, Name, Message}
-
-Client Commands
-
-Started: messenger:client(Server_Node, Name)
-
-To client: logoff
-To client: {message_to, ToName, Message}
-
-配置: server_node() 函数返回 messenger server 运行 node 名字
-
-编译生成 *.beam 文件
-
-  erlc messenger.erl (messenger.beam)
-
-Four Erlang nodes are started up: messenger@super, c1@bilbo, c2@kosken, c3@gollum.
-
-单机的话 hostname 都为 localhost
-
-erl -sname messenger@localhost
-
-代码中的新概念:
-
-server_transfer/4 和 server_transfer/5 是两个不同的函数
-
-server(User_List) 是一个递归函数，形成了 loop。Erlang compiler 会优化代码，so that this really is a sort of loop and not a proper function call。尾递归优化。但是要求: 最后函数调用后没有代码。
-
-否则，如果有代码的话。compiler 会预期函数调用返回值，进行正常函数调用。结果会 getting bigger and bigger for every loop。
-
-lists:keymember(Key, Position, Lists) 遍历 list of tuple 查找每个 tuple Position 位置的元素是否和 Key 一样。第一个元素是 position 1.如果找到，就返回 true，找不到返回 false。
-
-lists:keydelete() 类似，但是会删除第一个找到的 tuple 返回剩余 list
-
-lists:keysearch() 类似 lists:keymember 返回 {value, Tuple_Found} 或 false
-
-process 在执行完代码就会退出，即最后的函数返回值，也没有调用其他函数。另一个方法是调用 exit/1。exit 的参数有自己的特殊函数 exit(normal) 是正常退出，类似 process 正常执行完代码。
-
-BIF whereis 查找是否有对应名字的 process。找到的话返回 pid 未找到返回 undefined。
-
-4. Robustness
-
-上一章最后的代码有一些问题
-
-- client 挂掉而没有发出 logoff 信号，server 会仍然认为用户处于登录状态。此时，用户就无法再次登录了，因为服务端以为用户已经登录。
-- 如果服务端挂掉，会导致 client 一直等待 await_result 函数
-
-4.1 Time-outs
-
-ping-pong 例子中，除了发送 finished 原子 作为结束信息，还可以给 pong 设置接收 ping 回复信息的超时时间。
-
-receive
-  {ping, Ping_PID} ->
-    io:format("Pong received ping~n", []),
-    Ping_PID ! pong,
-    pong()
-  after 5000 ->
-    io:format("Pong timed out~n", [])
-end.
-
-4.2 Error Handling
-
-Erlang process 如何停止的，或 exit 的。
-
-执行 exit(normal) 的 process 或 仅仅执行完代码的 process 是 normal exit
-
-遇到 runtime error (除以 0，匹配失败，调用不存在的函数 等) exits with an error。是 abnormal exit。以及执行 exit(Reason) 的 process 也是 abnormal exit。
-
-Erlang 进程间可以设置 link。如果一个 process 调用 link(Other_Pid) 它就和 Other_Pid 建立起双向 link。当一个进程终止时，它会向所有关联的 process 发送信号。
-
-信号包含 Pid 和退出信息
-
-接受到 normal exit 信号的 process 默认行为是忽略信号。
-
-对于其他两种情况 abnormal exit:
-
-  bypass all messages to the receiving process
-
-  杀死 接收进程
-
-  向关联进程传播同样的 error signal
-
-这样，我们可以将所有进程以一种事务方式关联。其中一个 abnormally 退出时，事务中的全部进程都被终止。
-
-为了在创建时就 link 到其他 process，有一个 BIF 是 spawn_link
-
-可以修改默认杀死关联进程的行为。
-
-使用 process_flag(trap_exit, true).
-
-https://erlang.org/doc/man/erlang.html#process_flag-2
-
-但通常不这样做，而是在 OTP supervisory programs 中完成。
-
-使用新知识让 messenger.erl 更 more robust
-
-
-如果 server 所在 node go down，会自动发送 {'EXIT', MessengerPID, noconnection} 到关联进程，并将这些进程关闭。 (系统自动生成)
-
-client 在 link 前就终止的情况也被考虑在内。link一个不存在的 process 会产生错误 {'EXIT', From, noproc} 自动产生的错误。
-
-5. Records 和 Macros
-
-大型程序，总是由一组有定义良好接口的文件组合而成的。
-
-5.1 分解例子到多个文件
-
-mess_config.hrl
-
-mess_interface.hrl
-
-user_interface.erl
-
-mess_client.erl
-
-mess_server.erl
-
-使用 record 记录 message between (shell client server)
-
-5.2 头文件
-
-使用 -include("Header_File_Name"). 引入头文件
-
-头文件可以有任意 Erlang code 大多数是 record 和 macro 定义
-
-5.3 Records
-
-定义如下
-
--record(name_of_record, {field_name1, field_name2, ...}).
-
-erl 中 record 有关命令
-
-rd 在 shell 中定义 record
-
-因为 record definitions are only available at compile time, not at runtime
-
-无法在 erl 中直接定义 record。
-
-可以先在文件中定义，载入到 erl 中。或者用 rd
-
-rl() rl(RecordName) 列出 record 定义
-
-rp() 显示 record
-
-rd(message_to, {to_name, message}).
-
-M1 = #message_to{to_name=james,message="Hello"}.
-
-rp(M1).
-
-rl(message_to).
-
-创建 record
-
-#person{phone=[0,8,2,3,4,3,1,2], name="Robert"}.
-
-未提供值的会使用默认值。
-
-#person{name = "Jakob", _ = '_'}. (From Erlang 5.1/OTP R8B)
-
-_ 表示为其他 field 都赋值为 '_'
-
-获取 field: M1#message_to.to_name.
-
-更新 field: P2 = P1#person{name="Robert"}.
-
-判断是否为 某个类型 record
-
-when is_record(P, person)
-
-模式匹配
-
-#person{name=Name} = P3, Name.
-
-实际是 #person{name=Name} = P3.
-然后显示 Name.
-
-合一起就是 #person{name=Name} = P3, Name.
-
-嵌套 record
-
--record(name, {first = "Robert", last = "Ericsson"}).
--record(person, {name = #name{}, phone}).
-
-http://erlang.org/doc/reference_manual/records.html#internal-representation-of-records
-
-  编译期 record 转为 tuple
-
-https://erlang.org/doc/man/shell.html
-
-5.4 Macros
-
--define(server_node, messenger@localhost).
-
--include("mess_config.hrl"). 引入 macros
-
-然后每一个 ?server_node 都被替换为 messenger@localhost
-
-也用于 spawn 中 spawn(?MODULE, func_name, [[]]).
-
-?MODULE is always replaced by the name of the current module
-
-In the messenger example, no assumptions have been made about what the message being sent is. It can be any valid Erlang term.
+https://erlang.org/doc/man/escript.html
 
 ===
 
@@ -777,6 +118,10 @@ https://github.com/clojurians-org/haskell-example/blob/master/README.org
 
 https://www.theerlangelist.com/article/spawn_or_not
 
+https://www.pluralsight.com/guides/10-essential-erlang-tools-for-erlang-developers
+
+https://erlang.org/doc/reference_manual/code_loading.html#running-a-function-when-a-module-is-loaded
+
 Packages:
 
 fluentd 日志
@@ -785,3 +130,20 @@ ranch
 cowboy
 
 use Emacs: citadel/noteinaction/emacs.md
+
+
+- Tail recursion
+https://stackoverflow.com/questions/20317194/erlang-tail-recursion
+https://erlang.org/doc/efficiency_guide/myths.html 
+https://prog21.dadgum.com/1.html
+
+
+同名参数数量不同函数 . 结尾
+
+同名参数数量相同的函数 类似多分支语句 ; 结尾
+
+分支结束最后一句代码不用符号表示结束
+
+, 用于函数内部多条语句
+
+已经有 beam 可以直接执行模块函数
