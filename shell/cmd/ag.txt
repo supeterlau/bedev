@@ -1,0 +1,5 @@
+https://stackoverflow.com/questions/36601233/silver-searcher-ignore-multiple-directories
+	ag 'select' --ignore-dir={deps,_build,native,assets,priv} .
+
+https://stackoverflow.com/questions/48673946/how-do-i-ag-search-into-a-specific-set-of-folders-using-the-g-option
+	ag -G '^routes' middleware
