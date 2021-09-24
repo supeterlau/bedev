@@ -1,19 +1,154 @@
 https://sosml.org/editor?0&start.ml
 
-# ML 程序设计教程
+# ML 程序设计教程 
+
+10 章
+
+## Ch 1
+
+可变数组 array
+
+不可变数组 vector
+
+Pascal 过程式，procedural
+C++ 面向对象，object-oriented
+都是命令式 imperative
+因为它们都是基于命令，命令作用于机器状态。
+
+SML 声明式 declarative programming
+
+http://smlnj.org/index.html Standard ML of New Jersey (abbreviated SML/NJ)
+
+  Ubuntu: sudo apt-get install smlnj
+
+  apt install --dry-run pkg
+  sudo apt build-dep gcc-9-multilib
+  sudo dpkg --configure -a
+
+  http://smlnj.org/dist/working/110.99.1/install.html
+
+Hit CTRL-d to exit
+
+https://jimfix.github.io/csci384/lectures/week3/smlsyntax.html
+
+<pkg>/bin/sml
 
 ## Ch 2
 
+1. 值（常量）声明
+
+值 类型 签名 结构 函子(monad) 都可以被赋予名字
+
+表达式以 ; 结尾
+
+注释
+
+  (* comments *) 可以跨行
+
+声明常量
+
 2+2;
+
 Math.sqrt 2.0;
+
+声明 declaration
+
 val seconds = 60;
+
 val minutes = 60;
+
 val hours = 24;
+
 seconds * minutes * hours;
+
+it 特殊变量，保存 repl 最后求值结果，历史结果被丢弃，需要赋值给其他变量才能使用
+
 it div 24;
+
 val pi = 3.1415926;
+
 val r = 2.0;
+
 val area = pi * r * r;
+
+声明函数
+
+r 形参 formal parameter
+
+fun areafn(r) = pi * r * r;
+
 fun areafn r = pi * r * r;
-areafn(r);
+
+fun areafn r =
+  pi * r * r;
+
+函数是抽象的值 用 fn 表示
+
+areafn(r); areafn r;
+
+函数声明和调用(应用)时的括号是可选的
+
+函数式语言也叫 applicative 语言 (应用式语言)
+
 (* stupid comments *)
+
+值的名字为变量，无法更新，但是可以重新赋值
+
+此时，之前声明的函数中还保存原来的值 这就是 静态绑定 特性
+
+字母名字 必须字母开头
+  可以使用 字母 数字 _ ' 
+  区别大小写
+  ' 存在是因为 SML 设计者是数学家 变量常用 x x' x''
+  避免关键字
+    abstype and andalso as case datatype
+    eqtype fn fun functor handle
+    include infix infixr local nonfix of
+    op open orelse raise rec sharing sig signature
+    structure with withtype
+
+符号名字
+  ! % & $ # + - * / : < = > ? @ \ ~ ' ^ | 组成
+  ???@@@
+
+  特殊字符无法用保留字
+    : | = => -> # :>
+
+ML 从文件读取声明
+
+  use "some_file";
+
+数据类型
+  整数 int
+  实数(浮点数) real
+  字符串
+  真值 布尔值
+
+负号 ~2
+
+~1.23.4E~2
+
+函数应用优先级高于中缀运算符
+
+  area a + b == (area a) + b
+
+Int.min(7, Int.sign 12);
+
+无法确定类型时，可以在三处添加类型
+
+  参数表 (x: real, y: int)
+  结果类型 fun square x : real = x * x;
+  函数体类型 fun square x = x * x : real;
+
+字符串 string 双引号
+  "How dare you";
+  拼接字符 "Have" ^ " " ^ "Fun"
+  字符个数 size("How dare you");
+    size(it);
+  可以用特殊字符
+
+字符 
+  #"a" #" "
+  val it = #" " : char
+
+  0 <= k <= 255 时 chr(k) 返回以 k 为字符码的字符
