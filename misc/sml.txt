@@ -148,7 +148,43 @@ Int.min(7, Int.sign 12);
   可以用特殊字符
 
 字符 
-  #"a" #" "
+  #"a" #" " #"\n"
+
   val it = #" " : char
 
-  0 <= k <= 255 时 chr(k) 返回以 k 为字符码的字符
+  0 <= k <= 255 时 
+    chr(k) 返回以 k 为字符码的字符
+    ord(c) 返回字符 c 的 ASCII 编码
+
+    chr 98;
+    ord #"b";
+
+fun digit i = chr(i + ord #"0");
+
+digit ~1
+val it = #"/" : char
+
+digit 10;
+val it = #":" : char
+
+ML 定义中只有字符类型。标准库添加字符串类型。
+
+结构 String 提供字符串操作 Sting.sub
+
+  c 为字符 str(c) 返回对应字符串
+
+  str(#"b");
+  val it = "b" : string
+
+  s 为字符串 String.sub(s, n) 返回第 n 个字符，起始为 0
+
+结构 Char 提供字符操作 isDigit isAlpha
+
+结构 Substring 提供对字符串子序列操作
+
+fun digit i = String.sub("0123456789", i); (* 更好，不依赖于字符编码方式 *)
+
+digit ~1
+digit 10;
+
+uncaught exception Subscript [subscript out of bounds]
