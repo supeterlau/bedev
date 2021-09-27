@@ -1,0 +1,20 @@
+# Doc
+
+https://deno.land
+
+# Install
+
+https://deno.land/#installation
+
+UNIX: curl -fsSL https://deno.land/x/install/install.sh | sh
+
+macOS: brew install deno
+
+# Usage
+
+deno run https://deno.land/std/examples/welcome.ts
+
+# Pkg Source
+# Tours
+# Refs
+
