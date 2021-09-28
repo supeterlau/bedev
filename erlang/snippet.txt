@@ -1,0 +1,56 @@
+- random
+
+https://hashrocket.com/blog/posts/the-adventures-of-generating-random-numbers-in-erlang-and-elixir
+Seed = crypto:bytes_to_integer(crypto:strong_rand_bytes(12)). 
+random:seed(Seed).
+
+Elixir
+  :rand.seed(:exsss, {1, 2, 3})
+  Stream.repeatedly(&:rand.uniform/0) |> Enum.take(3)
+
+If a cryptographically strong random number generator is needed, use something like crypto:rand_seed/0.
+
+https://erlang.org/doc/man/rand.html#uniform-0
+  范围 0.0 <= Val < 1.0
+  避免出现 0.0
+  1 - rand:uniform()
+  rand:uniform(1000).
+https://erlang.org/doc/man/rand.html#uniform_real-0
+
+- lists
+
+https://stackoverflow.com/questions/1459152/erlang-listsindex-of-function
+https://news.ycombinator.com/item?id=22908851 
+  In Erlang, lists are linked lists. The fact that tuples are stored in memory sequentially is a major difference from lists.
+http://erlang.org/pipermail/erlang-questions/2015-May/084642.html how are implemented lists?
+
+High Pivot Low
+
+reverse
+
+L1 = [45, 34, 55],
+L2 = [7, 9, 1],
+lists:foldl(fun(E, Acc) -> [E | Acc] end, L2, L1).
+
+lists:foldl(
+  fun(L, Acc) -> lists:foldl(fun(E, Acc) -> [E | Acc] end, Acc, L) end,
+  [],
+  [[45, 34, 55], [10], [7, 9, 1]]
+).
+
+- Comparison operator
+
+=< 小于等于
+
+- if
+
+if
+  X > Y ->
+    Doing,
+  true ->
+    Else_Branch
+end
+
+- 避免 Emulator 将 list 作为 string 显示
+
+shells.strings(false).
