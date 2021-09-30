@@ -1,0 +1,65 @@
+Kotlin Android 10 编程
+
+创建 Kotlin 工程
+  IDEA: New Project
+  Android Studio: gradle
+    ~/.gradle/wrapper/dists/gradle-6.7-all/cuy9mc7upwgwgeb72wkcrupxe/gradle-6.7/bin/gradle
+    gradle init
+      选择
+        3
+        4
+        1
+        default
+    Open the file Library.kt 添加 main 方法，配置 IDE 运行
+
+main 直接作为全局函数
+
+val 定义常量
+var 定义变量
+
+class ContactInfo(val bitmap: Bitmap, val title: String, val detail: String) {}
+
+大括号都可以省略
+
+对比 lambda 语法
+
+  Java fab.setOnClickListener(view -> Snackbar.make(view, "", Snackbar.LENGTH_LONG))
+  Kotlin fab.setOnClickListener {view -> Sanckbar.make(view, "", Snackbar.LENGTH_LONG)}
+
+类型必须可以推导 val bStr = null 就不行，需要是 val bStr: String? = null
+  防止空指针异常
+
+变量插入字符串
+  String.format("Hi, ${yourName}")
+
+没有基础数据类型，都是对象
+  110.equals(33)
+
+== 是比较值，=== 比较指针
+
+没有自动类型转换
+
+创建对象直接用构造方法
+
+if ... else ... 是表达式
+
+when 替代 switch ... case
+
+  不带目标变量时，检查每个分支是否为真，为真则执行对应分支
+
+  
+https://dev.to/cutiko/how-to-create-a-kotlin-project-using-gradle-and-run-it-with-android-studio-4hac
+
+companion object
+@JvmStatic
+
+手动选择失败，直接右键运行成功
+
+
+https://docs.gradle.org/current/samples/sample_building_java_applications.html#run_the_init_task
+https://pspdfkit.com/blog/2019/understand-gradle-build-system/
+https://docs.gradle.org/current/userguide/library_vs_application.html
+
+
+https://zhuanlan.zhihu.com/p/62462581
+  要清楚的知道你想要定位的目标人群是哪些。你做什么产品就要卖什么服务。切记不要什么内容都讲，讲得越杂收听的人越少，转化率越低。定位好自己的内容，每天坚持去分享。
