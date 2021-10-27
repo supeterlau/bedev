@@ -1,0 +1,28 @@
+Build erlang from source code
+
+on Alpine
+	https://hub.docker.com/_/alpine
+
+	docker run --rm -it -v erlang:dev alpine:latest sh
+
+https://erlang.org/doc/installation_guide/INSTALL.html
+
+tar xvzf app.tar.gz
+
+export ERL_TOP=`pwd`
+
+./configure [ options ]
+
+export LANG=C
+
+make
+
+https://www.erlang.org/downloads
+
+https://erlang.org/download/otp_src_24.0.tar.gz
+
+OPT Documents
+https://erlang.org/download/otp_doc_html_24.0.tar.gz
+
+OTP Man Pages
+https://erlang.org/download/otp_doc_man_24.0.tar.gz
