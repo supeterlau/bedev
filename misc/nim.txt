@@ -1,0 +1,30 @@
+Nim
+https://narimiran.github.io/nim-basics/
+https://nim-lang.org/docs/tut1.html
+https://nim-lang.org/docs/manual.html
+https://github.com/indraniel/nim-learn
+
+#
+
+https://narimiran.github.io/nim-basics/
+
+both compile and run the program with just one command
+nim c -r helloworld.nim
+
+安装
+https://github.com/asdf-community/asdf-nim
+
+asdf plugin add nim https://github.com/asdf-community/asdf-nim
+asdf nim install-deps
+
+Updating the plugin later is easy:
+
+asdf plugin update nim main
+
+asdf install nim (latest version)
+
+asdf install nim 1.4.2
+
+asdf install nim ref:17992fca1dc0b3674dce123296b277551bbca1db
+
+asdf local nim <nim-version>
