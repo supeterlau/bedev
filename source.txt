@@ -1,0 +1,11 @@
+# Elixir
+
+plug
+
+ecto
+
+phoenix
+
+swoosh https://github.com/swoosh/swoosh
+
+livebook
