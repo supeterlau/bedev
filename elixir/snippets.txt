@@ -1312,17 +1312,44 @@ https://hexdocs.pm/iex/IEx.html#module-the-iex-exs-file
 
 IEx looks for a local .iex.exs file (located in the current working directory), then a global one (located at ~/.iex.exs) and loads the first one it finds (if any)
 
+https://stackoverflow.com/questions/40324929/integer-list-printed-as-string-in-elixir
+101, 102, 103, 104] == 'efgh'
+#=> true
+
+[101, 102, 103, 104] |> inspect(charlists: :as_lists)
+#=> [101, 102, 103, 104]
+IEx.configure(inspect: [charlists: :as_lists])
+
+- convert
+
+https://medium.com/@alxtz.tw/elixir-otp-20-covert-ascii-number-to-string-97f4e2751b93
+char to ascii: 
+
+?A 
+65
+
+?1
+49
+
+ascii to char:
+
+List.to_string([65])
+"A"
+
+https://stackoverflow.com/questions/41313995/elixir-convert-integer-to-unicode-character
+
+iex(1)> x = ?一 + 1
+19969
+iex(2)> <<x::utf8>>
+"丁"
+iex(3)> List.to_string([x])
+"丁"
 - more
 
 https://elixir-examples.github.io/examples/get-a-nested-map-value
 
-
-
 https://elixirschool.com/en/lessons/basics/control-structures/#with
-
-
-
-
 
 https://medium.com/elixirlabs
 https://medium.com/erlang-battleground/
+
