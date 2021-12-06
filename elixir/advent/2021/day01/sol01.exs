@@ -1,6 +1,6 @@
 # using Enum.reduce_while()
 
-defmodule Advent.Day01 do
+defmodule Advent.Day do
   def p1() do
     File.read!('./input.txt')
     |> String.split("\n")
@@ -46,5 +46,5 @@ defmodule Advent.Day01 do
   end
 end
 
-Advent.Day01.exec(1)
-Advent.Day01.exec(3)
+Advent.Day.exec(1)
+Advent.Day.exec(3)

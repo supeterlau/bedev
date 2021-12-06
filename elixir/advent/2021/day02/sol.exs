@@ -1,6 +1,6 @@
-defmodule Advent.Day02 do
+defmodule Advent.Day do
   def parse_input() do
-     File.read!('./input.txt') |> String.split("\n") |> Enum.reject(&(&1==""))
+     File.read!('./input.txt') |> String.split(~r{\n}, trim: true)
   end
 
   def p1() do
@@ -38,4 +38,4 @@ end
 
 # horizontal position
 
-Advent.Day02.exec()
+Advent.Day.exec()
