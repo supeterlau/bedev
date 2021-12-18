@@ -1,6 +1,11 @@
 # Elixir
 
 plug
+
 ecto
+
 phoenix
-https://github.com/swoosh/swoosh
+
+swoosh https://github.com/swoosh/swoosh
+
+livebook

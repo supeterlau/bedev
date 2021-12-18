@@ -1,0 +1,15 @@
+day=$(ls -1qd day* | wc -l)
+
+next_day=$((day+1))
+
+function new {
+  dir_name="day"$(printf "%02d" $next_day)
+  mkdir -p $dir_name
+	copy_code $dir_name
+}
+
+function copy_code {
+  cp ./code.exs $1/sol.exs
+}
+
+new
