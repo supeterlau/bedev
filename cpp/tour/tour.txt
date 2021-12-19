@@ -283,6 +283,14 @@ cpp 不允许返回指针到函数外部，必须声明数组为 static
   C++ does not advocate to return the address of a local variable to outside of the function so you would have to define the local variable as static variable.
 
 ## 17. Strings
+
+https://www.tutorialspoint.com/cplusplus/cpp_strings.htm
+
+C-style character string.
+
+The string class type introduced with Standard C++.
+
+
 ## 18. Pointers
 ## 19. References
 ## 20. Date & Time
