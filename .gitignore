@@ -6,3 +6,4 @@ pure.txt
 fun.txt
 
 **/*.class
+**/a.out
