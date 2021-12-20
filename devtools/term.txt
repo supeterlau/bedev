@@ -38,7 +38,11 @@ https://gist.github.com/ipatch/7b904877367e015c1a77a741d97bc6d2
 
 https://clubmate.fi/alacritty
 
+https://arunvelsriram.medium.com/starting-neovim-in-a-separate-alacritty-window-6079b725c817
+  nohup
+  
 https://dev.to/hlappa/my-web-development-environment-alacritty-tmux-neovim-4pd2
+  Alacritty, Tmux, Neovim, Zsh
 
 
 
@@ -131,7 +135,10 @@ windows:
 
 Test the new default layout with (yes, it is "mux"):
 
-mux default
+tmux default
+
+- swip windows (pane in window)
+https://www.freecodecamp.org/news/how-to-add-authentication-to-react-native-in-three-steps-using-firebase/ Firebase
 
 ## work directory
 
@@ -256,3 +263,7 @@ https://www.sitepoint.com/10-killer-tmux-tips
 https://peterxjang.com/blog/a-minimalist-guide-to-tmux.html#
 
 https://ryanlue.com/posts/2018-01-13-pair-programming-over-ssh
+
+https://gist.github.com/Starefossen/5955406 tmux session
+
+https://clubmate.fi/tmux
