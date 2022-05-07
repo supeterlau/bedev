@@ -1,5 +1,7 @@
 Design Pattern
 
+- in Functional Programming Style
+
 - https://refactoring.guru/design-patterns
 
 # Design Pattern
