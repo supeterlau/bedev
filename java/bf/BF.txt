@@ -1,3 +1,5 @@
+https://www.geeksforgeeks.org/brainfuck-interpreter-java/
+
 Brainfunck 只有 8 个简单命令和一个指令指针
 
 commands:
@@ -9,3 +11,12 @@ commands:
   ,  接收 1 byte 保存在 data pointer
   [- 如果 data pointer 处值为 0，不执行下一个 command 而是跳到下一个匹配的 ] 后的 command
   -] 如果 data pointer 处值不为 0，不执行下一个 command 而是跳到上一个匹配的 [ 前的 command
+
+https://thesharperdev.com/how-to-write-a-brainfuck-interpreter-in-c/ Csharp
+
++++++++++++++++++++++++++++++++++.
+!
++++++++++++++++++++++++++++++++++.>+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.
+!?
+++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.
+Hello World!
