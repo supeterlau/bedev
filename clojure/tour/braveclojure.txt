@@ -158,6 +158,14 @@ get-in 可在嵌套 map 中查找
 
 (map-form key1)
 
+添加元素
+
+https://clojuredocs.org/clojure.core/conj
+
+https://clojuredocs.org/clojure.core/assoc
+
+(def op (conj op [:sub -] [:product *]))
+
 2.4 Keywords
 
 主要作为 map 的 key  
@@ -207,8 +215,8 @@ list 字面量
 (nth list-form index)
 
 nth 比 get 慢
-  vector 是顺序存储 计算偏移
-  list 是链式存储 全部遍历
+  vector 是顺序存储 计算偏移 array-like tuple_in_elixir
+  list   是链式存储 全部遍历 list-like  list_in_elixir
 
 nth 越界报错
 list 函数创建
