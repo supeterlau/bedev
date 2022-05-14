@@ -393,3 +393,23 @@
             (into final-body-parts (set [part (matching-part part)])))
           []
           asym-body-pairs))
+
+(better-symmetrize-body-parts asym-hobbit-body-parts)
+
+(let [a 1 b 2 c 3]
+  (println a)
+  (println b)
+  (println c))
+
+(defn hit
+  [asym-body-parts]
+  (let [sym-parts (better-symmetrize-body-parts asym-body-parts) 
+        body-part-size-sum (reduce + (map :size sym-parts))
+        target (rand body-part-size-sum)]
+     (loop [[part & remaining] sym-parts
+            accumulated-size (:size part)]
+       (if (> accumulated-size target)
+         part
+         (recur remaining (+ accumulated-size (:size (first remaining))))))))
+
+(hit asym-hobbit-body-parts)
