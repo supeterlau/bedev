@@ -18,3 +18,5 @@ Code Style:
 
   https://google.github.io/styleguide/cppguide.html Google C++ Style Guide
   https://stackoverflow.com/questions/3706379/what-is-a-good-naming-convention-for-vars-methods-etc-in-c What is a good naming convention for vars, methods, etc in C++? - Stack Overflow
+
+https://blog.csdn.net/quietbxj/article/details/122385489 C++/C判断Windows，Mac和Linux平台宏定义
