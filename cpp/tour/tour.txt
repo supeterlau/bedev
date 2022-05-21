@@ -290,14 +290,171 @@ C-style character string.
 
 The string class type introduced with Standard C++.
 
-
 ## 18. Pointers
+
+https://www.tutorialspoint.com/cplusplus/cpp_pointers.htm
+
+every variable is a memory location and every memory location has its address defined
+
+int var1
+
+取地址 &var1
+
+int *ip; // pointer to an integer
+
+用指针取值 *ip 
+
+pointers and arrays are interchangeable in many cases
+
+指针和数组大多数情况下可以互相替换:
+  指向数组首元素的指针可以通过指针运算或数组索引访问其他元素
+  // point to the next location
+  ptr++;
+
 ## 19. References
+
+引用 是变量别名。已有变量的另一个名字
+
+变量名或引用名可以读取变量内容
+
+引用和指针区别
+  没有 NULL 引用
+  无法改变引用
+  引用创建时必须初始化
+
+int i = 17;
+int& r = i; 声明中的 & 读作 引用
+
+无法返回超出作用域的变量引用 如 local variable
+
+可以返回 static variable 的引用
+
 ## 20. Date & Time
+
+C++ inherits the structs and functions for date and time manipulation from C
+
+include <ctime>
+
 ## 21. Input/Output
+
+<iostream>
+	
+<iomanip> performing formatted I/O with so-called parameterized stream manipulators, such as setw and setprecision
+
+<fstream> user-controlled file processing
+
 ## 22. Struct
 
+https://www.tutorialspoint.com/cplusplus/cpp_data_structures.htm
+
+结构体
+
 ## 23. Classes Objects
+
+copy constructor
+
+Initialize one object from another of the same type.
+Copy an object to pass it as an argument to a function.
+Copy an object to return it from a function.
+
+Line( int len );         // simple constructor
+Line( const Line &obj);  // copy constructor
+
+inside a member function, this may be used to refer to the invoking object.
+  指向调用函数 this 指针
+
+int compare(Box box) {
+    return this->Volume() > box.Volume();
+}
+
+Friend functions do not have a this pointer, because friends are not members of a class. Only member functions have a this pointer.
+
+class 定义后需要分号 ;
+
+https://www.geeksforgeeks.org/convert-string-char-array-cpp/
+
+无法重载的操作符
+    :: .* . ?:
+
+polymorphism
+
+virtual function 虚函数
+子类实现的父类标注为虚函数的函数
+实现 dynamic linkage, or late binding
+
+Data abstraction
+  providing only essential information to the outside world and hiding their background details
+  the separation of interface and implementation
+
+  In C++, we use classes to define our own abstract data types (ADT).
+
+Encapsulation
+
+Program statements (code) − This is the part of a program that performs actions and they are called functions.
+
+Program data − The data is the information of the program which gets affected by the program functions.
+
+Data encapsulation led to the important OOP concept of data hiding
+
+Interfaces
+
+C++ interfaces are implemented using abstract classes and these abstract classes should not be confused with data abstraction which is a concept of keeping implementation details separate from associated data.
+
+至少一个方法是 pure virtual function
+
+virtual double getVolume() = 0;
+
+动态内存
+
+The stack − All variables declared inside the function will take up memory from the stack.
+
+The heap − This is unused memory of the program and can be used to allocate the memory dynamically when program runs.
+
+new 和 delete 操作内存
+
+double* pvalue = NULL; // Pointer initialized with null
+
+pvalue = new double; // Request memory for the variable
+
+double* pvalue = NULL;
+if( !(pvalue = new double )) {
+  cout << "Error: out of memory." <<endl;
+  exit(1);
+}
+
+The main advantage of new over malloc() is that new doesn't just allocate memory, it constructs objects which is prime purpose of C++.
+
+delete pvalue; // Release memory pointed to by pvalue 释放内存
+
+命名空间 有作用域
+
+A namespace can be defined in several parts 可以有多个部分
+
+嵌套 命名空间
+
+namespace namespace_name1 {
+  // code declarations
+  namespace namespace_name2 {
+  // code declarations
+  }
+}
+
+using namespace namespace_name1;
+
+Template
+
+Templates are the foundation of generic programming
+
+泛型实现 Template
+
+Preprocessor
+
+  give instructions to the compiler to preprocess the information before actual compilation starts.
+
+  #define PI 3.1415926 无分号
+
+class {}; 必须有分号
+
 ## 24. Inheritance
 ## 25. Overloading
 
@@ -317,3 +474,5 @@ Refs:
 
 https://stackoverflow.com/questions/11271889/global-variable-count-ambiguous
   注意避免使用 using namespace std;
+
+A Tour of C++ by Bjarne Stroustrup
