@@ -1,49 +1,18 @@
-# Basic 
+Emacs for
+	Clojure
+	Erlang/Elixir
+	Agda
 
-## 安装
+# Erlang/Elixir
 
-- 编译
+- indent code
 
-- brew install 
+- format code
 
-底层也是编译
+- lint code
 
-- dmg 安装
+- complete code
 
-## 开发
+- code snippet
 
-### Erlang / Elixir 
-
-> (concat "a" "b" "foo")
-"abfoo"
-
-## Topic 
-
-- OrgMode 
-
-Not OMG Mode 
-
-# Misc
-
-https://orgmode.org/ Org mode for Emacs
-
-# Tips
-
-https://blog.csdn.net/ruglcc/article/details/7821728
-  在emacs中运行shell命令
-  M-!
-
-http://www.gnu.org/software/emacs/manual/html_node/emacs/Split-Window.html
-  split window: C-x 2
-
-https://github.com/bbatsov/projectile
-
-https://stackoverflow.com/questions/2580650/how-can-i-reload-emacs-after-changing-it
-  eval-buffer / eval-b 
-
-open buffer: C-x b
-# Refs 
-
-https://github.com/chrisdone/elisp-guide#programming-in-emacs-lisp chrisdone/elisp-guide: A quick guide to Emacs Lisp programming
-
-https://huadeyu.tech/tools/emacs-setup-notes.html 极简Emacs开发环境配置
+- start erlang node
