@@ -69,7 +69,7 @@ man tmux
 
 tmux source ~/.tmux.conf
 
-tmux source-file .tmux.conf
+tmux source-file ~/.tmux.conf
 
 show option:
   tmux show -g status-right
