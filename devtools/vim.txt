@@ -634,6 +634,13 @@ https://dev.to/veer66/enable-rust-autocomplete-in-neovim-j3o Enable Rust autocom
 
 https://oren.github.io/articles/rust/neovim/ https://oren.github.io/articles/rust/neovim/
 
+## Dart Flutter 
+https://github.com/dart-lang/dart-vim-plugin
+
+:CocInstall coc-flutter
+
+https://dev.to/tavanarad/vim-as-a-flutter-ide-4p16
+
 # TODO 
 
 - Tab 补全
