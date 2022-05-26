@@ -101,6 +101,8 @@ instance Functor ((->) r) where
 
 Just (+3) <*> Just 2
 
+=> Just 5
+
 [(+3),(*2)] <*> [1,2,3]
 
 结果数组有 2 * 3 个元素
@@ -109,7 +111,13 @@ map (<$> in Haskell) and ap (<*> in Haskell)
 
 (*) <$> Just 5 <*> Just 3
 
+=> Just 15
+
+import Control.Applicative 
+
 liftA2 (*) (Just 5) (Just 3)
+
+=> Just 15
 
 - Monad
 
@@ -135,5 +143,5 @@ A monad is a data type that implements the Monad typeclass.
 
 A Maybe implements all three, so it is a functor, an applicative, and a monad.
 
-成为 monad 需要实现 flatMap (liftM in Haskell) (>>= in Haskell pronounced “bind”)
+变成 monad 需要实现 flatMap (liftM in Haskell) (>>= in Haskell pronounced “bind”)
 
