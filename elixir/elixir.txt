@@ -1,6 +1,6 @@
-WIP: 376 (4/27)
-
 tour: https://elixir-lang.org/getting-started/introduction.html
+
+mix hex.config mirror_url https://hexpm.upyun.com
 
 # Introduction
 
