@@ -8,7 +8,13 @@ Elixir 语言学习路线
 @moduledoc false
 隐藏文档
 
+https://medium.com/elixirlabs
+https://medium.com/erlang-battleground/
 
+tips elixir
+  code $BEDEV/elixir/tips
+
+  
 IEx 中打印 CharLists
 1..10 |> Enum.filter(&(&1 == 8)) |> inspect(charlists: false)
 https://www.theguild.nl/print-list-of-integers-as-integers-in-iex/
@@ -1275,6 +1281,9 @@ https://stackoverflow.com/questions/47512198/printing-integer-in-hexadecimal-wit
 
 https://stackoverflow.com/questions/34404781/converting-hexadecimal-string-to-integer elixir - Converting hexadecimal string to integer - Stack Overflow
 
+https://stackoverflow.com/questions/50959824/convert-decimal-integer-to-hex-in-elixir
+  Integer.to_string(123, 2)
+  
 https://medium.com/@alxtz.tw/elixir-otp-20-covert-ascii-number-to-string-97f4e2751b93 [Elixir/OTP 20] Covert ascii/number to string | by Alex Tzeng | Medium
 
 
@@ -1294,5 +1303,16 @@ converter = fn input ->
 end
 converter.("0x4c")
 
-https://medium.com/elixirlabs
-https://medium.com/erlang-battleground/
+- bitwise
+
+Bitwise.bor(0b0100, 0b0010) |> Integer.to_string(2)
+
+- 比较日期 
+
+~D[2021-01-01]
+
+http://www.creativedeletion.com/2016/03/07/comparing_dates_in_elixir.html
+
+https://blog.leif.io/never-use-to-compare-dates/
+
+https://hexdocs.pm/elixir/master/Date.html#module-comparing-dates
