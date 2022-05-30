@@ -10,6 +10,9 @@ fakeFunction(M, N) ->
   M + N.
 
 start() ->
+  info().
+
+info() ->
   io:format("machine name: ~w~n", [?MACHINE]),
   io:format("otp: ~w~n", [?OTP_RELEASE]),
   io:format("Say: ~s~n", [?message]),
