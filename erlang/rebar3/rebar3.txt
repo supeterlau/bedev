@@ -64,3 +64,11 @@ rebar3 unlock
 rebar3 deps 显示 deps 列表
 
 https://rebar3.org/docs/tutorials/building_plugins/
+
+代码格式化
+
+  https://github.com/AdRoll/rebar3_format/#configuration
+
+  {project_plugins, [rebar3_format]}
+
+  rebar3 format
