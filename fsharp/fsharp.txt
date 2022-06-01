@@ -41,3 +41,190 @@ https://fake.build/ A DSL for build tasks and more The power of F# - anywhere - 
 What is Paket?
 
 Paket is a dependency manager for .NET projects. Paket enables precise and predictable control over your dependencies. With Paket, you can reference:
+
+https://fsharp.org/use/linux/
+
+https://www.tutorialspoint.com/fsharp/index.htm
+
+https://fsharpforfunandprofit.com/learning-fsharp/
+
+printfn "Hello World from F#"
+
+Now compile and run this F# script with the following command:
+
+dotnet fsi hello.fsx
+
+dotnet new console --language F#
+dotnet run
+
+REPL: dotnet fsi
+#help;;
+#quit;;
+
+Ch01
+
+https://www.tutorialspoint.com/fsharp/fsharp_program_structure.htm
+
+open System 引入 namespace
+
+main() 顶级程序入口
+
+Ch02
+
+https://www.tutorialspoint.com/fsharp/fsharp_basic_syntax.htm
+
+F# 实际不需要顶级入口。最后一个编译的文件是项目入口，其中的 top-level 代码自上而下执行
+
+Ch03
+
+https://www.tutorialspoint.com/fsharp/fsharp_data_types.htm
+
+printfn
+  %s
+  %c
+  %b true/false
+
+Ch04
+
+let 声明变量默认不可变
+类型可选
+let x = 10
+let x:int32 = 10
+
+let mutable x 声明可变
+let mutable x = 10
+x <- 15 后续改变值需要用 <- 符号
+
+Ch05
+https://www.tutorialspoint.com/fsharp/fsharp_operators.htm
+
+A = B
+A == B
+A <> B
+
+Ch06
+
+https://www.tutorialspoint.com/fsharp/fsharp_decision_making.htm
+
+if then
+elif then
+elif then
+else
+  ...
+
+Ch07
+
+https://www.tutorialspoint.com/fsharp/fsharp_loops.htm
+
+for to / for downto 固定次数循环
+
+for in 可迭代数据内部
+while (test-exp) do
+  statement
+
+nested loop
+
+Ch08
+
+https://www.tutorialspoint.com/fsharp/fsharp_functions.htm
+
+let 定义函数
+let rec 定义递归函数
+
+返回值类型可选。如果没有返回值类型，编译器会从最后一行函数体推断
+
+参数类型可选
+
+let doubleIt (x : int) = 2 * x
+
+声明递归函数
+
+let rec fib n = if n < 2 then 1 else fib(n-1) + fib(n-2)
+
+瘦箭头描述函数类型
+
+int -> string
+
+let mydivfunction x y = (x / y).ToString()
+
+int → string → float
+
+参数为 int  string 返回值 float
+
+匿名函数 lambda 表达式
+
+let applyFunc (f : int -> int -> int) x y = f x y
+  参数为 f x y
+let mul x y = x * y
+applyFunc mul 5 8 => 40
+
+fun x y -> x * y
+
+函数组合和管道
+
+https://fsharpforfunandprofit.com/posts/function-composition/
+
+fun1 fun2
+
+组合 >>
+
+  参数为两个函数，返回值也是函数
+
+let res = (fun1 >> fun2) 10
+
+let f (x:int) = float x * 3.0  // f is int->float
+let g (x:float) = x > 4.0
+
+let h (x:int) =
+    let y = f(x)
+    g(y)
+
+对于
+
+let F x y z = x y z
+
+等价于
+
+let F x y z = (x y) z
+
+而
+
+let F x y z = x (y z)
+let F x y z = y z |> x    // using forward pipe
+let F x y z = x <| y z    // using backward pipe
+
+管道
+
+let res = 10 |> fun1 |> fun2
+
+将参数放置在函数前，如果函数需要多个参数，那么前边的这个参数作为最后一个参数传入
+
+let f x y z = x + y + z
+
+3 |> f 1 2 => f 1 2 3
+
+反向管道作用类似取消 括号
+  https://fsharpforfunandprofit.com/posts/partial-application/#the-reverse-pipe-function
+
+printf "%i" 1+2 (error)
+printf "%i" (1+2) 正确，但需要括号
+printf "%i" <| 1+2
+
+let main _ =
+    printfn "Entry point!"
+    0
+
+Ch09
+
+https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/parameters-and-arguments
+
+https://docs.microsoft.com/en-us/dotnet/fsharp/tour
+
+https://docs.microsoft.com/en-us/dotnet/fsharp/language-reference/
+
+https://github.com/dotnet/templating/wiki/Available-templates-for-dotnet-new
+
+Run WPF on Linux via Wine
+
+https://ccifra.github.io/PortingWPFAppsToLinux/Overview.html
+
