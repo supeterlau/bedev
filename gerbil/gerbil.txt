@@ -26,4 +26,8 @@ gxi
 
 (displayln "Hello Gerbil")
 
+ ,? Help
+
+ ,q Terminate current process
+
 https://cons.io/guide/intro.html#hello-world An Introduction to Gerbil | Gerbil Scheme
