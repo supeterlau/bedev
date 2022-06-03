@@ -1,3 +1,16 @@
+// go snippets
+
+go build -o libp2p-node
+
+import (
+  "fmt"
+  "os"
+  "os/signal"
+  "syscall"
+)
+
+https://www.tutorialspoint.com/how-to-handle-signals-in-golang
+
 - file stream
 
 https://medium.com/learning-the-go-programming-language/streaming-io-in-go-d93507931185
