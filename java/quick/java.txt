@@ -356,6 +356,16 @@ Access Modifier
   protected 子类可以访问
   public 任意代码可以访问
 
+private String name;
+
+public void setName(String name) {
+  this.name = name;
+}
+
+public String getName() {
+  return this.name;
+}
+
 静态和非静态
 
 static field 属于类 类变量
@@ -576,8 +586,30 @@ http://tutorials.jenkov.com/java/enums.html
 
 可以有 abstract method，可以实现 interface
 
-# 08. String 
+# 21. Annotations
 
+为代码提供 meta data 通过 Reflection 获取
+
+三个内置 annotations
+  @Deprecated
+  @Override
+  @SuppressWarnings
+
+自定义
+
+创建 interface
+
+使用 annotations
+  http://tutorials.jenkov.com/java-reflection/annotations.html
+
+Class Method Parameter
+
+# 22. Lambda Expression
+# 23. Module System (Java 9)
+
+# 00. String 
+
+https://www.sitepoint.com/self-types-with-javas-generics/
 
 
 运行 Java: 
