@@ -1,3 +1,69 @@
+# 函数
+
+Kotlin: fun powerOf(number: Int, exponent: Int): Int {}
+
+Swift: func greet(p: String, day: String) -> String {}
+
+Go: func max(n1, n2 int) int {}
+
+Rust: fn max(x: i32, y: i32) -> i32 {}
+
+Dart: int max(int n1, int n2) {}
+
+# 习惯写法
+
+JavaScript:
+
+  AngryCat.js
+
+	class AngryCat {}
+
+	function angryCat() {}
+
+Python:
+
+	angry_cat.py
+
+	class AngryCat
+
+	def angry_cat:
+		pass
+
+	ANGRY_CAT
+
+Elixir:
+	
+	angry_cat.ex
+
+	defmodule AngryCat
+	end
+
+	def angry_cat
+	end
+
+GNU C:
+	a_b_c
+
+Cpp:
+
+	void getAvg
+
+
+# 内部自指
+
+Cpp
+	fieldName=value;
+Csharp
+	fieldName=value;
+Java
+	this.fieldName=value;
+Rust
+	self.0
+	
+# 习惯写法
+
+Python:
+
 function
 	javascript
 	bash
