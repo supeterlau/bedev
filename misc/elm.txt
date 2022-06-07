@@ -16,6 +16,9 @@ Linux 下安装
 	elm init
 
 启动服务器
+	<path>
+		src/
+		elm.json
 	elm reactor
 
 编译文件
@@ -26,6 +29,28 @@ Linux 下安装
 
 安装模块
 	elm install
-	Elm packages all live at package.elm-lang.org
+		Elm packages all live at package.elm-lang.org
+
+	elm install elm/http
+	elm install elm/json
 
 elmdev
+
+src/Counter.elm
+	module Counter exposing (..)
+
+https://dev.to/mickeyvip/creating-an-elm-project-with-snowpack-1c1b
+
+https://github.com/rtfeldman/elm-spa-example
+
+https://guide.elm-lang.org/
+
+https://elmprogramming.com/
+
+https://github.com/dwyl/learn-elm
+
+https://elmbridge.github.io/curriculum/ ElmBridge learning Elm
+
+2019 Programming Elm: Build Safe and Maintainable Front-End Applications
+
+2020 Elm in Action
