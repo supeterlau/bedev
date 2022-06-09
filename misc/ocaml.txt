@@ -6,6 +6,10 @@ https://ocamlverse.github.io/content/toplevel.html OCaml REPL (Toplevel) | OCaml
 
 https://opam.ocaml.org/doc/Manual.html
 
+安装 utop
+sudo apt install -y make cmake
+eval $(opam env)
+
 - Refs
 
 https://ocaml.org/learn/tutorials/compiling_ocaml_projects.html
