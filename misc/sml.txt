@@ -57,6 +57,12 @@ val seconds = 60;
 
 val minutes = 60;
 
+minutes = 600;
+val it = false : bool
+
+val minutes = 600;
+val minutes = 600 : int
+
 val hours = 24;
 
 seconds * minutes * hours;
@@ -188,3 +194,6 @@ digit ~1
 digit 10;
 
 uncaught exception Subscript [subscript out of bounds]
+
+2.6 真值 条件表达式
+
