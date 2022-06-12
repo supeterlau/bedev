@@ -6,7 +6,6 @@ $HQ/Space/play
 Run Playground:
   docker run -rm -it -v $(PWD):/home/dev/play peterlau/play sh
 
-
 Dockerfile
 
 - Debian
