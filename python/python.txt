@@ -31,3 +31,7 @@ pip config set global.index-url http://mirrors.cloud.tencent.com/pypi/simple
 
 # 豆瓣源
 pip config set global.index-url http://pypi.douban.com/simple/
+
+Python List
+	dynamic array
+	array of pointers (CPython 实现)
