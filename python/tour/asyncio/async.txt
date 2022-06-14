@@ -23,3 +23,13 @@ async def 声明一个 coroutine
     task 可以 cancel 也可以 await 来执行
   futures
     low-level awaitable 对象表示异步操作结果
+
+https://docs.python.org/3/library/asyncio-stream.html
+
+https://www.capitalone.com/tech/software-engineering/async-processing-in-python-for-faster-data-pipelines/
+
+https://zhuanlan.zhihu.com/p/27258289
+
+https://blog.csdn.net/weixin_39637921/article/details/116184345
+
+https://coderzcolumn.com/tutorials/python/asyncio-concurrent-programming-using-async-await-syntax-in-python
