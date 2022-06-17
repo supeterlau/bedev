@@ -44,7 +44,7 @@ ag '\(\)' dest_files
 
 https://stackoverflow.com/questions/41594706/silver-searcher-ag-with-multiple-search-expressions
 
-ag "pattern1|patter2" dest
+ag "pattern1|pattern2" dest
 
 ## qemu 
 
@@ -53,6 +53,8 @@ brew install qemu nasm (support linux/macos)
 https://stackoverflow.com/questions/47235461/how-to-resolve-specify-the-raw-format-explicitly-to-remove-the-restrictions macos - How to resolve "Specify the 'raw' format explicitly to remove the restrictions." in qemu? - Stack Overflow
 
   -drive file=helloos.img,format=raw,index=0,media=disk
+
+https://stackoverflow.com/questions/41594706/silver-searcher-ag-with-multiple-search-expressions%C2%B6
 
 ## browsh 
 
@@ -79,3 +81,24 @@ Lightweight and flexible command-line JSON processor
 brew info jq 
 
 brew install jq
+
+# youbute-dl
+
+# BaiduPCS-Go
+
+# ffmpeg
+
+- 获取文件编码信息
+
+https://www.commandlinefu.com/commands/view/2207/get-video-information-with-ffmpeg
+
+ffmpeg -i filename.flv
+
+ffprobe video.flv
+
+https://askmeaboutlinux.com/2019/06/26/how-to-extract-opus-audio-from-mkv-file/
+
+ffmpeg -i Attention.mkv -acodec copy -vn audio.opus <enter>
+
+# imagemagic
+
