@@ -1,5 +1,12 @@
 git.txt
 
+- undo last commit
+
+https://www.git-tower.com/learn/git/faq/undo-last-commit/
+
+git reset --soft HEAD~1
+git restore --staged 撤销 git add
+
 - clean untracked files
 
 git clean -fd
