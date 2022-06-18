@@ -1344,6 +1344,39 @@ iex(2)> <<x::utf8>>
 "丁"
 iex(3)> List.to_string([x])
 "丁"
+
+raw binary to string 
+
+https://newbedev.com/how-to-convert-an-elixir-binary-to-a-string
+def raw_binary_to_string(raw) do
+   codepoints = String.codepoints(raw)  
+      val = Enum.reduce(codepoints, 
+                        fn(w, result) ->  
+                            cond do 
+                                String.valid?(w) -> 
+                                    result <> w 
+                                true ->
+                                    << parsed :: 8>> = w 
+                                    result <>   << parsed :: utf8 >>
+                            end
+                        end)
+
+  end
+
+  iex(6)>raw=<<65, 241, 111, 32, 100, 101, 32, 70, 97, 99, 116, 117, 114, 97, 99, 105, 111, 110, 32, 65, 99, 116, 117, 97, 108>>
+iex(6)>raw_binary_to_string(raw)
+iex(6)>"Año de Facturacion Actual"
+
+https://stackoverflow.com/questions/48929159/how-to-remove-the-firsts-n-characters-from-a-string-in-elixir
+String.slice("abcdef", 1..-1)
+
+https://stackoverflow.com/questions/48233043/how-do-i-convert-an-float-to-an-integer-in-elixir
+  trunc(4.3) => trunc(4)
+
+float to integer
+
+- split a list into two: Enum.split_with()
+
 - more
 
 https://elixir-examples.github.io/examples/get-a-nested-map-value
