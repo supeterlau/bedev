@@ -1,0 +1,187 @@
+
+https://www.runoob.com/design-pattern/design-pattern-intro.html
+
+GOF（四人帮，全拼 Gang of Four）所提出的设计模式主要是基于以下的面向对象设计原则。
+
+对接口编程而不是对实现编程。
+
+优先使用对象组合而不是继承。
+
+Design Patterns - Elements of Reusable Object-Oriented Software（中文译名：设计模式 - 可复用的面向对象软件元素） 中
+
+有 23 种设计模式
+
+分为三大类：创建型模式（Creational Patterns）、结构型模式（Structural Patterns）、行为型模式（Behavioral Patterns）
+
+创建型模式
+  创建对象的同时隐藏创建逻辑的方式，而不是使用 new 运算符直接实例化对象
+  在判断针对某个给定实例需要创建哪些对象时更加灵活
+
+工厂模式（Factory Pattern）
+抽象工厂模式（Abstract Factory Pattern）
+单例模式（Singleton Pattern）
+建造者模式（Builder Pattern）
+原型模式（Prototype Pattern）
+
+结构型模式
+  关注类和对象的组合。继承的概念被用来组合接口和定义组合对象获得新功能的方式。
+
+适配器模式（Adapter Pattern）
+桥接模式（Bridge Pattern）
+过滤器模式（Filter、Criteria Pattern）
+组合模式（Composite Pattern）
+装饰器模式（Decorator Pattern）
+外观模式（Facade Pattern）
+享元模式（Flyweight Pattern）
+代理模式（Proxy Pattern）
+
+行为型模式
+  对象之间的通信
+
+责任链模式（Chain of Responsibility Pattern）
+命令模式（Command Pattern）
+解释器模式（Interpreter Pattern）
+迭代器模式（Iterator Pattern）
+中介者模式（Mediator Pattern）
+备忘录模式（Memento Pattern）
+观察者模式（Observer Pattern）
+状态模式（State Pattern）
+空对象模式（Null Object Pattern）
+策略模式（Strategy Pattern）
+模板模式（Template Pattern）
+访问者模式（Visitor Pattern）
+
+- 创建型模式
+
+01. Factory Pattern 工厂模式
+
+定义创建对象要实现的接口，子类按需实例化工厂类
+
+优点
+
+  根据要创建对象的名字选择实例化的类
+
+  屏蔽接口细节
+
+缺点:
+
+  每次增加产品，需要添加新的产品类
+
+复杂对象适合使用工厂模式，而简单对象，特别是只需要通过 new 就可以完成创建的对象，无需使用工厂模式。如果使用工厂模式，就需要引入一个工厂类，会增加系统的复杂度。
+
+02. Abstract Factory Pattern 抽象工厂模式
+
+在抽象工厂模式中，接口是负责创建一个相关对象的工厂，不需要显式指定它们的类。每个生成的工厂都能按照工厂模式提供对象。
+
+提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类
+
+interface:
+  Shape.java
+  Color.java
+
+class:
+  Rectangle.java
+  Square.java
+  Circle.java
+
+  Red.java
+  Green.java
+  Blue.java
+
+abstract class:
+  AbstractFactory.java
+
+基于给定的信息生成实体类的对象
+  ShapeFactory.java
+  ColorFactory.java
+
+工厂创造器/生成器类，通过传递形状或颜色信息来获取工厂
+  FactoryProducer.java
+
+03. Singleton Pattern 单例模式
+
+涉及到一个单一的类，该类负责创建自己的对象，同时确保只有单个对象被创建。这个类提供了一种访问其唯一的对象的方式，可以直接访问，不需要实例化该类的对象。
+
+在内存里只有一个实例，减少了内存的开销，尤其是频繁的创建和销毁实例
+避免对资源的多重占用
+
+没有接口，不能继承，与单一职责原则冲突，一个类应该只关心内部逻辑，而不关心外面怎么样来实例化
+
+多线程下 getInstance() 方法可能导致多次实例化 需要同步锁
+
+多线程实现有多种
+  懒汉型
+    线程不安全
+    线程安全
+  饿汉型
+    基于 classloader 机制避免了多线程的同步问题
+
+https://www.cnblogs.com/huansky/p/13700861.html 设计模式六大原则详解
+
+
+
+
+
+
+小程序登录
+https://cloud.tencent.com/developer/article/1797514 
+https://juejin.cn/post/6844903748716724238
+
+https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/functions/getting-started.html
+项目根目录找到 project.config.json 文件，新增 cloudfunctionRoot 字段
+
+{
+   "cloudfunctionRoot": "cloudfunctions/"
+}
+
+右键创建云函数
+
+cloud.init({env: cloud.DYNAMIC_CURRENT_ENV})
+
+- 认证流程
+
+wx.checkSession
+  success ->
+
+- CRUD
+
+- tab bar
+
+- drawer
+
+- compose button
+
+click compose
+-> launch page (Form)
+-> explore page
+
+
+  时间 年月时分 picker
+    昨天
+    明天
+    后天
+    前天
+    今天
+  地点 地图选点
+  介绍
+  名额
+  消费 无 / 100
+
+- sidebar
+https://www.w3schools.com/howto/howto_js_collapse_sidebar.asp
+
+sidebar
+-> launched
+-> launche page
+-> (return) 
+- sass 支持 remaxjs 通过插件
+
+https://github.com/remaxjs/plugins/tree/master/packages/sass
+
+- icon
+https://xie.infoq.cn/article/560362bbeb95e0f14916cff59 小程序中使用自定义 icon 图标
+
+https://www.iconfont.cn/
+
+在线链接
+
