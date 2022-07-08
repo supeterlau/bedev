@@ -1,2 +1,0 @@
-https://docs.min.io/docs/how-to-run-multiple-minio-servers-with-traef-k.html MinIO | How to run multiple MinIO servers with Træfɪk - Cookbook/Recipe
-
