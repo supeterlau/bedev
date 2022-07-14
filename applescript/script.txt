@@ -1,0 +1,7 @@
+osascript app.scpt
+
+https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptX/AppleScriptX.html
+
+https://macosxautomation.com/mavericks/notifications/01.html
+
+https://stackoverflow.com/questions/29258142/how-can-i-open-applescript-app-with-arguments
