@@ -1,0 +1,14 @@
+https://en.wikipedia.org/wiki/ANSI_C
+  Historically, the names referred specifically to the original and best-supported version of the standard (known as C89 or C90)
+
+
+Topic:
+
+  error handling
+
+  macro
+
+  https://www.guru99.com/c-function-pointers.html
+
+https://www.guru99.com/c-programming-language.html
+https://www.tutorialgateway.org/c-programming/
