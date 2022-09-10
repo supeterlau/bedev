@@ -1,0 +1,180 @@
+A tiny ErlangVM-like program
+
+implement six keywords of Erlang in C
+
+- thread.c
+
+thread communication
+
+https://www.geeksforgeeks.org/multithreading-c-2/
+https://www.educative.io/answers/how-to-create-a-simple-thread-in-c
+https://kuleuven-diepenbeek.github.io/osc-course/ch6-tasks/interthread/
+
+select
+https://www.geeksforgeeks.org/tcp-and-udp-server-using-select
+
+epoll
+http://matrix207.github.io/2014/04/10/epoll-example-in-c/
+https://intrepidgeeks.com/tutorial/how-to-use-epoll-a-complete-example-in-c
+
+Fork system call is used for creating a new process
+	https://www.geeksforgeeks.org/fork-system-call/
+
+fork() vs exec()
+
+The fork system call creates a new process. The new process created by fork() is a copy of the current process except for the returned value. The exec() system call replaces the current process with a new program.
+
+Spawn is a function used in POSIX to load and execute child processes
+https://linuxhint.com/posix-spawn-c-programming/
+
+Spawn vs fork (in Ruby)
+https://www.semicolonandsons.com/code_diary/unix/spawn-vs-fork
+
+https://www.unix.com/unix-for-advanced-and-expert-users/178644-spawn-vs-fork.html
+  the word spawn does not have to refer to a specific UNIX function, just what happens to make a new process.
+
+spawn, send, reeive, register, whereis, self
+
+lightweight process 
+	coroutine
+	pointer to function
+
+send process message via unique name
+
+processes share no resources
+
+pattern match
+
+send 
+	coroutine allocate a mailbox : queue [ptr]
+		handled queue (linkedlist)
+		unhandled queue (linkedlist)
+	send function update mailbox queue pointer
+	send(pid)
+		process = HashMap.get(pid)
+		process.send()
+		push front to queue/mailbox
+		
+
+OOP
+	parent class
+	child class 
+	class member : pass by pointer 
+	instance member : pass by value 
+	new
+	 new SomeClass() ->
+	 	call SomeClass.new() / SomeClass.SomeClass()
+
+typedef ()() NewFunc;
+
+typedef struct Objects{
+	Object* super;
+	Object* self;
+	NewFunc new;
+} Object
+
+- typedef struct 
+
+https://newbedev.com/c-typedef-struct-name-vs-typedef-struct-name
+
+struct Student {};
+typedef struct Student Student_t;
+
+- Pointer to Pointer 
+
+- Dynamic Memory Allocation
+
+https://www.tutorialspoint.com/c_standard_library/c_function_malloc.htm
+
+https://www.geeksforgeeks.org/dynamic-memory-allocation-in-c-using-malloc-calloc-free-and-realloc/
+
+<stdlib.h>
+
+对于数组，初始化全部元素连续内存
+对于链表，初始化单个结构体内存
+
+(int *)malloc(n * sizeof(int));
+初始化为 each block with the default garbage value initially
+
+(int *)calloc(n, sizeof(int));
+初始化为 '0'
+
+free(ptr);
+
+- structure padding 
+结构体对齐
+
+https://www.javatpoint.com/structure-padding-in-c
+structure occupies the contiguous block of memory
+
+https://newbedev.com/determining-32-vs-64-bit-in-c
+https://stackoverflow.com/questions/38788137/structure-padding-on-64bit-machine
+https://www.codewall.co.uk/an-introduction-to-32-bit-64-bit-cpu/
+https://cplusplus.com/reference/cstdint/
+https://en.cppreference.com/w/cpp/types/integer
+https://en.cppreference.com/w/c/types/size_t
+
+取消 padding 
+#pragma pack(1)  1-byte packaging
+
+struct Base {
+
+}__attribute__((packed));
+
+- serialization
+
+https://newbedev.com/how-to-serialize-a-struct-in-c
+https://stackoverflow.com/questions/6002528/c-serialization-techniques
+https://www.codeguru.com/cplusplus/an-introduction-to-object-serialization-in-c/#Object_Serialization
+https://forum.dlang.org/post/urmgcpeasplsqugzxmzc@forum.dlang.org
+
+- union 
+
+https://www.javatpoint.com/c-union
+
+struct Store {
+	union {
+		struct {
+		  char *title;
+		} book;
+		struct {} shirt;
+	} item;
+};
+
+struct Store s;
+s.item.book.title = "C programming";
+
+- pointer to struct 
+
+https://www.programiz.com/c-programming/c-structures-pointers
+
+struct person *personPtr, person1;
+personPtr = &person1;
+
+- coroutine 
+
+https://www.geeksforgeeks.org/duffs-device-work/
+
+process.alive = process in ProcessHashMap
+	state running/suspend/dead
+
+- Debug 
+
+https://www.geeksforgeeks.org/how-to-find-segmentation-error-in-c-c-using-gdb/
+
+gdb gcc
+	help 
+	r 
+	q
+
+lldb llvm
+
+
+
+https://www.geeksforgeeks.org/multiline-macros-in-c/
+https://gcc.gnu.org/onlinedocs/cpp/Macros.html
+
+https://www.geeksforgeeks.org/sort-c-stl/
+
+https://solarianprogrammer.com/2011/12/16/cpp-11-thread-tutorial/
+https://en.cppreference.com/w/cpp/language/new
