@@ -1,0 +1,4 @@
+runc() {
+	cc $1 -o exec -Wall -Wextra -pedantic -std=c99
+	./exec
+}
