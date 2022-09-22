@@ -1,0 +1,98 @@
+
+## pointer
+https://www.javatpoint.com/c-pointers
+
+https://stackoverflow.com/questions/9053658/correct-format-specifier-to-print-pointer-or-address
+	printf pointer
+
+int (*p)[10] 
+
+p is a pointer to an array of integers of size 10
+
+int (*p)(int (*)[2], int (*)void))
+
+a pointer to such function which accepts the first parameter as the pointer to a one-dimensional array of integers of size two and the second parameter as the pointer to a function which parameter is void and return type is the integer.
+
+- structure pointer
+
+struct point {
+	int x;
+	int y;
+}
+
+struct point *p = &p;
+
+- function pointer 
+
+float (*fp) (int , int);    // Declaration of a function pointer.  
+float func( int , int );    // Declaration of  function.  
+fp = func;                     // Assigning address of func to the fp pointer.
+
+Call Function:
+result = func(a, b));
+
+Call Function pointer:
+result = (*funcp)(a, b);
+result = funcp(a, b);
+
+
+https://www.includehelp.com/c-programs/printing-an-address-of-a-variable.aspx
+https://stackoverflow.com/questions/34723062/compiler-gives-warning-when-printing-the-address-of-a-variable
+https://en.wikipedia.org/wiki/C11_(C_standard_revision)
+
+## structure
+https://www.javatpoint.com/structure-padding-in-c
+
+初始化通过 field 完成，或 
+
+compound literal. This was added to the language in C99.
+
+struct MyStruct q = {x,y,..,z};
+
+https://stackoverflow.com/questions/12189480/why-structs-cannot-be-assigned-directly
+
+## file
+
+int fseek(FILE *stream, long int offset, int whence)
+
+  whence: SEEK_SET, SEEK_CUR and SEEK_END
+
+set the file pointer to the specified offset. 
+
+write data into file at desired location.
+
+void rewind(FILE *stream)
+
+sets the file pointer at the beginning of the stream. 
+It is useful if you have to use stream many times.
+
+## coroutine
+
+- with switch:
+
+	https://www.geeksforgeeks.org/coroutines-in-c-cpp/
+	The challenge is to have coroutines in C language which is itself a stack based language i.e in every response to a function call in C language there is a stack being initialized that keeps track of all its variables and constants, and gets destroyed when the function call ends.
+
+1. Resume control to its last state
+2. Make data persist through calls
+
+都可以用 static variables 解决
+
+how to remember the state and also return back to a the same execution state as before i.e., the lines of code after return or the loop
+	使用 GOTO
+	使用 Duff's device 
+	  https://www.geeksforgeeks.org/duffs-device-work/
+
+## Memory
+
+https://www.geeksforgeeks.org/memory-layout-of-c-program/
+
+## More
+https://www.javatpoint.com/typedef-vs-define-in-c
+https://www.javatpoint.com/2s-complement-in-c
+
+# Ref
+http://www.info.uni-karlsruhe.de/~i44www/html-docu/make/make_4.html
+https://www.gnu.org/software/make/manual/html_node/Wildcard-Function.html
+https://www.tutorialspoint.com/makefile/makefile_rules.htm
+https://www.cplusplus.com/reference/cstdio/printf/
