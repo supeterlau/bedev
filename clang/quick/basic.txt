@@ -1,0 +1,54 @@
+- headers
+- struct
+- union
+
+https://www.tutorialspoint.com/cprogramming/c_data_types.htm
+
+Basic Types
+
+  Integer Types
+
+  char
+  unsigned char      1  0, 255
+  signed char        1  -128, 127
+  int
+  unsigned int       %u
+  short              %d  2  -2^15, 2^15-1
+  unsigned short     %d  2  0, 2^16-1
+  long               %ld 8  
+  unsigned long      %ul 8
+
+  Floating-Point Types
+
+  float              %f  4
+  double             %g  8
+  long double        %g  10
+
+void
+
+Derived types
+  Pointer
+  Array
+  Structure
+  Union
+  Function
+
+#inclue <stdio.h>
+
+#define NEWLINE '\n'
+
+const char NEWLINE = '\n';
+
+Storage Classes
+  auto
+    局部变量的 default storage class
+  register
+    保存在 register 而非 RAM 的局部变量
+    需要被快速访问的局部变量
+    仅表示可能保存在 register 具体看硬件实现
+  static
+    表示变量作用域在程序体中有效 全局变量
+  extern
+    对外可见的变量
+
+
