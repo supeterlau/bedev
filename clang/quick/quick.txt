@@ -1,0 +1,19 @@
+- basic
+
+https://www.tutorialspoint.com/cprogramming/index.htm
+
+- advanced
+
+https://www.geeksforgeeks.org/array-rotation/
+https://www.geeksforgeeks.org/c-programs-gq/linked-list-programs-gq/
+https://www.geeksforgeeks.org/linked-list-set-1-introduction/
+https://www.scaler.com/topics/java/exception-handling-in-java/
+https://www.scaler.com/topics/java/heap-memory-and-stack-memory-in-java/
+https://www.geeksforgeeks.org/function-pointer-in-c
+https://www.geeksforgeeks.org/memory-layout-of-c-program/
+
+https://www.tutorialspoint.com/cplusplus/cpp_pointers.htm
+  https://www.tutorialspoint.com/cplusplus/cpp_pointer_arithmatic.htm
+https://www.tutorialspoint.com/cprogramming/c_storage_classes.htm
+https://www.tutorialspoint.com/c_standard_library/c_function_memcpy.htm
+
