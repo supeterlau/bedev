@@ -1,0 +1,27 @@
+#rust #sqlite
+
+https://medium.com/the-polyglot-programmer/what-would-sqlite-would-look-like-if-written-in-rust-part-0-4fc192368984 
+
+#javascript #decorator
+
+https://www.simplethread.com/understanding-js-decorators/ 
+
+#elixir #plug
+
+https://dev.to/fteem/a-deeper-dive-in-elixirs-plug-2dk8 A deeper dive in Elixir's Plug - DEV Community 👩‍💻👨‍💻 
+
+#mmap
+
+https://medium.com/@arpith/adventures-with-mmap-463b33405223 Adventures with mmap. This week I started at the Recurse… | by Arpith Siromoney | Medium 
+
+#python #async 
+
+https://blog.heroku.com/python37-dataclasses-async-await
+
+#javascript 
+
+https://howtodoinjava.com/javascript/implement-mvc-and-pubsub-in-javascript/#pubsub
+
+https://zhuanlan.zhihu.com/p/110003756 golang快速入门[6.2]-集成开发环境-emacs详解 - 知乎
+https://github.com/lryong/emacs-golang-conf lryong/emacs-golang-conf: Emacs configuration suitable for golang development
+https://sandyuraz.com/articles/go-emacs/ Becoming an emacs gopher 🐗
