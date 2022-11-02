@@ -1,0 +1,279 @@
+$HQ_EMACS_HOME/pre_readme.txt
+
+
+# Resource
+
+https://www.emacswiki.org/
+http://emacsrocks.com/
+
+https://emacs-china.org/
+https://elpa.emacs-china.org/ EmacsChina 镜像
+
+An Introduction to Programming in Emacs Lisp https://www.gnu.org/software/emacs/manual/eintr.html
+
+An Emacs Tutorial: Beginner’s Guide to Emacs https://www.masteringemacs.org/article/beginners-guide-to-emacs
+
+http://ergoemacs.org/emacs/emacs.html
+http://ergoemacs.org/emacs/emacs_make_modern.html
+
+http://ergoemacs.org/emacs/which_emacs.html
+
+# Basic 
+
+## 安装
+
+- 编译
+
+- brew install 
+
+也是编译
+
+- dmg 安装
+
+## Topic 
+
+### 基础
+
+What you would normally refer to as a window, Emacs calls a frame, and the frame can be split into multiple windows.
+
+### OrgMode 
+
+Not OMG Mode 
+
+https://orgmode.org/quickstart.html
+https://orgmode.org/guide/index.html
+https://orgmode.org/manual/index.html
+
+https://orgmode.org/worg/
+https://orgmode.org/worg/org-tutorials/index.html
+
+https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html
+  index.org
+  about.org
+  tweet.org
+https://opensource.com/article/20/3/blog-emacs
+
+- TODO 
+
+** TODO buy milk
+
+切换状态 
+  C-c C-t (org-todo)
+  Shift-right Shift-left
+
+添加 TODO 
+  Shift-Meta-RET
+
+### Tabs 
+
+https://www.emacswiki.org/emacs/TabsAreEvil
+
+### Packages 
+
+helm 
+flycheck
+company 
+ido 
+swiper
+avy
+  https://github.com/abo-abo/avy
+
+distel
+  https://massemanet.github.io/distel/
+
+use-package
+  https://github.com/jwiegley/use-package
+
+- reload init.el 
+
+https://stackoverflow.com/questions/2580650/how-can-i-reload-emacs-after-changing-it
+
+  M-x load-file 
+  C-x C-e
+
+- Package Archive melpa elpa 
+
+http://elpa.gnu.org/
+https://melpa.org/#/
+
+https://emacs.stackexchange.com/questions/10500/do-i-still-need-gnu-elpa-if-i-have-melpa
+https://www.emacswiki.org/emacs/ELPA
+
+- theme 
+
+dracula
+  英 [ˈdrækjələ]  美 [ˈdrækjələ]
+
+https://draculatheme.com/emacs/
+
+- reload buffer 
+
+https://edivad.wordpress.com/2007/05/31/emacs-reload-a-file
+
+M-x revert-buffer 
+
+- 按照 pair 移动
+
+https://stackoverflow.com/questions/9845661/with-emacs-how-to-go-to-the-pairing-balancing-parentheses
+
+
+
+- tips 
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Help.html
+
+https://www.math.utah.edu/computing/emacs/emacs-commands.html
+
+fullscreen
+
+browser
+  https://www.gnu.org/software/emacs/manual/html_node/emacs/EWW.html
+  M-x eww
+
+Help
+  https://www.gnu.org/software/emacs/manual/html_node/emacs/Help.html
+  
+高亮行
+https://www.reddit.com/r/emacs/comments/822my4/is_it_possible_to_highlight_column_at_cursor/
+
+替换
+ m-x replace-regexp
+
+搜索 
+  c-s 下一个 c-s 上一个 c-r 
+
+config clojure indent 
+  https://stackoverflow.com/questions/39036397/indent-configurations-in-emacs-cider-paredit-clojure-mode
+
+reindent clojure
+  https://stackoverflow.com/questions/11423566/how-do-i-intelligently-re-indent-clojure-in-emacs
+
+查看 key binding 
+  https://emacs.stackexchange.com/questions/653/how-can-i-find-out-in-which-keymap-a-key-is-bound
+  c-h 
+  q 退出
+  https://www.gnu.org/software/emacs/manual/html_node/elisp/Active-Keymaps.html
+
+查看当前 mode 
+  https://emacs.stackexchange.com/questions/18082/how-do-i-get-the-current-major-mode/18084
+  M-: major-model
+  (Eval: major-model)
+
+复制选中行
+  c-a c-k 换行 c-y 
+
+换行
+  c-o 
+
+删除后一个字符
+  c-d 
+删除前一个字符
+  c-w 
+
+按 word 移动
+  a-f 
+
+undo 
+  c-/
+
+M-<	Move to beginning of buffer.
+
+M->	Move to end of buffer.
+
+jump to line 
+  m-g g
+
+窗口 window 切换
+  c-x o 
+
+关闭其他所有窗口
+  c-x 1
+
+上下分割
+  c-x 2
+
+左右分割
+  c-x 3 
+
+删除当前窗口
+  c-x 0
+
+## Dev 
+
+### Erlang / Elixir 
+
+> (concat "a" "b" "foo")
+"abfoo"
+
+## Rust 
+
+https://robert.kra.hn/posts/2021-02-07_rust-with-emacs/
+
+## Clojure 
+
+M-x cider-jack-in.
+
+设置 repl namespace
+  c-c m-n m-n
+求值 行尾
+  c-x c-e
+编译当前 buffer 
+  c-c c-k 
+显示光标位置符号文档
+  c-c c-d c-d
+光标处 symbol 到源码切换
+  m-.
+  m-,
+搜索文档
+  c-c c-d c-a
+repl history 
+  c-up 
+  c-down
+闭合括号并求值
+  c-enter
+退出 stack trace 
+  q 
+按照匹配括号移动
+C-M-f, C-M-b
+
+Paredit
+
+https://www.emacswiki.org/emacs/PareditCheatsheet
+
+(+ 1 2 3 4)
+
+M-(
+
+C-right 
+  macOS 用 CMD-SHIFT-right 替代
+
+  https://stackoverflow.com/questions/6260754/just-getting-used-to-paredit-in-emacs-on-os-x-how-come-c-doesnt-work
+
+删除括号
+ m-s 
+ https://stackoverflow.com/questions/14170649/how-to-delete-extra-parens-in-paredit-mode
+
+# Misc
+
+https://orgmode.org/ Org mode for Emacs
+
+# Tips
+
+https://blog.csdn.net/ruglcc/article/details/7821728
+  在emacs中运行shell命令
+  M-!
+
+http://www.gnu.org/software/emacs/manual/html_node/emacs/Split-Window.html
+  split window: C-x 2
+
+https://github.com/bbatsov/projectile
+
+https://stackoverflow.com/questions/2580650/how-can-i-reload-emacs-after-changing-it
+  eval-buffer / eval-b 
+  open buffer: C-x b
+
+# Refs 
+
+https://github.com/chrisdone/elisp-guide#programming-in-emacs-lisp chrisdone/elisp-guide: A quick guide to Emacs Lisp programming
+
+https://huadeyu.tech/tools/emacs-setup-notes.html 极简Emacs开发环境配置
