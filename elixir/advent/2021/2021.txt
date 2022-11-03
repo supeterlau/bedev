@@ -1,0 +1,158 @@
+ [16,1,2,0,4,2,7,1,2,14] |> Enum.group_by(&(&1)) |> Enum.reduce(%{}, fn {k, v}, map ->
+  Map.update(map, length(v), [k], fn old -> [k|old] end)
+  end)
+
+# day08
+
+0 6
+1 2
+2 5
+3 5
+4 4
+5 5
+6 6
+7 3
+8 7
+9 6
+
+text |> String.split("\n", trim: true) |> Enum.map(fn elem -> elem|>String.split(" ", trim: true) |> Enum.map(&(Integer.parse(&1) |> elem(0))) end) |> Enum.map(&(List.to_tuple(&1))) |> Map.new()
+
+map = text |> String.split("\n", trim: true) |> Enum.map(fn elem -> elem|>String.split(" ", trim: true) |> Enum.map(&(Integer.parse(&1) |> elem(0))) end)
+
+map |> Enum.reduce(%{}, fn [value, key], map ->
+Map.update(map, key, [value], fn old -> [value | old] end)
+nd)
+
+pattern_map = pattern_map |> Enum.map(fn {k, v} ->{k, uniq_map[v]} end)
+
+pm |> Enum.map(fn {k, v} ->{k, uniq_map[v]} end) |> Enum.into(%{}) |> Enum.filter(fn {_,v} -> is_nil(v) end) |> Enum.map(fn {k, _} -> k end) |> Enum.filter(&(String.length
+(&1) == 5))
+
+# day 10
+
+one or more chunks on each line, and chunks contain zero or more other chunks
+
+Some lines are incomplete, but others are corrupted. Find and discard the corrupted lines first
+  A corrupted line is one where a chunk closes with the wrong character
+
+Some of the lines aren't corrupted, just incomplete; you can ignore these lines for now
+
+# day 11
+
+# day 15
+
+2^n ?
+
+# day 16
+
+first three bits  version
+next three bits   type ID
+
+101111111000101
+ 0111 1110 0101
+
+type ID other than 4 is operator
+
+  length type ID
+
+# day 17
+
+# day 18
+
+add
+
+explode
+
+split
+
+During reduction, at most one action applies, after which the process returns to the top of the list of actions
+
+For example, if split produces a pair that meets the explode criteria, that pair explodes before other splits occur.
+
+lists -> explodes, splits
+
+好像不是 split -> explode -> split 的意思
+
+记录是否有 explode
+
+先执行完 explode 再执行 split ...
+
+# day 19
+
+rotate 可能性为 24 种
+
+# day 20
+
+first section 
+
+image enhancement algorithm
+
+000001011
+011111000
+
+# day 21
+
+a single die, 
+
+two pawns, and 
+
+a game board circular track containing ten spaces marked 1 through 10 clockwise
+
+starting space is chosen randomly
+
+each player's turn
+
+the player rolls the die three times and adds up the results
+
+moves their pawn that many times forward around the track
+
+increase score == value of space
+
+win for any player whose score reaches at least 1000
+
+deterministic dice and a 100-sided die falls out
+
+die always rolls 1 first, then 2, then 3, and so on up to 100
+
+p1
+  1 2 3 
+  7 8 9 
+
+quantum die
+
+rolling the die always splits the universe into three copies
+
+1 1
+  2
+  3
+
+2
+
+3
+
+每轮分裂 3^3 个
+
+1 2 3
+
+3308794901
+
+444356092776315
+
+# day 22
+
+a large 3-dimensional grid made up entirely of cubes
+
+one cube per integer 3-dimensional coordinate (x,y,z)
+
+either on or off
+
+at the start of the reboot process, they are all off.
+
+reboot steps (your puzzle input)
+
+cuboid (the set of all cubes that have coordinates which fall within ranges for x, y, and z)
+
+The initialization procedure only uses cubes that have x, y, and z positions of at least -50 and at most 50. For now, ignore cubes outside this region.
+
+三维集合运算
+
