@@ -1,0 +1,23 @@
+type Todo {
+  task: String!
+  completed: Boolean!
+}
+
+type Query {
+  allTodos: [Todo!]
+  allCases: [Case!]
+}
+
+type Label {
+  lid: String!
+  text: String!
+  case: Case
+}
+
+type Case {
+  date: Time!
+  location: String!
+  detail: String!
+  reportedAt: Time!
+  labels: [Label] @relation
+}
