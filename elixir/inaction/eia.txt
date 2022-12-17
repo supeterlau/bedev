@@ -1,0 +1,240 @@
+Elixir in Action
+# Ch 1.
+
+Erlang is a development platform for building
+  scalable and reliable systems that
+  constantly provide service with little or no downtime.
+
+imperative
+  reliability
+  responsiveness
+  scalability
+  constant availability
+
+support technical, nonfunctional challenges:
+  concurrency
+  scalability
+  fault-tolerance
+  distribution
+  high availability
+
+popular systems about 
+  communication
+  collaboration
+
+common nonfunctional requirements
+
+
+Joe Armstrong
+
+# Ch 2. Building Blocks
+
+- Maps
+
+squares = %{1 => 1, 2 => 2, 3 => 3}
+
+squares[2]
+
+ %{squares | 1 => 100}
+
+Map.get(squares, 2)
+
+Map.fetch(squares, 100)
+
+field value
+  bob = %{:name => "Bob", :age => 18, :works_at => "Tech"}
+  bob.age == bob[:age]
+
+  %{bob | age: 20}
+
+- binaries and bitstrings
+
+3-byte binary:
+
+<<1, 2, 3>>
+
+<<256>> => <<0>>
+
+<<257>> => <<1>> 
+
+指定 value size
+
+<<257::16>> => <<1, 1>> <<1::8, 1::8>>
+
+::16 是 size specifier
+
+如果 total size 不是 8 的整数倍，则称为  bitstrings
+
+<<1::1, 0::1, 1::1>> => <<5::size(3)>> bitstring
+
+<<1::1, 0::1, 1::6>> => <<129>> binary
+
+<<1::1, 0::1, 1::6>> == <<129>>
+
+binary 是特殊的 bitstring 都支持 <> 连接操作
+
+<<
+year :: binary-size(4), "-",
+month :: binary-size(2), "-",
+day :: binary-size(2)>> = "2019-03-20"
+
+year
+
+- Strings
+
+binary 形式
+
+"binary string" 底层是 binary 
+
+~s() 等价 "" sigil ci咒 魔印
+
+() 可以替换为 <> "" 等
+
+heredoc 类似 ~s()
+
+~S raw string 不转义，不支持变量
+
+~S(Not escaped \n)
+
+charlist 形式
+
+'ABC' => [65, 66, 67]
+
+用于 erlang 库中
+
+sigils: ~c ~C
+
+Strings.to_charlist("ABC")
+List.to_string('ABC')
+
+- function
+
+square = fn x -> x*x end
+
+获取外部变量
+
+counter = 0
+
+count = fn -> counter end
+
+count = fn -> 
+  counter 
+end
+
+- other
+
+reference
+
+pid
+
+port identifier
+
+  Fiel I/O 和 外部程序交互通过 ports 完成
+
+- Higher-level types
+
+Range
+  range = 1..20
+
+  -1 in range
+
+  实现为 有 range boundaries 的 map 
+
+Keyword Lists
+
+  days = [{:monday, 1}, {:tuesday, 2}]
+
+  days = [monday: 1, tuesday: 2]
+
+  days[:tuesday] 是 list 的 lookup 操作，复杂度 O(n)
+
+  IO.inspect([100,200,300,400])
+
+  IO.inspect(data,[ width: 3, limit: 1])
+
+  IO.inspect(data, width: 3, limit: 1)
+
+  optional arguments
+
+    def fun(arg1, arg2, opts \\ []) do
+    end
+
+  参数使用 keyword list 是一种约定
+
+MapSet
+  set 的实现
+
+  days = MapSet.new([:monday, :tuesday, :wednesday, :monday])
+  MapSet.member?(days, :monday)
+  Enum.member?(days, :firday)
+  MapSet.put(days, :new_value)
+
+Times and Dates 
+  相关模块 Date Time DateTime NaiveDateTime
+
+  date = ~D[2019-01-01]
+  date.year
+
+  time = ~T[11:59:59.00007]
+
+  navie version datetime
+  ~N[2019-01-01 11:59:59.00007]
+
+  DateTime 处理时区有关操作
+
+  datetime = DateTime.from_naive!(naive_dt, "Etc/UTC")
+
+- IO lists
+
+- Operation
+
+1 == 1.0 true
+
+1 === 1.0 false
+
+逻辑操作 and or not 
+
+a+b => Kernel.+ a, b
+
+- Macros
+
+- Runtime
+
+Elixir runtime 是 BEAM 实例
+
+VM 追踪载入内存的模块，如果需要的模块未载入，VM 会从硬盘载入对应 byte code 
+
+Elixir 的任意模块 Geometry == :"Elixir.Geometry"
+
+elixirc source.ex 生成 beam
+
+iex -pa more/code/path
+
+用 :code.get_path 查看当前搜索路径
+
+iex source.ex
+
+defmodule Source do
+end
+
+模块名也可以用 :my_module 但不推荐
+
+会生成 beam 文件 Elixir.Source.beam
+
+动态调用函数
+
+  apply(IO, :puts, ["Dynamic call function"])
+
+elixir source.exs 在执行完成会停止 beam vm
+
+elixir --no-halt source.exs 不停止 beam vm 
+
+# Ch 3. Control flow 
+
+1. Pattern matching 模式匹配
+
+
+# Ch 3. Building Blocks
+# Ch 3. Building Blocks
+# Ch 3. Building Blocks
+# Ch 3. Building Blocks
