@@ -1,0 +1,765 @@
+metaprogramming
+
+# Ch 01
+
+quote
+
+quote do: 5 + 2 
+
+返回元组形式的 AST 
+
+{:+, [context: Elixir, import: Kernel], [5, 2]}
+
+defmacro 参数为输入表达式的 AST 形式
+
+实现 say
+
+defmacro say() do
+end 
+
+say 4 * 8 => say 得到的参数为 quote do: 4 * 8
+可以对其进行模式匹配
+
+使用 Macro 的原则
+
+- Don't Write Macros 
+
+宏使得程序很难 debug 查明出错原因
+
+不需要代码生成时，优先考虑常规函数
+
+- Use Macros Gratuitously
+
+大胆尝试
+
+AST - Demystified
+
+embedded tree 
+
+简单的规则
+  所有 elixir 代码都用三元元组表示 three-element tupels
+
+三元元组含义
+  第一个元素 函数调用的 atom 或 nested node
+  第二个元素 表达式的 metadata 上下文信息，环境信息，变量等
+  第三个元素 函数调用的参数
+
+quote do: (5*2)-1+7
+
+对比 CommonLisp 的 AST
+
+(+ (* 2 3) 1) 
+
+quote do: 2 * 3 + 1
+
+AST 字面量
+
+quote 前后不变的结构
+  atoms
+  integers
+  floats
+  lists
+  strings
+  任何包含以上类型的二元元组
+
+这些不变结构传入 macros 得到字面量参数而非 AST 表示 （或者说也是 AST 表示，只是没有变化
+
+defmacro 参数是
+  ast literal
+  其他都是 abstract form 
+
+实现 unless (based if)
+  if 也是宏，based case
+    h if === h if/2
+  case 也是宏
+    h case
+
+unquote
+  quote unquote 可以类比 代码的 string interpolation
+  quote 用于获取 AST 
+  unquote 用于根据环境 context 插入值 (对 AST 求值 ?)，如外部绑定的 expression block
+
+Code.eval_quoted 直接对 AST 求值
+
+如果 
+
+number = 5
+
+ast = quote do
+  number * 10
+end
+
+{:*, [context: Elixir, import: Kernel],
+ [{:number, [], Elixir}, 10]}
+
+❌ {:*, [context: Elixir, import: Kernel],
+ [{:number, [5], Elixir}, 10]}
+
+{:*, [context: Elixir, import: Kernel],
+ [5, 10]}
+
+Code.eval_quoted ast 会报错，找不到 number/0
+
+number 改为 unquote(number) 就可以找到
+
+- macro expansion
+
+编译期 macro 如何执行的
+
+编译器递归地展开 macro 直到不包含 macro 调用
+
+if (macro) -> case (macro/expression)
+
+case 属于特殊的 macro Kernel.SpecialForms
+
+基础 block 无法 overridden
+
+用 Macro.expand_once 体验编译器展开 macro 过程
+
+c "path/to/unless.exs"
+
+ast = quote do
+  ControlFlow.unless 2 == 5, do: "in block"
+end
+
+expanded_once = Macro.expand_once(ast, __ENV__) |> Macro.expand_once(__ENV__)
+
+## Code Injection 和调用上下文
+
+inject code 的地方叫 context 即调用者的 bindings 
+  变量 
+  imports aliases 等作用域
+
+macro 执行涉及两个 context 
+  macro 定义处
+  caller 调用 macro 处
+
+Hygiene 机制保护 caller 的 context
+
+  macro 中定义的 binding 不会污染 caller context
+
+  Code.eval_quoted ast, meaning_to_life: 42
+
+  Code.eval_quoted 基于体提供的 context, 对 ast 求值
+
+  Code.eval_quoted 引入新的 binding
+
+Code.eval_quoted ast, meaning_to_life: 42
+
+override hygiene
+
+  quote do
+    name = unquote(string)       不影响外部 context
+    var!(name) = unquote(string) 影响外部 context
+  end
+
+# Ch 02 用 metaprgramming 扩展 Elixir 
+
+powerful code generation
+
+elimate boilerplate
+
+produce elegant APIs
+
+添加新控制结构
+
+创建测试框架
+
+1. Custom Language Constructs
+
+例如 并行执行的 for
+
+类似 para(for i <- 1..10 do: i * 10) 
+
+可以 spawns processes 执行 i * 10
+
+- 01if.exs
+
+重新实现 if 宏 (基于 case)
+
+1 in 1..10
+
+usage
+
+require Ch02
+Ch02.if 1 == 1 do
+  "correct"
+else
+  "incorrect"
+end
+
+- 02while.exs
+
+while loop for Elixir
+
+支持如下语法
+
+while Process.alive?(pid) do
+  send pid, {self, :ping}
+  receive do
+    {^pid, :pong} -> IO.puts "Got pong"
+  after 2000 -> break
+  end
+end
+
+for 和 infinite stream 可以模拟 infinite loop
+
+for _ <- Stream.cycle([:ok]) do
+end
+
+利用 try throw catch 从 loop 中退出
+
+  任何位置 throw :break 都会调转到 catch
+  catch 多个 throw
+    :break1 ->
+      expr
+    :break2 ->
+      expr
+
+2. Smarter Testing with Macros
+
+03asserstion.exs
+
+使用方法
+
+defmodule TestA do
+  import Assertion
+  def run
+    assert 5 == 5
+    assert 3 > 0
+  end
+end
+
+看看 3 > 0 的 AST
+
+quote do: 3 > 0
+
+{:>, [context: Elixir, import: Kernel], [3, 0]}
+
+通过模式匹配获取 operator, left-hand side, right-hand side
+
+{operator, _, [lhs, rhs]}
+
+defmacro 有 bind_quoted 参数
+
+作用和 unquote 类似，但能够避免 reevaluation of bindings (04debugger.exs)
+
+每次使用 unquote 都会重新求值
+
+使用 bind_quoted 时 unquote 默认被 disabled，需要传入 unquote: true
+
+assert 函数
+  def assert(operator, lhs, rhs) 利用 pattern match
+
+将 assertion 中 test 部分 delegate 到另一个模块，避免引入多余函数
+
+宏模式
+  在 caller context 中尽可能少地生成代码，例如通过 proxying 到另一个模块
+  帮助写出可维护的宏
+
+在 MathTest 中快速体验 Assertion 
+
+05mathtest
+
+load_file.(2,3)
+
+还需要用 name 或 description 组织 test，并避免手动提供 run 函数
+
+3. Extending Modules
+
+macro 用于 inject code into modules
+
+可以 extend behavior, define function, 生成需要的代码
+
+test 宏，参数为字符串，测试描述
+
+然后是一系列测试内容
+
+用 description 标注失败测试
+
+例如 
+
+test "..." do
+  assert 1 == 2
+end
+
+Test.run()
+
+use
+
+需要一种方法，在 caller 的 context 中生成代码
+
+在用户模块中自动生成 run 函数
+
+Module Extension is Simply Code Injection
+
+大部分的 Elixir 元编程是在 module 定义中扩展模块功能
+
+06module_ext_custom.exs
+
+require Ch02.ModuleCustom
+Ch02.ModuleCustom.extend
+
+use SomeModule 调用 SomeModule 中的 __using__/1 宏
+
+从而成为一个扩展模块的通用 API
+
+4. Using Module Attributes for Code Generation
+
+用户可以定义多个测试，需要一种方法来保存所有测试
+
+通过 module attributes 可以解决
+
+它允许在 compile time 时在模块中保存信息，类似其他语言中的 constants
+
+当使用 accumulate: true 参数时，在编译期可以获得一个逐次 append 得来的列表
+
+在编译结束后，变量中保存全部注册过的值
+
+修改 test macro 来获得两个参数 
+  测试描述
+  测试样例
+
+Module.register_attribute __MODULE__, :tests, accumulate: true
+
+执行 run() 后 @tests 为空，因为 run 比模块属性注册更早展开
+
+设法让 run() 在执行完收集 tests 后展开
+
+这要用到一些 compile-time hooks
+
+5. Compile-Time Hooks
+
+@before_compile 特殊的module attribute
+
+用于通知编译器在编译完成前要执行的操作
+
+before_compile_finished ???
+
+参数为模块名，该模块需要实现 __before_compile__/1 宏
+
+将 run() 函数的生成，放入 __before_compile__/1
+
+宏只用于生成函数调用部分，函数实现放到 Assertion 中完成
+
+Assertion.Test 中的 assert 只负责产生结果，输出都放在 run 中完成
+
+原则
+  generate as little code as possible
+
+使用
+  pattern-matching
+  DSL
+  compile-time hooks
+
+所谓 generate code responsibly
+
+宏要简单，并将大部分工作托管给外部函数完成
+
+其他额外可以添加到功能
+  添加任意 elixir operator
+  添加 assert true
+  添加 refute 宏 
+
+  并行执行 test (spawn)
+  添加测试报告 pass/fail count 及运行时长
+
+下一部分
+  advanced compile-time code-generation techniques
+  create highly performant and maintainable programes
+
+# Ch 03 用 metaprgramming 扩展 Elixir 
+
+
+# Ch 02 用 metaprgramming 扩展 Elixir 
+
+# Expression
+
+quote do: 5 + 2 
+
+quote do: unquote(var)
+
+Macro.expand_once(__ENV__)
+
+Macro.Env
+  compile time environment information
+
+__ENV__
+
+__CALLER__ env inside macro
+
+Code.eval_quoted ast, meaning_to_life: 42
+  不要在 defmacro 中使用
+    Calling this function inside a macro is considered bad practice as it will attempt to evaluate runtime values at compile time. Macro arguments are typically transformed by unquoting them into the returned quoted expressions
+    (instead of evaluated).
+
+name = unquote(string)       不影响外部 context
+var!(name) = unquote(string) 影响外部 context
+
+# Misc
+
+AST 是一堆 三元组和列表结合
+
+elixir sleep:
+  :timer.sleep()
+
+get_dir = fn key -> File.ls!() |> Enum.filter(& String.ends_with?(&1, Integer.to_string(key))) |> hd() end
+
+get_sub = fn (key, files) -> files |> Enum.filter(& String.starts_with?(&1, Integer.to_string(key) |> String.pad_leading(2, "0"))) |> hd() end
+
+get_files = fn (key, subkey) ->
+  with dir <- get_dir.(key),
+    files <- File.ls!(dir),
+    sub <- get_sub.(subkey, files) do
+      Path.join(dir, sub)
+  end
+end
+
+for file <- files do
+  Path.join(dir, file)
+end
+
+get_files.(2, 2)
+
+is_greater_than(X, Y) ->
+    if
+        X>Y ->
+            true;
+        true -> % works as an 'else' branch
+            false
+    end
+
+case Expr of
+    Pattern1 [when GuardSeq1] ->
+        Body1;
+    ...;
+    PatternN [when GuardSeqN] ->
+        BodyN
+end
+
+1> not true.
+false
+2> true and false.
+false
+3> true xor false.
+true
+4> true or garbage.
+** exception error: bad argument
+     in operator  or/2
+        called as true or garbage
+
+Expr1 orelse Expr2
+Expr1 andalso Expr2
+
+Print = fun (Msg) -> io:format("~w", [Msg]) end.
+#Fun<erl_eval.44.37215449>
+
+true andalso Print("hello").
+
+https://erlang.org/doc/reference_manual/expressions.html
+https://erlang.org/doc/man/lists.html#any-2
+https://erlang.org/doc/reference_manual/functions.html#tail-recursion
+
+https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell
+
+https://superuser.com/questions/1419613/change-git-init-default-branch-name
+
+git config --global user.email "lenny.klocko@protonmail.com"
+git config --global user.name "Lenny Klocko"
+
+git config --global user.email "superpeterlau@outlook.com"
+git config --global user.name "Peter Lau"
+
+rsync -avzP --delete --exclude="node_modules" --exclude=".git" --exclude=".next" ~/Downloads/codebase/client/. app/.
+
+rsync -avzP ../app/. .
+
+https://superuser.com/questions/1419613/change-git-init-default-branch-name
+  git --version > 2.28
+  git config --global init.defaultBranch main
+
+https://stackoverflow.com/questions/2596805/how-do-i-make-git-use-the-editor-of-my-choice-for-commits
+git config --global core.editor "vim"
+
+e8t-tmpl
+  npx create-next-app nextjs-tailwindcss
+
+nextunit
+  tailwind (fontawesome)
+  update package-lock.json
+    rm package-lock.json && npm i
+
+  amplify
+  metoomap
+  redux
+  swr
+    toy/swr
+    toy/redux
+
+    rw/amplify
+    rw/metoomap
+
+https://github.com/request/request/issues/3142
+
+https://github.com/davidshimjs/qrcodejs
+
+runml
+
+tmux 
+  C-x C-o
+  C-x x (nano command)
+
+#!/usr/bin/env escript
+%% -*- erlang -*-
+%%! -smp enable -sname runml -mnesia debug verbose
+
+main([String]) ->
+try
+  io:format("get arguments: ~w", [String])
+catch
+  _:_ -> 
+    usage()
+end;
+
+main(_) ->
+  usage().
+
+usage(_) ->
+  io:format("Usage: runml file.erl~n"),
+  halt(1).
+
+TODO:
+
+https://hexdocs.pm/elixir/Kernel.html#put_elem/3
+
+- erl / iex 共享 history ???
+
+- elixir graphql client
+
+- 优化 case 默认行为
+
+case News.create_link(args) do
+  {:ok, link} ->
+    {:ok, link}
+
+  _error ->
+    {:error, "create link [Failed]"}
+end
+
+case News.create_link(args) do
+  # {:ok, link} ->
+  #  {:ok, link}
+  _error ->
+    {:error, "create link [Failed]"}
+end
+
+- convert elixir ast to LISP-like ast
+
+- is_macro case
+
+- iex 多行，历史回溯无法按多行回溯
+
+IEx
+  https://nts.strzibny.name/elixir-interactive-shell-iex/
+  https://elixirschool.com/en/lessons/basics/iex-helpers/
+  https://itnext.io/a-collection-of-tips-for-elixirs-interactive-shell-iex-bff5e177405b
+  https://hexdocs.pm/iex/IEx.html
+  https://medium.com/blackode/custom-iex-prompt-elixir-c95b7f5bf8c3
+  https://samuelmullen.com/articles/customizing_elixirs_iex/
+
+  iex -> elixir 
+    iex -h -> elixir -h
+    exit code not 
+
+request -> loop (Value)
+  {request_consensus, Value, Req}
+    Acceptors ! {prepare, Leader_Info}
+
+loop -> all acceptors
+  
+  acceptor
+  {}
+
+proposer -> acceptors -> prepare -> proposer
+
+wait_response ->
+  receive
+    {prepare_respons, Leader_Info} -> 
+      loop ! {prepare_result, Leader_Info};
+    {accept_response, Leader_Info} -> 
+      loop ! {accept_result, Leader_Info};
+    
+is_acceptors_valid(Pids) ->
+  Count = length(Pids),
+  Count >= 3 and Count rem 2 == 1.
+
+loop({Leader_Info, Value, Req, Node_Code}=State, ID_Generator) ->
+  State = receive
+    % proposer
+    {request_consensus, Value, Req} ->
+      Acceptors = 
+      Acceptors ! {prepare, Leader_Info},
+      {Res_Leader_Info, Value, Req, Node_Code};
+
+    {prepare_result, {New_Leader_Pid, New_Leader_ID, New_Leader_Value}=New_Propose_Info}=New_Leader_Info}
+      % ID 相同 发起 accept
+      % ID 不同 返回给 Req
+      {_, Propose_ID, _} = Leader_Info,
+      Res_Leader_Info = if
+        Propose_ID == New_Leader_ID -> 
+          Acceptors ! {accept, Leader_Info},
+          Leader_Info;
+        true -> 
+          Req ! {, Res_Leader_Info},
+
+          New_Leader_Info
+      end,
+      {Res_Leader_Info, Value, Req, Node_Code};
+
+    {accept_result, Leader_Info} ->
+      {Leader_Info, Value, Req, Node_Code};
+
+    % acceptor
+    {prepare, {New_Propose_Pid, New_Propose_ID, New_Propose_Value}=New_Propose_Info, To} -> 
+      {_, Propose_ID, _} = Leader_Info,
+      Res_Leader_Info = if
+        Propose_ID < New_Propose_ID -> New_Propose_Info;
+        true -> Leader_Info
+      end,
+      To ! {prepare_response, Res_Leader_Info};
+      {Res_Leader_Info, Value, Req, Node_Code};
+    
+    {accept, {New_Propose_Pid, New_Propose_ID, New_Propose_Value}=New_Propose_Info}} ->
+      {_, Propose_ID, _} = Leader_Info,
+      Res_Leader_Info = if
+        Propose_ID < New_Propose_ID -> New_Propose_Info;
+        true -> Leader_Info
+      end,
+      To ! {accept_response, Res_Leader_Info};
+      {Res_Leader_Info, Value, Req, Node_Code};
+
+    {accept_response, Leader_Info} ->
+      Diff = math:ceil(timer:now_diff(os:timestamp(), Start) / 1000),
+      New_Timeout = if
+        Timeout > Diff -> Timeout - Diff;
+        true -> 0
+      end,
+      Key = {Leader, Propose_ID, Propose_Value}
+      LC = maps:update_with(Key, fun (C) -> C + 1 end, 0, Leaders_Count),
+      Key_Count = maps:get(Key, LC),
+      New_Leader_Info = if
+        Key_Count > Major_Count -> Key;
+        true -> Leader_Info
+      end;
+      New_Timeout = if
+        Timeout > Diff -> Timeout - Diff;
+        true -> 0
+      end,
+      {To, LC, New_Leader_Info, Major_Count, New_Timeout, prepare_response}
+
+mp3tag https://apps.apple.com/cn/app/mp3tag/id1532597159?l=en&mt=12
+  128 元
+  
+https://apkfab.com/
+https://bifrostv.en.aptoide.com/app
+https://apkpure.com/
+https://en.aptoide.com/
+
+https://u.geekbang.org/subject/cloudnative 云原生训练营
+https://u.geekbang.org/subject/fe 前端进阶训练营
+  https://github.com/JaykeyGuo/toy-browser
+  https://www.npmjs.com/package/images
+  https://blog.jscrambler.com/building-a-web-browser-using-electron
+https://u.geekbang.org/subject/arch 架构实战营
+https://time.geekbang.org/
+
+https://www.oncehub.com/blog/explaining-clean-architecture
+
+https://github.com/ChrisLeNeve/books
+https://github.com/sdcuike/Clean-Code-Collection-Books
+
+https://1lib.us/book/11968077/1a4591
+https://pragprog.com/titles/sgdpelixir/concurrent-data-processing-in-elixir/
+
+https://github.com/sger/ElixirBooks
+
+https://bookyage.com/concurrent-data-processing-in-elixir-fast-resilient-applications-with-otp-genstage-flow-and-broadway/
+扫描下方二维码添加微信号 bookyage 回复本书编号 203137 即可，我们会尽快（一般24小时之内）将相应文件以百度网盘链接的形式发送给您。
+注意：每位用户只能免费获取1本书的pdf，超过1本之后需要付费才能继续收到相应的pdf，您可以以微信转账方式付款，所有PDF统一定价每本9.9元人民币。
+
+https://salttiger.com/haskell-in-depth/
+https://salttiger.com/testing-elixir/
+https://salttiger.com/good-code-bad-code/
+https://salttiger.com/modern-css-with-tailwind/
+https://salttiger.com/web-development-with-clojure-3rd-edition/
+
+client
+  {request_consensus, 1000, Req}
+  {current_leader, #{}}
+
+
+node -> nodes -> reporter -> node
+
+start register
+
+start generator
+
+start nodes
+
+client request proposer
+
+ID_Generator ! {generate_id, 101, self()}.
+
+
+Nodes = #{[proposer, acceptor] => 5, [acceptor] => 10, [listener]=>10},
+Reg_Pid = paxos:start_reg(),
+ID_Generator = paxos:start_generator(),
+paxos:start_nodes(ID_Generator, Reg_Pid)
+
+Init = maps:from_list(lists:zip([proposer, acceptor, listener], lists:duplica
+te(3, []))).
+Roles = [acceptor, proposer].
+Pairs = maps:from_list(lists:zip(Roles, lists:duplicate(length(Roles), Pid))).
+maps:merge_with(fun(_Key, V1, V2) -> [V1 | V2] end, Pairs, Pids )
+
+lists:foldl(fun({Role, Pid}, Pids) -> maps:update_with(Role, fun(Old_Pids) -> [Pid | Old_Pids] end, Pids) end, Init, Pairs).
+
+
+lists:foldl(fun(X, Sum) -> X + Sum end, 0, [1,2,3,4,5]).
+
+[A | B] = [a1,a2,a3].
+
+[a11,a12] ++ [a13].
+
+[a11 | [a12, a13]].
+
+
+
+
+
+
+
+
+
+
+
+
+我的梦被戳碎，可不可以给我提高的机会
+
+
+至今还是不知道当初究竟发生了什么事情。到底是什么促使了她的变化。
+
+是我没能平衡好狗工作和生活，生活上花的心思不够，您可以再给我一次机会吗？
+
+离职，自己做项目，失败，找工作
+
+整年失眠 我可以去你那里睡觉吗？我自己睡不着
+  有段时间感冒特别难受，害怕再也见不到你
+掉头发
+焦虑 每天都在想你被别人追走了 有几个月真的用顺其自然麻痹住自己，但越来越不好了。
+整年不开心
+我究竟做了什么，要受到这样的折磨。
+不知道该怎么办
+我是废物
+我是怎么失去的你
+每天就在没有你也能过得好，和没有你一点过不好之间纠结
