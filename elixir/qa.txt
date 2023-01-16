@@ -1,0 +1,70 @@
+- context prefix
+
+mix phx.gen.context PinHub Follow ph_follows
+
+mix phx.gen.context Model Follow follows
+
+- 省略 div class
+
+<div class="mb-8"> (tailwindcss)
+
+<div mb-8>
+
+div
+  mb-8
+  hidden
+  div
+    p
+      a
+        
+- 为何 render(message: message) 不能写作 render(message)
+
+
+- defdelegate
+
+https://revelry.co/resources/development/delegate-with-defdelegate/
+
+- supervisor:start_child (Erlang) 和 start_link 关系
+https://learnyousomeerlang.com/supervisors
+https://learnyousomeerlang.com/building-applications-with-otp
+
+- list functions in module
+
+https://stackoverflow.com/questions/28664119/in-elixir-is-there-any-way-to-get-a-module-to-list-its-functions
+
+Map.__info__(:functions)
+
+- sigil
+
+https://hexdocs.pm/elixir/Macro.html#module-custom-sigils
+
+只能用单个字母
+
+~aa(Hello)
+** (SyntaxError) iex:3:1: invalid sigil delimiter: "a" (column 3, code point U+0061). The available delimiters are: //, ||, "", '', (), [], {}, <>
+
+- phoenix default controller
+
+get "/dashboard", DashboardController, :index
+
+自动渲染 index.html
+
+defmodule LiveAppWeb.PGA.DashboardController do
+  use LiveAppWeb, :controller
+
+  def index(conn, _params) do
+    render(conn, "index.html")
+  end
+
+  def dashboard(conn, _params) do
+    render(conn, "dashboard.html")
+  end
+end
+
+- mix deps.add {:bcrypt_elixir, "~> 2.0"}
+
+sed
+
+DEP='{:bcrypt_elixir, "~> 2.0"}'
+PAD_DEP='      '${DEP}','
+sed "/.*defp deps.*/,/.*\[.*/ s/\[.*/\[\n${PAD_DEP}/" mix.exs
