@@ -1,0 +1,32 @@
+- https://mycoralhealth.medium.com/code-your-own-blockchain-in-less-than-200-lines-of-go-e296282bcffc
+
+no mekerl tree / ut account / network / presist
+
+go get github.com/davecgh/go-spew/spew
+
+查看那 struct 和 slice
+
+go get github.com/gorilla/mux
+
+web handler
+
+go get github.com/joho/godotenv
+
+使用 .env 
+
+go get github.com/davecgh/go-spew/spew;go get github.com/gorilla/mux;go get github.com/joho/godotenv
+
+Block struct
+
+type Block struct {
+}
+
+blockchain slice of Block
+
+计算 Hash 产生新 Block
+  record struct field 字符串形式连接 
+
+  h := sha256.New()
+	h.Write([]byte(record))
+	hashed := h.Sum(nil)
+	return hex.EncodeToString(hashed)
