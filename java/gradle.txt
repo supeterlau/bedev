@@ -1,0 +1,11 @@
+https://docs.gradle.org/current/userguide/command_line_interface.html
+
+List tasks:
+
+./gradlew tasks 
+
+https://www.tutorialspoint.com/gradle/gradle_tasks.htm
+
+./gradlew -i / --info
+
+https://docs.gradle.org/7.2/userguide/userguide.html
