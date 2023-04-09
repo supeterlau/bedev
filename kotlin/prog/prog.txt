@@ -1,0 +1,41 @@
+Programming Kotlin
+	create elegant expressive and performant JVM and Android Applications
+
+kotlinc-jvm -version
+
+kotlinc -version
+
+https://kotlinlang.org/docs/command-line.html
+
+	kotlinc hello.kt -include-runtime -d hello.jar
+
+	kotlinc -help
+
+	java -jar hello.jar
+
+	kotlinc hello.kt -d hello.jar
+
+	kotlin -classpath hello.jar HelloKt
+
+	java -cp Hello.jar HelloKt
+
+	java -jar Hello.jar
+
+	(HelloKt is the main class name that the Kotlin compiler generates for the file named hello.kt)
+
+	REPL kotlinc-jvm
+
+		:load Hello.kt
+		main()
+
+	运行脚本
+
+	kotlinc -script list_folders.kts -- -d <path_to_folder_to_inspect>
+
+
+
+export PATH=$PATH:"/Applications/Android\ Studio.app/Contents/plugins/Kotlin/kotlinc/bin/"
+
+https://www.baeldung.com/kotlin/read-file
+
+https://www.tutorialkart.com/kotlin-tutorial/
