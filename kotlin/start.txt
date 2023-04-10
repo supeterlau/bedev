@@ -1,0 +1,79 @@
+https://kotlinlang.org/docs/coding-conventions.html
+约定惯例
+
+ProcessDeclarations.kt
+
+Class layout
+
+Property declarations and initializer blocks
+
+Secondary constructors
+
+Method declarations
+
+Companion object
+
+包名
+
+org.example.project
+
+org.example.myProject
+
+类名
+
+open class DeclarationProcessor { /*...*/ }
+
+object EmptyDeclarationProcessor : DeclarationProcessor() { /*...*/ }
+
+fun processDeclarations() { /*...*/ }
+var declarationCount = 1
+
+工厂函数可以和接口名一样
+interface Foo { /*...*/ }
+
+class FooImpl : Foo { /*...*/ }
+
+class MyTestCase {
+     @Test fun `ensure everything works`() { /*...*/ } // 还不被 android runtime 支持
+
+     @Test fun ensureEverythingWorks_onAndroid() { /*...*/ }
+}
+
+fun Foo(): Foo { return FooImpl() }
+
+https://play.kotlinlang.org/byExample/overview
+
+https://kotlinlang.org/docs/command-line.html
+
+kotlinc hello.kt -include-runtime -d hello.jar
+java -jar hello.jar
+
+kotlinc hello.kt -d hello.jar
+kotlin -classpath hello.jar HelloKt
+
+kotlinc-jvm
+
+kotlinc -script list_folders.kts -- -d <path_to_folder_to_inspect>
+
+https://github.com/JetBrains/kotlin/releases
+
+
+# https://www.tutorialspoint.com/kotlin/index.htm
+
+https://www.tutorialspoint.com/kotlin/kotlin_comments.htm
+
+# https://salttiger.com/kotlin-for-android-app-development/
+Downloads/Kotlin.for.Android.App.Development.2019.pdf
+
+
+https://www.geeksforgeeks.org/a-complete-guide-to-learn-kotlin-for-android-app-development/
+https://developer.android.com/kotlin/campaign/learn
+
+https://ktor.io/docs/creating-http-apis.html#create_ktor_project
+
+
+https://salttiger.com/functional-programming-in-kotlin/ Functional Programming in Kotlin
+https://salttiger.com/saving-data-on-android-2nd-edition/ Saving Data on Android, 2nd Edition
+https://salttiger.com/android-test-driven-development-by-tutorials-2nd-edition/ Android Test-Driven Development by Tutorials, 2nd Edition
+https://salttiger.com/reactive-programming-with-kotlin-2nd-edition/ Reactive Programming with Kotlin, 2nd Edition
+https://salttiger.com/dagger-by-tutorials/ Dagger by Tutorials
