@@ -1,0 +1,3 @@
+run() {
+  kotlinc -script $1
+}
