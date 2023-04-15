@@ -1,0 +1,127 @@
+dotnet
+
+https://platform.uno/
+
+https://platform.uno/docs/articles/get-started-vscode.html
+
+https://dotnet.microsoft.com/
+
+https://docs.microsoft.com/zh-cn/dotnet/core/install/linux
+
+wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+
+sudo apt-get update && \
+  sudo apt-get install -y dotnet-sdk-5.0
+
+\#通过 ASP.NET Core 运行时，可以运行使用 .NET 开发且未提供运行时的应用
+
+sudo apt-get install -y aspnetcore-runtime-5.0
+
+https://platform.uno/docs/articles/get-started-vscode.html
+
+安模板
+dotnet new -i Uno.ProjectTemplates.Dotnet
+
+初始化
+dotnet new unoapp -o MyApp -ios=false -android=false -macos=false -uwp=false --vscodeWasm
+
+https://docs.microsoft.com/en-us/dotnet/core/tools/
+
+dotnet new console --output sample1
+dotnet run --project sample1
+
+DOTNET_CLI_TELEMETRY_OPTOUT
+
+https://csharp.net-tutorials.com/linq/introduction/
+csharp
+
+开发环境
+    编辑器/ide 支持 AndroidStuidio flutter plugin
+特点
+包管理
+内置模块
+
+dotnet
+    Web
+
+Unity
+    Game
+
+.NET
+    Windows Desktop
+
+
+
+http://zetcode.com/gui/csharpwinforms/introduction/
+
+
+https://scottlilly.com/learn-c-by-building-a-simple-rpg-index/
+
+https://www.telerik.com/winforms/winforms-guide
+
+http://www.wpf-tutorial.com/
+
+http://www.cppblog.com/vczh/
+
+qbasic
+
+:verbose set softtabstop tabstop expandtab
+
+4-spaces to 2-spaces
+  %s/    /\t/g
+  retab
+  %s/\t/  /g
+
+# Tour
+
+02. program structure
+
+using System;
+
+namespace NS {
+  class SomeClass {
+    static void Main(string[] args) {
+      Console.WriteLine("A simple Tour");
+    }
+  }
+}
+
+03. basic syntax
+
+Console.WriteLine("Length: {0}", length);
+
+类变量不需要用 this
+
+04. data types
+
+bool True/False
+byte 
+sbyte signed
+char
+short (signed)
+ushort
+int (signed)
+uint
+long 64-bit
+ulong
+decimal 128-bit
+
+sizeof(decimal)
+
+引用类型
+
+object  compile time 类型检查
+dynamic runtime 类型检查
+String System.String
+
+指针类型 Unsafe Codes
+char *cptr;
+
+类型转换
+
+int i = (int) d;
+
+i.ToSbyte();
+i.ToString();
+i.ToUInt16();
