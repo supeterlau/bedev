@@ -1,0 +1,11 @@
+D 
+
+curl -fsS https://dlang.org/install.sh | bash -s dmd
+
+D comes with a compiler dmd, a script-like run tool rdmd and a package manager dub
+
+dmd hello.d
+
+选择性引入 import std.stdio : writeln, writefln;
+
+D's module system — in contrast to other systems — is entirely based on files. For example, my.cat always refers to a file cat.d in the folder my/.
