@@ -1,0 +1,77 @@
+https://koenwoortman.com/lua-install-on-ubuntu/
+
+sudo apt install lua5.3
+
+# Quick Tour
+
+# 01.
+
+https://www.runoob.com/lua/lua-basic-syntax.html
+lua -i / lua
+print("Lua Programming\n")
+lua file.lua
+单行注释 -- 
+多行注释
+--[[
+
+--]]
+
+Lua 不允许使用特殊字符如 @, $, 和 % 来定义标示符
+Lua 是一个区分大小写的编程语言
+
+else elseif
+false true
+goto
+
+do for while repeat until
+
+以下划线开头连接一串大写字母的名字（比如 _VERSION）被保留用于 Lua 内部全局变量
+
+在默认情况下，变量总是认为是全局的
+访问一个没有初始化的全局变量也不会出错，只不过得到的结果是：nil
+删除一个全局变量，只需要将变量赋值为nil
+
+# 02.
+8 个基本类型
+nil false
+boolean 
+number 双精度类型的实浮点数
+string 双引号或单引号
+function C 或 Lua 编写的函数
+userdata 任意存储在变量中的C数据结构
+thread 执行协同程序
+table "关联数组"（associative arrays）
+
+type("Lua")
+
+Lua 把 false 和 nil 看作是 false，其他的都为 true
+
+[[
+  多行字符串
+]]
+对一个数字字符串上进行算术操作时，Lua 会尝试将这个数字字符串转成一个数字
+字符串连接 "Hello" .. "Lua"
+计算长度 #"how-long-is-this-string"
+
+local tbl1 = {} 局部变量
+local tbl2 = {"London","Paris","Tokyo","Newyork"} key 为 index 的表 从 1 开始
+
+for k, v in pairs(tbl2) do
+  print(k .. " : " .. v)
+end
+
+函数可以存在变量里
+
+fun
+
+thread（线程）
+在 Lua 里，最主要的线程是协同程序（coroutine）。它跟线程（thread）差不多，拥有自己独立的栈、局部变量和指令指针，可以跟其他协同程序共享全局变量和其他大部分东西。
+
+线程跟协程的区别：线程可以同时多个运行，而协程任意时刻只能运行一个，并且处于运行状态的协程只有被挂起（suspend）时才会暂停。
+
+userdata 主要用于表示 C  struct 和 指针
+# 02.
+# 02.
+# 02.
+# 02.
+
