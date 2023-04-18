@@ -1,0 +1,15 @@
+Ponylang
+https://github.com/ponylang/ponyup
+https://github.com/ponylang/ponyc/blob/main/INSTALL.md
+
+brew install libressl
+sh -c "$(curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/ponylang/ponyup/latest-release/ponyup-init.sh)"
+
+Install the latest release
+ponyup update ponyc release
+
+root/main.pony
+root/: ponyc
+
+https://tutorial.ponylang.io/types/classes.html
+https://stdlib.ponylang.io/format--index/
