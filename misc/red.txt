@@ -1,0 +1,7 @@
+https://www.red-lang.org/p/getting-started.html
+
+https://www.red-lang.org/p/download.html
+
+chmod +x ./red-064
+
+Unfortunately Red is 32-bit only at this time. People use VMs if they're on Big Sur.
