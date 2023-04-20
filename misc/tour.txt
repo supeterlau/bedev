@@ -1,0 +1,4 @@
+https://www.tutorialspoint.com/machine_learning_tutorials.htm
+
+- Erlang
+https://www.tutorialspoint.com/erlang/index.htm
