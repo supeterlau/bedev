@@ -1,0 +1,27 @@
+https://github.com/orgs/vlang/repositories
+
+https://modules.vlang.io/net.html
+
+https://github.com/vlang/ui
+
+https://github.com/vlang/awesome-v
+
+https://blog.logrocket.com/what-is-vlang-an-introduction/
+
+https://github.com/vlang/ui/blob/master/examples/counter.v
+
+https://github.com/vlang/ui/blob/master/examples/webview.v
+
+执行项目
+需要有一个包含 main 函数的文件
+
+<ROOT>/v run . --yourparam some_other_stuff
+
+// module main
+
+import os
+
+fn main() {
+	println(os.args)
+}
+
