@@ -1,0 +1,121 @@
+# deps
+
+    "@hapi/joi": "^17.1.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "~1.4.5",
+    "cors": "^2.8.5",
+    "debug": "~4.3.1",
+    "dotenv": "^10.0.0",
+    "express": "~4.17.1",
+    "harperive": "^2.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "~1.10.0"
+
+# Generator CLI
+
+npm i -g express-generator
+
+express --no-view api 
+
+expressapp/start
+  name: "api",
+
+# 
+
+# es6 support
+https://www.freecodecamp.org/news/how-to-enable-es6-and-beyond-syntax-with-node-and-express-68d3e11fe1ab/#installing-express
+
+# dot env
+
+# jwt auth
+https://codeburst.io/to-handle-authentication-with-node-js-express-mongo-jwt-7e55f5818181
+
+# Database
+
+https://blog.echobind.com/a-guide-for-restful-apis-with-node-sequelize-postgres-63636d026d5d
+  dotenv
+
+  rename config/config.json -> config/config.js
+
+  "db:create": "sequelize-cli db:create"
+
+  create a model 
+
+  yarn sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string,email:string,password:string,role:string
+
+  OR: npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
+
+  OR: yarn db:g:migration User --attributes firstName:string,lastName:string,email:string,email:string,password:string,role:string
+
+  "db:migrate": "sequelize-cli db:migrate",
+  "db:g:migration": "sequelize-cli migration:generate --name"
+
+  "db:g:seed": "sequelize-cli seed:generate --name"
+  "db:seeds": "sequelize-cli db:seed:all"
+
+  yarn db:g:seed users
+
+
+https://www.oriechinedu.com/posts/getting-started-with-sequelize-and-postgres/
+
+https://levelup.gitconnected.com/build-an-express-api-with-sequelize-cli-and-express-router-963b6e274561
+
+https://www.codementor.io/@mirko0/how-to-use-sequelize-with-node-and-express-i24l67cuz
+
+sequelize + postgres
+
+Sequelize CLI 
+  npm install sequelize pg && npm install --save-dev sequelize-cli
+  yarn add sequelize pg && yarn add -D sequelize-cli
+
+ignore
+  node_modules
+  .DS_Store
+  .env
+
+npx sequelize-cli init
+
+seeds
+
+https://levelup.gitconnected.com/getting-started-with-sequelize-cli-using-faker-824b3f4c4cfe
+
+
+# validation
+https://jasonwatmore.com/post/2020/07/22/nodejs-express-api-request-schema-validation-with-joi
+https://dev.to/itnext/joi-awesome-code-validation-for-node-js-and-express-35pk
+
+
+# swagger
+https://www.c-sharpcorner.com/article/integrate-swagger-open-api-with-node-express/
+
+
+https://dev.to/kabartolo/how-to-document-an-express-api-with-swagger-ui-and-jsdoc-50do
+
+https://blog.logrocket.com/documenting-your-express-api-with-swagger/
+
+# Test
+
+https://dev.to/mhmdlotfy96/testing-nodejs-express-api-with-jest-and-supertest-1bk0
+
+https://dev.to/mhmdlotfy96/testing-a-rest-api-in-node-js-with-express-using-mocha-and-chai-1258
+
+# Basic CRUD
+
+https://bezkoder.com/node-js-express-sequelize-mysql/#Setup_Express_web_server
+
+add
+query
+  id
+  key value
+update
+remove
+
+# Diretory
+
+package.json
+
+config
+routes
+controllers
+
+eshop_dev
