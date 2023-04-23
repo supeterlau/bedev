@@ -1,0 +1,37 @@
+nodejs lts versions
+
+https://nodejs.org/en/about/releases/
+
+https://nodejs.org/en/download/releases/
+
+Version	LTS	Date	V8	npm	NODE_MODULE_VERSION[1]
+
+Node.js 8.17.0	Carbon	2019-12-17	6.2.414.78	6.13.4	57
+
+Release	Status	Codename	Initial Release	Active LTS Start	Maintenance LTS Start	End-of-life
+v10	Maintenance LTS	Dubnium	2018-04-24	2018-10-30	2020-05-19	2021-04-30
+v12	Active LTS	Erbium	2019-04-23	2019-10-21	2020-10-20	2022-04-30
+v14	Current		2020-04-21	2020-10-20	2021-10-19	2023-04-30
+v15	Pending		2020-10-21		2021-04-01	2021-06-01
+
+镜像 https://developer.aliyun.com/mirror/NPM?from=tnpm
+
+NODEJS_ORG_MIRROR https://npm.taobao.org/mirrors/node/
+
+读写文件
+  https://itnext.io/using-node-js-to-read-really-really-large-files-pt-1-d2057fe76b33
+  https://stackoverflow.com/questions/17645478/node-js-how-to-read-a-file-and-then-write-the-same-file-with-two-separate-functi/47889716
+  https://areknawo.com/node-js-file-streams-explained/
+  https://unix.stackexchange.com/questions/289712/when-files-are-being-moved-are-they-stored-in-a-memory/289715
+  https://stackoverflow.com/questions/52561735/node-js-read-and-write-stream-to-the-same-file-at-the-same-time
+  https://nodejs.org/api/readline.html#readline_example_read_file_stream_line_by_line readline 逐行读文件
+  https://nodesource.com/blog/understanding-streams-in-nodejs/ 理解 stream
+  https://nodejs.org/api/stream.html#stream_writable_streams stream api
+  https://www.freecodecamp.org/news/node-js-streams-everything-you-need-to-know-c9141306be93/
+  https://stackoverflow.com/questions/46483326/is-there-a-more-elegant-way-to-read-then-write-the-same-file-with-node-js-stre/46523561
+  https://stackoverflow.com/questions/6156501/read-a-file-one-line-at-a-time-in-node-js
+
+API:
+
+https://nodejs.org/api/fs.html
+https://nodejs.org/api/wasi.html
