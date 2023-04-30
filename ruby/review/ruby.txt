@@ -1,0 +1,12 @@
+quick
+
+well-grounded
+metaprogramming
+rubyandrails
+
+Ruby 3.1.2 Released
+
+# Quick Review
+
+# Deploy with Docker
+
