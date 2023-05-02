@@ -1,0 +1,4240 @@
+1. Getting Started 开始学
+
+rustup
+
+升级到最新版 rust
+
+> rustup update
+
+卸载 rustup self uninstall
+
+本地文档 rustup doc
+
+> rustc --version
+
+fn main() {
+    println!("Hello, world!");
+}
+
+> rustc main.rs
+./main
+
+rust
+  4 个空格而非 tab
+  println! 调用 rust macro，函数形如 println 没有 !
+  字符串作为宏参数
+  以 semicolon 表示行结束
+
+必须要 rustc main.rs 来编译 rust 代码，输出二进制可执行文件
+
+windows 平台可执行文件 main.exs 并多出一个 debug 文件 .pdb
+
+Rust is an ahead-of-time compiled language，意思是可以将代码编译后给其他没有装 rust 的人来运行。而 dynamic language 必须要求别人装对应的实现。
+
+dynamic language 可以一个命令完成代码的编译和执行
+
+Everything is a trade-off in language design
+
+Cargo 是 Rust 的构建工具和包管理工具。大部分 Rust 开发者 Rustaceans 用它来管理项目。
+  build project
+  download libraries
+  compile libraries
+
+> cargo --version
+
+用 cargo 创建项目
+
+> cargo new hello_cargo
+
+新建项目同时初始化 git 仓库
+
+> cargo new --help
+
+编译执行项目
+
+> cargo build
+
+> cargo run
+
+> cargo check 查看是否通过编译，不产生可执行文件
+
+编译发布版本
+
+> cargo build --release
+
+产生文件位于 target/release 而不是 target/debug
+
+debug 版本编译快，优化差；
+
+release 发布版编译慢，优化好。
+
+2. Guessing game tutorial
+
+cargo new 生成项目
+
+获取用户输入和以及进行输出
+use std::io;
+
+默认在 prelude scope 中只引入少量类型，不在 prelude 中的需要用 use 语句引入
+
+fn main() {}
+
+fn 声明新函数
+println! 是宏 打印出信息
+
+let 创建变量 let foo = bar; 创建变量 foor 将值 bar 绑定到 foo
+
+Rust 变量默认是 immutable 需要用 mut 将变量标记为 mutable
+
+let mut bar = 5;
+
+// 表示注释
+
+/* */
+
+String::new() 返回 String 的一个实例
+  creates a new, empty string
+
+String 是标准库中的类型 growable UTF-8 编码的文本
+
+::new 表示 new 方法是与 String 类型关联的
+
+因此 new 是 类型方法(静态方法)而非实例方法
+
+use std::io; 引入标准库的输入输出功能 input/output functionality
+
+如果不用 use 需要写做 std::io::stdin
+
+stdin() 返回 std::io::Stdin 实例， 终端标准输入标识符实例
+
+standard input handle 的 read_line 方法，获取用户输入
+
+.read_line(&mut guess)
+
+调用 read_line 方法，使用 standard input handle ( io::stdin() ) 获取用户输入。需要传入参数 &mut guess 接收输入。
+
+read_line 将用户通过终端输入的内容，放入字符串中，因此需要传入 mutable string 的 reference。reference 作用是让代码可以访问同一个数据而不需要多次copy 到内存。Rust 的一大优势就是安全简单地使用 references。引用默认是不可变的，需要用 &mut guess 来让它可以被修改。
+
+- Result 类型处理可能的错误 Potential Failure
+
+read_line 会返回值，这里返回 io::Result。Rust 标准库有很多叫 Result 的类型。
+
+Result 类型是 enumerations 即 enums。它们有固定数量的值，即枚举值(变体)。
+
+Result 的变体为 Ok Err。Ok 表示操作成功，Err 表示操作失败。Err还有 how why 失败的信息。
+Result 类型用来编码 error-handling 信息。Resut类型的值有自己的方法，io::Result 实例有 expect 方法。如果这个实例是 Err，expect 方法会导致程序 crash 并显示你传递给 expect 的信息。如果 io::Result 是 Ok，那么 expect 会仅返回 Ok 中你会用到的值。
+
+如果不添加 expect，程序可以编译，但会有警告。
+
+- println! 占位符打印值
+
+let x = 5;
+let y = 10;
+println!("x = {} and y = {}", x, y);
+
+2. 生成随机数
+
+标准库中未提供生成随机数功能，需要用 rand crate
+
+- 使用 crate
+
+crate 是 Rust source code files 的集合。我们在做的项目是一个 binary crate，可以执行的。rand 是 library crate 用于在其他程序中使用。
+
+Cargo's use of external crates is where it really shines.
+
+修改 Cargo.toml 引入 rand 作为 dependency
+
+版本规则 Semantic Versioning - SemVer
+
+0.5.5 是 ^0.5.5 简写。即和版本 0.5.5 public API 兼容的任何版本。
+
+升级 dependencies
+
+cargo update
+
+注意 当出现新版本 v0.5.6 v0.6.0 时，这一命令只能升级到 v0.5.6
+
+必须修改 Cargo.toml 为 "0.6.0" 并运行 cargo build 才能升级到 v0.6.0
+
+- 生成随机数字
+
+use rand::Rng
+
+Rng 是一个 trait 定义实现方法，trait 只有在作用域中才能使用它的方法。
+
+rand::thread_rng 是当前线程中的随机数生成函数
+
+gen_range 包含最小值，不包含最大值，因此需要设置区间为 1 - 101
+
+note: 通过 cargo doc --open 查看 local trait 提供的文档。
+
+- 比较 Guess 和 Secret Number
+
+use 引入新 type std::cmp::Ordering
+
+类似 Result 也是一个 enum
+
+成员值为 Less Greater Equal 即比较大小时可能出现的三种情况
+
+guess.cmp 为 Ordering 类型的 cmp 方法，参数为要比较值的 reference 引用，返回值为 Ordering 一个成员值
+
+使用 match 表达式决定根据返回值执行下一步操作
+
+match 由多条模式分支组成。一个分支 arm 由一种模式和当结果与模式匹配时将执行的代码组成。
+
+Rust 依次检查传入 match 的值和分支中的模式是否匹配
+
+cmp 返回值类似 Ordering::Greater
+
+运行代码，编译出错。比较值的类型不一致。
+
+guess 是 String
+
+secrete_number 是 number 默认类型为 i32
+
+通过 guess.trim().parse() 转为 u32 类型
+
+let guess: u32 = ...; 这里还可以用 guess 变量
+
+Rust 允许shadow 之前的变量，这一特性常用于类型转换
+
+调用 parse 有可能出错，无法转为 number。我们需要使用 expect 方法处理。
+
+- Looping 允许猜多次
+
+loop 关键字创建一个无限循环
+
+loop {
+    ...
+}
+
+退出这个无限循环可以通过 Ctrl-C 或者输入无法解析为数字的字符
+
+- 猜对时退出
+
+添加 break; 语句
+
+- 处理无效输入
+
+为了在用户输入“非法”字符时不让程序崩溃，我们需要处理用户输入非数字字符的情况。
+
+将 parse 输入的地方，由 except 改为 match
+
+parse 成功会返回 Ok(num) num 即解析结果
+
+返回错误返回 Err(_) _ 作为占位变量名，表示不在意其中内容，catch all value 匹配任意返回值
+
+Ch 3: Common Programming Concepts
+
+3.1 变量和可变性 variables and Mutability
+
+变量默认不可变  immutable
+
+能利用 Rust 提供的 safety and easy concurrency
+
+Rust 编译器保证声明变量不变，这个变量就会被改变。
+
+不需要追踪值在哪里如何被改变。 Your code is thus easier to reason through.
+
+但有时需要可变变量。 当使用 large data structures，in place 修改实例值比复制值然后返回要更快。
+
+smaller data structures，创建新值并以更 functional programming style 会让代码更容易理解，因此 lower performance might be a worthwhile penalty for gaining that clarity。
+
+- 变量和 Constants 区别
+
+1. constants 不是默认不可变，而是永远不可变的。不能用 mut 修饰。
+
+声明 constants 用 const 而不是 let，并且必须写明类型
+
+2. constants 能在任意作用域里声明，常用于保存需要在多处使用的值。
+
+只能被赋值为 constant expression 不能是函数结果或其他 runtime 计算出的值。
+
+const MAX_POINTS: u32 = 100_000;
+
+constants 大写+下划线 数字中下划线增加可读性 improve readability)
+
+constants 在 scope 内都有效。用作全局可访问的值。
+
+- shadowing
+
+shadowing 和 mut 不同，shadowing 必须使用 let 。否则会报 compile-time error 。
+
+test: let mut 不能用于 shadowing
+
+3.2 Data Types
+
+介绍两种 data type subsets
+
+scalar compound
+
+Rust 是 statically typed language，在编译期就必须知道全部变量类型
+
+3.2.1 Scalar Types
+
+ 表示一个值的类型
+
+integer
+floating-point number
+Boolean
+character
+
+- Integer
+
+unsigned
+
+  u8 u16 u32 u64 u128
+  usize
+
+signed
+
+  i8 i16 i32 i64 i128
+  isize
+
+  usize isize 与底层架构有关。64-bit 上是 64 32-bit 上是 32
+
+取值范围
+  signed -2^(n-1) ~ 2^(n-1)
+  unsigned 0 ~ 2^n -1
+
+所有的 number literals
+  支持类型作为后缀 57u8
+  支持 _ 作为视觉分隔符
+
+Deciaml     98_222
+Hex         0xff
+Octal       0o77
+Binary      0b111_0000
+Byte(u8)    b'A'
+
+默认整数类型 i32
+
+note: 溢出处理
+
+debug mode 会检查，溢出会导致 panic
+
+以 --release 编译 release mode。不检查溢出，出现溢出时，进行 two's complement wrapping，补码替换。即 u8 中保存 257 会变为 1，程序不会 panic
+
+- Floating-Point
+
+两种 f32 f64 默认类型 f64
+
+let x = 2.0;
+
+let y: f32 = 3.0;
+
+- 数值操作符 + - * / %
+
+- Boolean
+
+true false: 大小为 one byte 类型为 bool
+
+let f: bool = false;
+
+- Character
+
+类型 char  大小 4 bytes 表示 Unicode Scalar Value
+
+let c = 'z';
+
+3.2.2 Compound Types
+
+基础数据类型 tuples arrays
+
+- tuple
+
+存储多种类型，固定长度，大小不能改变
+
+let tup: (i32, f64, u8) = (500, 6.4, 1);
+
+从 tuple 中取值
+
+  pattern matching
+  let (x, y, z) = tup;
+
+  period 访问
+  let x = tup.0; 从 0 开始
+
+- array
+
+存储相同类型的值 固定长度
+
+let arr = [1,2,3,4];
+
+当你想在 stack 上分配内存时，array 有用。或者你想确保有固定数量的元素。
+
+array 和 vector 不同。vector 是标准库提供类似 array 的结构，大小可变。
+
+大多情况下用 vector。
+
+存储变化不多的数据多用 array
+
+带类型的 array
+
+let a: [i32; 5] = [1,2,3,4,5];
+
+       类型; 元素数
+
+let a: [3, 5];
+
+初始化为 五个元素值为 3 的数组
+
+获取数组元素 a[0] a[4]
+
+根据无效索引获取元素
+
+  编译不产生错误，运行时出错，didn't exit succesfully
+
+3.3 Functions
+
+Function 在 Rust 中随处可见。最重要的 function
+
+main function 是每个程序的入口。
+
+声明新函数使用 fn 关键字
+
+Rust 用 snake_case 作为函数和变量命名规则
+
+- 函数参数
+
+variables in a function's definition 叫做 形参 parameters
+
+concrete values 叫做 实参 arguments
+
+必须写明每个形参的类型
+
+fn function(x: i32, y: i32) {
+    ...;
+}
+
+- 函数体
+
+statements 组成，可以 ending with expression
+
+Rust 是 expression-based language
+
+statement 执行一些动作，没有返回值
+
+  let y = 6;
+
+  函数声明也是 statement
+
+expression 会进行求值
+
+  5 + 6
+
+  函数调用
+
+  calling macro 调用宏
+
+  {} 创建 block 也是 expression
+
+  > Expressions do not include ending semicolons
+
+    表达式没有结尾的分号，加上分号就变为 statement
+
+let x = (let y = 6); 错误，因为 第一个 = 右侧不返回值。
+
+不像 Ruby 中 x = y = 6 是合法代码
+
+- 函数返回值
+
+用 -> 声明返回值
+
+fn five() -> i32 {
+    5
+}
+
+结合带参数
+
+fn plus_one(x: i32) -> i32 {
+    x + 1
+}
+
+x+1 如果结尾加上 ; 变为 statement 没有返回值。
+
+没有返回值被表示为 empty tuple () 与声明的返回值类型 i32 不同
+
+导致 编译期 mismatched types error
+
+3.4 Comments
+
+单行 // hello, world
+
+多行
+
+// hello
+// world
+
+常用形式 写在目标代码的上方
+
+fn main() {
+    // say something
+    let lucky_number = 7;
+}
+
+另一种 comment: documentation comments (ch14)
+
+3.4 Control Flow
+
+判断 if
+
+循环 loop while for
+    break;
+    break 100;
+
+- if expression
+
+同 if 关联的代码叫做 arm 类似 match 里的 arm
+
+可以提供 else expression 分支
+
+注意 condition 必须是 bool 类型，不会进行类型转换
+
+多分支 else if  expression
+
+只运行第一个条件为 true 的 arm
+
+多分支可用 match
+
+-- 在 let 语句中使用 if
+
+let number = if condition { 5 } else { 6 };
+
+注意 if  else 分支返回值类型需要一致
+
+- 循环
+
+loop while for
+
+1. loop
+
+fn main() {
+  loop {
+    println!("run next loop");
+  }
+}
+
+在 break 后可以返回值
+
+break 是 expression
+
+可以单独用
+
+break;
+
+也可以返回值
+
+break some_value;
+
+let result = loop {
+  counter += 1;
+  if counter == 10 {
+    break counter *2;
+  }
+}
+
+2. whlie
+
+有时需要在循环中判断条件，满足条件运行代码，不满足则停止循环。
+
+可以通过 loop if else break 实现。但 Rust 内置这种控制结构 while
+
+while number != 0 {
+  number -= 1;
+}
+
+使用 while 使代码更简单
+
+3. 用 for loop throught 集合
+
+可以用 while 基于索引判断遍历
+
+while index < 5 {
+  // do something
+  index +=1;
+}
+
+基于索引很容易出错，同时慢。编译器增加 runtime code 来进行每次的判断。
+
+更好的选择是 for
+
+for element in arr.iter() {
+  println!("The value is: {}", element);
+}
+
+Ch 4: Understanding Ownership
+
+Ownership 是 Rust 最独特的功能，它能够不使用 garbage collector 保证 memory safety. (make memory safety guarantees)
+
+理解 Rust ownership 如何工作很重要。
+
+Ownership
+
+  borrowing
+
+  slices
+
+  how Rust lays data out in memory
+
+4.1 What is Ownership
+
+Rust 的核心特性 ownership。解释起来很直接，但对语言其他特性有很深刻的影响。
+
+每个程序运行时都必须管理使用电脑内存的方式。有些语言使用 garbage collection，垃圾回收，在运行中持续寻找不再使用的内存；一些语言中，程序员必须明确分配释放内存。Rust 采用第三种方法: 内存通过 ownership 系统的一些规则管理，编译器在编译期检查这些规则。ownership 的特性不会减慢你的程序。
+
+越理解 ownership，你越能写出安全高效的代码。
+
+当你理解了 ownership，你就理解了使 Rust 独特的特性。本章将通过对 strings 数据结构展示 ownership 如何工作。
+
+Note: The Stack and the Heap
+
+stack 栈，存放 known fixed size 数据。编译期 unknown size 或者 size 可能改变的数据必须存放在 heap 堆上。堆上的数据是 less organized 的。程序请求一块内存空间，memory allocator 找到足够大的空间，返回 pointer。这一过程就是 allocating。在栈上 Push 数据不认为是 allocating。
+
+push 到栈比 allocating 到推要快，因为在栈上不需要找空间。
+
+读取推上的数据更慢，因为你需要通过 pointer 找到数据。需要 Jump 较多的内存。处理器处理内存地址接近的数据更快。在堆上分配大量空间也消耗时间。
+
+当调用函数时，传递给函数的参数和函数局部变量被 push 到栈上。当函数返回时，这些值被 pop 出栈。
+
+追踪哪部分代码使用哪个部分的堆上数据，最小化堆上重复数据，清理堆上不使用的数据，是 ownership 要解决的一些问题。
+
+1. Ownership Rules
+
+Rust 中的每个值有一个变量叫做 owner
+
+每个时刻只能有一个 owner
+
+当 owner 在作用域外时，值被 drop 掉 (free)
+
+2. 变量作用域
+
+let s = "hello";
+
+{
+  // 形成作用域
+}
+
+3. The String Type
+
+Chapter 3 中介绍的数据类型都是在 栈上存储的，在作用域外会被从栈上 pop 掉。需要存储在堆上的数据类型来研究 Ownership。
+
+因此引入 String 类型，与 ownership 相关的部分也适用于其他复杂数据类型，不管是标准库提供的类型还是自己定义的类型，都能适用。
+
+String literals 不适用与一些场景的原因在于，它是 immutable，另外不是所有的字符串在写代码时都能知道其中内容的。Rust 有第二种 string 类型, String。
+
+https://doc.rust-lang.org/std/primitive.str.html
+The str type, also called a 'string slice', is the most primitive string type. It is usually seen in its borrowed form, &str. It is also the type of string literals, &'static str.
+
+分配在堆上，因此能够存储编译期未知大小的字符串。
+
+String::from("Hello"); 可以从 string literal 创建 String 类型数据。
+
+双冒号 :: double colon 表示 from 函数来自 String 类型中。
+
+为何 String 可变而 string literal 不可变？
+
+问题在于这两种类型如何与分配内存。
+
+4. Memory and Allocation
+
+对于字符串字面量，它的内容在编译期是已知的，内容被直接硬编译到最后的可执行文件中。所以字符串字面量快而高效。这得益于它的不可变性。immutability。但是我们无法为在编译期大小未知，或大小会随着运行变化的字符串分配内存。
+
+通过 String 类型，为了支持可变可增长字符串，我们需要在堆上分配内存，在编译期未知，来存储内容。这意味着:
+
+内存必须在运行时从 memory allocator 申请
+
+我们需要在使用完 String 数据后返回内存给 allocator
+
+第一部分是我们完成的，通过调用 String::from，它实现来按我们需求申请内存。在大部分编程语言中都类似。
+但是第二部分不一样了。在有 GC 的内存中，GC 追踪并清理不再使用的内存，我们不需要考虑内存问题。没有 GC 的话，我们需要识别哪些内存不再使用，并明确地释放内存。正确地完成内存释放，长久以来都是一个困难的编程问题。
+
+如果我们忘记释放内存，我们就会浪费内存；如果过早释放，我们会得到无效变量；如果释放了两次内存，我们就会遇到 bug。我们必须让一个 allocate 对应一个 free。
+
+Rust 采用不同的方式: 内存在变量超出作用域后自动释放内存。
+
+当变量超出自己所在作用域，Rust 为我们调用一个特殊函数 drop，在 drop 中可以返回内存。（如大括号构成的 block 结束位置
+
+（在 C++ 中，这种释放资源的方式称作 Resource Acquisition Is Initialization (RAII)
+
+这种模式极大影响了 Rust 代码编写方式。
+
+4.1 变量和数据交互 Move
+
+let x = 5;
+let y = x;
+
+现在我们有两个变量 x y 都等于 5。都分配在栈上。
+
+let s1 = String::from("Good");
+let s2 = s1;
+
+这看起来和前边很像。第二个会复制第一个的值，并绑定到 s2。
+
+String 由三个部分组成: 指向 string 内容的指针，length， capacity
+
+这些部分存储在栈上，string 内容存储在堆上。
+
+length 是 String 内容占用了多少 bytes，capacity 是 String 从 memory allocator 接收到的内存大小。
+
+let s2 = s1; 时，我们复制了 String 数据，即指针，length，capacity 而没有复制堆上数据。意味着两个变量指向同一个内存。
+
+如果复制堆上数据，会很消耗运行时资源。
+
+我们之前说超出作用域，变量会被 drop，并清理变量对应的堆空间。但两个变量指向同一个内存时，这个规则就出现问题了。
+
+s2 s1 都超出作用域时，都会试图释放同一块内存。这就是 double free error。
+
+Freeing memory twice can lead to memory corruption, which can potentially lead to security vulnerabilities.
+
+为了保证内存安全，Rust 不复制分配的内存，而是将 s1 看作不再有效的变量，因此 s1 超出作用域时，Rust 不需要释放任何内存
+
+其他语言中有 shallow copy 和 deep copy 概念。复制指针，length，capacity 而不复制数据听起来像 shallow copy。但是因为 Rust 将原先变量当作无效变量，这不能被叫 shallow copy 而是被叫做 move。
+
+即 s1 被 moved 到 s2.
+
+此处有一个设计选择: Rust 永远不会自动 deep 复制数据。因此，自动复制都可以被假定为高效的。(inexpensive)
+
+4.2 变量和数据交互方式 clone
+
+如果我们确实想进行 deeply copy 堆上数据，不只是栈上数据。可以使用通用方法 clone
+
+let s2 = s1.clone(); // code may be expensive
+
+4.3 Stack-only Data: Copy
+
+let y = x;
+
+不需要调用 clone，x 依然有效，没有进行 move
+
+因为 integer 有确定大小，并且存储在栈上。deep 和 shallow copy 没有区别。
+
+Rust 有 Copy trait，可以用于任何类似 integers 这种存储在栈上的数据。如果一个类型有 Copy trait，那么在复制后旧变量还可以使用。
+
+Rust 不会允许将一个类型，或类型某个部分实现 Drop trait 的类型标注为 Copy。
+
+simple scalar 值都是Copy，不需要内存分配或任何资源的都是 Copy。
+
+- 全部整数类型 u32
+- 布尔类型 true false
+- 浮点数 f64
+- 字符类型 char
+- 元组 各部分都是 Copy 的类型
+
+5. Ownership and Functions
+
+函数参数传递机制和赋值类似。
+
+会进行 move 或 copy
+
+6. Return Values and Scope
+
+函数返回值也会 transfer ownership
+
+s -> 表达式 有返回值
+
+s; -> statement 无返回值 ()
+
+对变量复制，会将原变量 move 到新变量。
+
+当含有 heap 数据的变量超出作用域，值会被 drop 清理，除非数据已经被 move 到另一个变量。
+
+在每个函数中都 take ownership 再 return ownership 会很麻烦。
+
+如何让函数使用值而不 take ownership 呢？
+
+传递值给函数再传出来以再次使用某个值会很 annoying。
+
+例如可以通过 tuple 返回多个值
+
+fn call(s:String) -> (String, usize) {
+  (s, length)
+}
+
+下一章有更好的办法
+
+ch 4.2 References and Borrowing
+
+使用对对象的引用而非 take ownership of value 来作为参数
+
+fn calculate_length(s: &String) -> usize {
+  s.len()
+}
+
+& 是 references 引用，允许 refer to 一些值，但不 taking ownership of it。
+
+对应操作是 dereferencing，dereference 操作符 *
+
+&s1 创建指向 s1 的 reference。因为函数形参 s 并不 own s1 的值，因此在函数作用域外，不影响指向的值。
+
+因此不需要返回 s 来交回 ownership。这种将引用作为参数的方式叫做 borrowing。
+
+通过引用修改传入参数
+
+  `s` is a `&` reference, so the data it refers to cannot be borrowed as mutable
+
+1. 可变引用
+
+变量默认是不可变的，引用默认也是不可变的。需要声明为可变引用
+
+可变引用要求变量也是可变的
+
+let mut s1 = String::from("")
+
+change(&mut s1);
+
+fn change(s: &mut String) {
+
+}
+
+修改三处
+
+注意，你一个作用域内，只能有一个 mutable 引用
+
+保证编译期的 data races
+
+data races 产生于
+
+  两个或多个指针同时访问同样数据
+
+  至少有一个指针用于写入数据
+
+  访问数据时没有同步机制
+
+Rust 在编译期组织 data races
+
+当然可以用 {} 创建新的作用域，不同作用域可以有多个可变引用
+
+同一作用域内，当有不可变引用时，不能创建可变引用。但可以有多个不可变引用。
+
+2. Dangling References
+
+指向被分配给其他指针的数据的指针
+
+In languages with pointers, it’s easy to erroneously create a dangling pointer, a pointer that references a location in memory that may have been given to someone else, by freeing some memory while preserving a pointer to that memory.
+
+Rust 编译期保证 references 不会是 dangling references
+
+数据不会在指针超出作用域前被清除。
+
+Rules of References
+  一个作用域内，either 一个可变引用或任意不可变引用
+  引用总是 valid
+
+ch 4.3 Slice Type
+
+slice 是另外一个没有 ownership 的数据结构。Slice 可以引用一个集合中的连续元素而不是整个集合。
+
+如下一个返回字符串中第一个单词的程序，如果找不到，则整个字符串是单词，返回它。如果找到了返回什么？
+
+- 返回单词尾部的索引
+
+fn first_word(s: &String) -> usize {}
+
+s.as_bytes() String 转为 byte 数组
+
+bytes.iter() 基于数组创建 iterator
+
+.enumerater() 将每个元素的 reference 和对应索引装入 tuple 返回
+
+  {index, ref} {i, &item}
+
+问题在于 返回的索引，与传入的字符串无关，无法保持同步。至少在字符串内容改变时，通知索引无效，要重新生成。
+
+1. String Slices
+
+string slice 是对 String 一部分的引用
+
+let hello = &s[0..5]; 前闭后开
+
+支持多种形式 &s[0..5]; &s[..5]; &s[3..]; &s[..];
+
+slice 内部保存起始位置和长度（ending_index - starting_index）
+
+  从第 starting_index+1 byte 开始
+
+让 first_word 返回 slice
+
+fn first_word(s: &String) -> &str {}
+
+String::from("Some String");
+
+first_word 中 &String 是 immutable reference
+
+外部的 s.clear(); 需要 mutable reference
+
+如果修改 first_word 中为 &mut String，就出现两个 mut reference
+
+Rust 编译器阻止这两种行为
+
+- 1.1 String 字面量是 slices
+
+let s = "Hello"; 类型是 &str; 一个指向 binary 特定位置的 slice
+
+因此 string 字面量是 immuable 的 &str 是 immutable reference
+
+- 1.2 String slice 用作参数
+
+fn first_word(s: &String) -> &str {}
+
+改为
+
+fn first_word(s: &str) -> &str {}
+
+first_word(&some_string);
+
+改为
+
+first_word(&some_string[..]);
+
+或 first_word("some_string_literal");
+
+2. 其他 slices
+
+collections 中有更通用的 slice type。例如数组
+
+let a = [1,2,3,4];
+
+let slice = &a[1..3]; 类型 &[i32]
+
+  和 string slice 一样，保存 starting_index 和 length
+
+The concepts of ownership, borrowing, and slices ensure memory safety in Rust programs at compile time.
+
+在 Rust 里可以和其他系统编程语言一样控制内存使用，同时提供在超出作用域时自动清理数据的功能。
+
+Ch 5 Structs (Using Structs to Structure Related Data)
+
+自定义数据类型，将多个关联值打包。类似 object-oriented language 的 object。
+
+对比 tuples 和 structs，如何使用 struct，如何定义 struct 方法，associated functions to specify behavior associated with a struct's data。
+
+structs 与 enums 是创建新类型的基础，都能充分利用 Rust 编译期类型检查。
+
+5.1 定义和初始化 Structs
+
+structs 类似 tuples.
+
+structs 不同部分可以是不同类型。不同是，需要给不同部分数据命名。
+
+由于可以命名，structs 比 tuples 更加灵活，不用依赖于数据存储的顺序。
+
+使用 struct 定义
+
+struct User {
+  username: String,
+  email: String,
+  sign_in_count: u64,
+  active: bool
+}
+
+需要创建 struct 的 instance 来使用 struct
+
+  let user1 = User {
+    email: String::from("user1@example.com"),
+    username: String::from("user1"),
+    active: true,
+    sign_in_count: 1,
+  };
+
+顺序可以任意
+
+默认需要提供所有 field 的值
+
+获取特定 field : user1.username
+
+如果 instance 是 mut 的，可以用 user.username = "some_value"; 修改 field 值。
+
+无法声明部分 fields 为 mutable。一旦声明为 mut，整体都是 mutable。
+
+返回 User 的函数
+
+fn build_user_tedious(email: String, username: String) -> User {
+  User {
+    email: email,
+    username: username,
+    active: true,
+    sign_in_count: 1,
+  }
+}
+
+1. 简化初始化
+
+fn build_user(email: String, username: String) -> User {
+  User {
+    email,
+    username,
+    active: true,
+    sign_in_count: 1,
+  }
+}
+
+变量名和 field 相同时可以用简化语法
+
+2. Struct update
+
+从其他 instance 创建新 instance
+
+struct update syntax
+
+let user2 = User {
+    email: String::from("another@example.com"),
+    username: String::from("anotherusername567"),
+    active: user1.active,
+    sign_in_count: user1.sign_in_count,
+};
+
+简化形式用 ..user1
+
+let user2 = User {
+    email: String::from("another@example.com"),
+    username: String::from("anotherusername567"),
+    ..user1
+};
+
+3. tuple structs
+
+类似 tuple 的 struct
+
+是 struct 但 field 没有和名字关联，field 只有类型
+
+当想把 tuple 作为区别其他 tuple 的类型时可以用 tuple structs。
+
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+
+两个不同类型
+
+let black = Color(0, 0, 0);
+let origin = Point(0, 0, 0);
+
+定义的每个 struct 都有自己的类型，不要写多余的 field names
+
+tuple structs 的行为和 tuple 一样
+
+4. Unit-like Structs
+
+没有 field 的 structs 行为类似 Unit () unit type
+
+当你要为一些类型实现 trait 时用的上。
+
+5. Struct data 的 ownership
+
+以上都使用的 owned String type 而不是 &str
+
+Structs 中可以保存 references 但是要求使用 lifetimes 会在 Chapter 10 学习。
+
+5.2 使用 Struct 例子
+
+理解 struct 使用场景
+
+先使用分散的参数
+
+area 中的参数是有关联的，可以用 tuple 来打包参数
+
+tuple 没有给元素命名，会让使用者迷惑元素代表的意思。
+
+struct 赋予变量更多信息
+
+fn area(rect: &Rectangle) -> u32 {}
+
+使用 immutable borrow
+
+struct 定义不需要末尾分号
+
+1. 通过 Derived Traits 给 struct 增加功能
+
+println! 宏显示实现了 std::fmt::Display 的类型
+
+注释 #[derive(Debug)] 提供打印 debug 信息的功能
+
+{:?} 告诉 println! 我们需要 Debug 格式的输出
+
+{:#?} 提供更格式化的形式
+
+Rust 已经提供了很多 traits 通过 derive 注解提供功能
+
+下一章，将 area 转为绑定到 struct 的方法。
+
+5.3 方法语法
+
+类似 函数，也用 fn method_name 定义，有参数和返回值
+
+不同在于方法定义在 struct 上下文中 （也可以是 enum 或 trait 对象的上下文
+
+  第一个参数总是 self (&self)，代表调用方法的 struct 实例
+
+1. 定义方法
+
+impl Rect {
+  fn area(&self) -> u32 {
+    self.width * self.height
+  }
+}
+
+调用 rect.area() 可以有其他参数
+
+impl 中 area 第一个参数可以 borrow self immutably &self 或 mutably
+
+如果需要修改 struct 第一个参数为 &mut self
+
+使用方法的好处是，将与 struct 有关的方法集合在一起
+
+Rust 没有类似 C, C++ 的 ->。在这两种语言中
+
+if object is a pointer, object->something() is similar to (*object).something()
+
+Rust 使用 automatic referenciing 和 dereferencing
+
+即调用 object.something() 时，自动添加爱 & &mut 或 * 让 object 能够匹配方法签名
+
+  p1.distance(&p2)
+  (&p1).distance(&p2)
+
+  两者一样
+
+2. 带参数的 struct 方法
+
+第二参数为其他 Rect
+
+
+impl Rect {
+  fn can_hold(&self, other: &Rect) -> bool {
+    self.width > other.width && self.height > other.height
+  }
+}
+
+调用方法
+
+let rect2 = Rect {width: 40, height: 50};
+println!(
+  "Can rect2 hold rect1? {}", rect1.can_hold(&rect2)
+);
+
+3. impl 内的关联函数
+
+允许在 impl 中定义不以 self 为参数的函数
+
+是函数不是方法，例如 String::from
+
+(类似 类方法)
+
+impl Rect {
+  fn square(size: u32) -> Rect {
+    Rect {
+      width: size,
+      height: size
+    }
+  }
+
+  fn new(width: u32, height: u32) -> Rect {
+    Rect {
+      width, height
+    }
+  }
+}
+
+调用用 :: 寻址 寻找模块函数等
+
+Rect::square(40);
+
+4. 多 impl 代码块
+
+struct 可以有多个 impl blocks。一般没必要这么做，在定义 generic types 和 traits 时会用到。
+
+Summary
+
+struct 为数据增加意义。
+保持数据关联性，让代码更清晰。
+methods 为与 struct 相关的方法创建命名空间。
+
+Ch6 Enums 和 Pattern Matching
+
+枚举类型 enumerations 也并叫做 enums。
+
+Enums 让我们可以定义一个类型的多个变体 variants
+
+用途增加数据的含义，
+
+学习枚举类型 Option 值为 something 或 nothing
+
+模式匹配
+
+学习 if let 结构如何方便地处理 enums
+
+Rust 的 enums 类似函数式语言中的 algebraic data types。
+
+6.1 定义 Enum
+
+假设表示 IP addresses， version four 和 version six
+
+任意 IP 地址，只能是两个版本的一个，无法同时存在两种。
+
+enum 的值只能是它变体的其中一种。
+
+不同变体的类型相同
+
+自定义类型
+
+enum IpAddrKind {
+  V4,
+  V6,
+}
+
+1. Enum 的值
+
+赋值
+
+  let four = IpAddrKind::V4;
+
+  let six = IpAddrKind::V6;
+
+V4 V6 处于 IpAddrKind 命名空间之下
+
+fn route(ip_kind: IpAddrKind) {
+
+}
+
+可以类似 route(four); 来使用 enum
+
+使用 enums 有更多好处。
+
+假设我们使用 struct 存放实际 ip 地址
+
+struct IpAddr {
+  kind: IpAddrKind,
+  address: String,
+}
+
+定义 ip 地址如下
+
+let home = IpAddr {
+  kind: IpAddrKind::V6,
+  address: String::from("127.0.0.1"),
+};
+
+但我们可以只用 enum 来简化
+
+enum IpAddrKind {
+  V4(String),
+  V6(String),
+}
+
+let home = IpAddr::V4(String::from("127.0.0.1"));
+
+使用 enum 而不是 struct 的另一个好处
+
+每个变体可以使用不同的类型
+
+enum IpAddrKind {
+  V4(u8, u8, u8, u8),
+  V6(String),
+}
+
+let home = IpAddr::V4(127.0.0.1);
+let loopback = IpAddr::V6(String::from("::1"));
+
+标准库提供保存 IP 地址的库
+
+struct Ipv4Addr {
+
+}
+
+struct Ipv6Addr {
+
+}
+
+enum IpAddr {
+  V4(Ipv4Addr),
+  V6(Ipv6Addr)
+}
+
+即可以把任意类型放在 enum 变体中
+
+标准库类型一般不像你想象的那么复杂。
+
+enum 与 struct
+
+enum Message {
+  Quit,
+  Move {x:i32, y:i32},
+  Write(String),
+  ChangeColor(i32, i32,i32),
+}
+
+类似 struct 是
+
+struct QuitMessage; unit struct / unit type
+struct MoveMessage {
+  x: i32,
+  y: i32
+}
+struct WriteMessage(String); tuple struct
+struct ChangeColorMessage(i32,i32,i32); tuple struct
+
+问题在于每个 struct 类型都是不同的，无法简单定义一个函数来处理任意 messages，而 enum 变体共享一种类型 Message
+
+enum 类似 struct 可以定义方法
+
+impl Message {
+  fn call(&self) {
+
+  }
+}
+
+2. Option Enum 与 Null Values
+
+IpAddr 枚举类型可以利用 Rust 的 type system 比纯数据编码更多信息到程序。
+
+现在学习 Option，标准库定义的另一个枚举类型。
+
+Option 类型用途广泛，它编码了值可能存在或不存在的情况。
+
+使用这一概念，编译器可以检查你是否处理了全部 cases，从而阻止其他语言里的常见错误。
+
+编程语言设计往往从包含的特性考虑，但不包含的特性也很重要。
+
+Rust 没有 null 的功能，即其他语言里表示 no value 的值。在有 null 的语言里，值只能是两种状态之一 null 或 not-null。
+
+“Null References: The Billion Dollar Mistake,” Tony Hoare, the inventor of null
+
+null 的问题在于当你想把它当作 not-null 值使用时会出错。
+
+null 的价值在于它表示值当前不可用或出错。
+
+Rust 用 Option 类型来编码这种情况
+
+enum Option<T> {
+  Some(T),
+  None,
+}
+
+Option 是预加载到 prelude 的类型
+
+另外可以直接使用 Some 和 None 而不用 ::
+
+<T> 是泛型类型，表示 Option 可以表示任意类型
+
+  let some_number  = Some(5);
+  let some_string = Some("just a string");
+  let absent_number: Option<i32> = None;
+
+使用 None 是需要提供类型，因为编译器无法推断类型。
+
+Option 类型优于 null 在于，Option<T> 和 T 不是一种类型
+
+编译器会阻止 i8 赋值给 Option<i8>
+
+编译器保证 i8 类型永远有一个 valid value，不需要检查是否为 null。
+
+对于 Option<T> 来说，必须先转为 T 才能执行与 T 有关的操作
+
+Option<T> 有很多转为 T 的方法 std::option
+
+match 模式匹配可以根据枚举值执行对应逻辑，对应代码可以使用匹配的值。
+
+6.2 模式匹配 match
+
+match 是强大的流程控制操作符
+
+允许比较值与一系列模式，根据匹配的模式执行对应代码。
+
+模式可以是 字面量，变量名，通配符等
+
+18 章有全部的模式。
+
+match 的强大在于模式的表现力和编译器保证所有情况都被处理。
+
+类似硬币分类机器。
+
+硬币枚举值和对应面值
+
+enum Coin {
+  Penny,
+  Nickel,
+  Dime,
+  Quarter,
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+  match coin {
+    Coin::Penny => 1,
+    Coin::Nickel => 5,
+    Coin::Dime => 10,
+    Coin::Quarter => 25,
+  }
+}
+
+match 值 {
+  // march arms
+  模式1 => 代码,
+  模式2 => 代码,
+  模式3 => 代码,
+}
+
+match 表达式执行时，按顺序匹配模式。
+
+匹配时执行对应的代码，arm 中代码返回值就是整个 match 的返回值
+
+arm 中代码为一行时不需要大括号 curyly brackets
+
+多行可以用大括号，arm 末尾逗号可以省略
+
+1. 绑定到值的模式
+
+match arm 可以绑定到匹配模式的值，这样就可以从 enum 变体中提取值。
+
+2. 匹配 Option<T>
+
+匹配后可以在 match arm code 内部读取到 Some<T> 的值
+
+fn plus_one(x: Option<i32>) -> Option<i32> {
+  match x {
+    None => None,
+    Some(i) => Some(i + 1),
+  }
+}
+
+Some(i) => Some(i+1),
+
+3. match 是面面具到的
+
+如果有未处理的可能情况，Rust 编译器会报错
+
+4. _ 占位匹配
+
+为不需要特殊处理的情况设置默认代码
+
+match some_u8_value {
+  1 => println!("one"),
+  2 => println!("two"),
+  _ => (),
+}
+
+可见，当只想处理一种特定情况时，match 太麻烦。可以用 if let 替代
+
+6.3 if let 简化条件控制
+
+只希望处理特定模式
+
+if let Some(3) = some_u8 {
+  println!("three");
+}
+
+if let 工作方式与 match 一样
+
+可以认为是 match 仅处理一种情况的语法糖
+
+if let 可以有 else 分支
+
+Rust modules 为了更好组织代码，只向用户提供需要 API
+
+Ch7 项目管理: Packages Crates Modules
+
+编写大型程序，代码组织很重要。
+
+通过将代码分割到多个 modules 多个文件组织代码。
+
+一个 package 可以有多个 binary crates 和一个可选的 library crate。
+
+package 可以提出到其他 crates 作为外部依赖。
+
+对于更大的项目，cargo 提供 workspaces。会在 14 章讨论
+
+写代码是可以定义哪部分是 public，而哪部分是 private 实现
+
+module system
+
+  Packages: cargo 特性，可以 build test share crates
+  Crates: modules 树，产生 library 或 executable
+  Modules 和 use: 控制路径的组织，作用域和 privacy 可见性
+  Paths: 对 struct function 或 module 的命名方式
+
+7.1 Packages 和 Crates
+
+crate 是 binary 或 library。
+
+crate root 是 Rust 编译器启动并设置为 crate root module 的源文件
+
+package 是一个或多个 crates，提供一组功能。
+
+package 有 Cargo.toml 描述如何编译这些 crates.
+
+package 必须包含 0 或 1 个 library crates。可以包含任意多 binary crates。
+
+至少有一个 crate (library or binary)。
+
+创建 package
+
+cargo new my-project
+
+cargo 默认 src/main.rs 是 binary crate 的 root
+
+如果 src 中有 lib.rs 那 package 就包含 library crate，且与 package 同名，src/lib.rs 为 crate root.
+
+Cargo 将 crate root 文件传给 rustc 编译 library 或 binary。
+
+同时有 src/main.rs 和 src/lib.rs。package 有两个 crates, 名字都与 package name 一样
+
+有多个 binary crates 的 package 可以将文件放在 src/bin，每个文件是单独的一个 crate。
+
+crate 将相关功能集合到一个作用域内，方便在多个项目中分享。提供的功能可以在引入后通过 crate name 获取
+
+保持 crate 的功能在自己 scope 保证不会与我们 crate 中的名字冲突，这些功能都被 namespaced 在自己的 scope。
+
+7.2 定义模块控制作用域和可见性 scope and privacy
+
+用 paths 来命名 items 模块元素
+
+关键字 use 将 path 引入当前 scope
+
+关键字 pub 将一个元素变为 public
+
+as 关键字
+
+外部 packages
+
+glob 操作符
+
+在 crate 中 Module 组织代码，使代码可读，易于复用，控制内部元素的可见性 privacy。
+
+创建 library crate 来学习 module
+
+cargo new --lib restaurant
+
+restaurant 中分为 front of house 和 back of house，分别是前厅和后厨。
+
+- 用 mod 定义模块
+
+mod module_name {
+  fn name () {}
+}
+
+模块中可以有其他元素 structs enums constants traits functions
+
+src/lib.rs src/main.rs 被成为 crate root 是因为它们在 crate module 结构 module tree 中形成一个模块被叫做 crate
+
+crate 这个 path 就代指 src/lib.rs 或 src/main.rs
+
+现在的 module tree 如下
+
+crate -> src/lib.rs
+  front_of_house
+    hosting
+      add_to_waitlist
+      seat_at_table
+    serving
+      take_order
+      serve_order
+      take_payment
+
+如果一个模块在另一个模块中，则称其为另一个模块的子模块
+
+整个模块树的 root 是约定名为 crate 的模块
+
+7.3 在 Module Tree 中指向某个对象的 Paths
+
+类似文件系统，在 Rust 模块中用 path 找到元素
+
+可以有两种形式
+
+  绝对 path，起于 crate
+  相对 path，起于当前模块，在当前模块中可使用 self super 或 identifier
+
+path 由被 :: 分隔的 identifier 组成
+
+
+pub fn eat_at_restaurant() {
+  // 绝对路径
+  crate::front_of_house::hosting::add_to_waitlist();
+
+  // 相对路径
+  front_of_house::hosting::add_to_waitlist();
+}
+
+使用哪种路径要看项目具体情况。
+
+建议使用 绝对路径，因为代码定义和实现多数情况下是分离的。
+
+编译项目
+
+cargo build
+
+默认模块中元素是 private
+
+父模块无法使用子模块的元素，但子模块可以用父模块元素
+
+因为子模块可以访问父模块的 context
+
+这样默认隐藏内部实现
+
+1. 用 pub 关键字暴露 Path
+
+找不到 自定义模块，原因 #[cfg(test)]
+
+The #[cfg(test)] annotation on the tests module tells Rust to compile and run the test code only when you run cargo test, not when you run cargo build.
+
+
+path  crate::front_of_house::hosting::add_to_waitlist(); 中
+
+hosting 需要是 pub 模块，add_to_waitlist 需要是 pub 函数
+
+使用同一模块内的元素，如 front_of_house 不需要 pub
+
+2. 在相对路径中使用 super
+
+类似文件系统的 .. 代指当前所在模块的上一级模块
+
+3. 使 structs 和 enums Public
+
+还是用 pub，但有些额外的细节。如 struct，即使用 pub struct Name {}
+
+struct 的 field 还是 private
+
+可以单独设定 field 为 public
+
+与此相反，如果设置 enum 为 public，它所有的变体都是 public
+
+7.4 用 use keyword 将 Paths 引入作用域
+
+用 use 简化 crate::front_of_house::hosting::add_to_waitlist();
+
+use 可以用绝对路径或相对路径 self::
+
+use crate::front_of_house::hosting;
+
+use self::front_of_house::serving;
+
+1. 习惯用法
+
+use 只到模块名而非函数名是 符合习惯 的做法；idiomatic way
+
+  这可以说明该函数是从其他模块引入的
+
+另外当使用 structs enums 或其他元素时，使用 full path，而非只到模块名
+
+use std::collections::HashMap;
+
+一个例外是如果引入的两个元素名字冲突，需要分别加上它们父模块来区分。
+
+use std::fmt;
+use std::io;
+
+fn function1() -> fmt::Result {
+
+}
+
+fn function2() -> io::Result {
+
+}
+
+2. 用 as 关键字提供新名字
+
+解决名字冲突的另一种方案
+
+use std::fmt::Result;
+use std::io:Result as IoResult;
+
+3. 用 pub use 重新导出模块
+
+pub use crate::front_of_house::hosting;
+
+外部的模块也能使用
+
+hosting::add_to_waitlist();
+
+4. 使用外部 packages
+
+编辑 Cargo.toml
+
+[dependencies]
+rand = "0.5.5"
+
+这会让 Cargo 下载 rand package 和它的依赖，并让 rand 对项目可用
+
+引入 rand::Rng Rng 是一个 trait，其中定义 rand::thread_rng 函数
+
+use rand::Rng;
+
+fn main() {
+  let secret_number = rand::thread_rng().gen_range(1, 101);
+}
+
+使用 标准库 std 不需要修改 Cargo.toml
+
+只需要引入即可
+
+use std::Collections::HashMap;
+
+5. 用 嵌套 Paths 清除 Large use List
+
+从同一模块导入的模块元素
+
+use std::cmp::Ordering;
+use std::io;
+
+可以合并为
+
+use std::{cmp::Ordering, io};
+
+use std::io;
+use std::io::Write;
+
+合并为
+
+use std::{self, Write};
+
+6. glob 操作符
+
+引入全部公开模块元素
+
+use std::Collections::*;
+
+小心使用，会不容易分清从哪里引入的 items，多用于测试时。
+
+7.5 分割模块到多个文件
+
+改善之前的多个模块混在一起的情况。
+
+将 front_of_house 模块挪到单个文件 src/front_of_house.rs
+
+在 src/lib.rs 中引入模块 front_of_house.rs
+
+mod front_of_house;
+
+使用这种形式而非 block，会告诉 Rust 从另一个同名文件中载入模块
+
+而 front_of_house.rs 中不需要 mod front_of_house {}
+
+hosting 模块也可以挪到自己的文件中
+
+对应文件是 front_of_house/hosting.rs
+
+Rust 中 package 可以分为多个 crates，而 crate 可以分为多个 modules。
+
+Ch8 Common Collections 常见集合
+
+Rust 标准库中很有用的数据结构，collections。其他数据结构表示一种特定值，但 collections 可以存储很多值。
+
+与内置 arry tuple 不同，collections 数据存储在 heap，这意味着在编译期不需要知道这些数据的大小，数据大小可以随程序运行而变化 grow or shrink。
+
+每种 collection 有不同的能力和代价，你会慢慢掌握为特定场景选择适当数据类型的能力。
+
+学习三种 collections
+
+  vector: 类似 array
+
+  string: 字符集合
+
+  hash map: key 和 value 的关联，是对更通用结构 map 的特殊实现
+
+8.1 Vector 存储数据
+
+Vec<T> 即 vector
+
+只能保存相同类型数据
+
+1. 创建 Vector
+
+  let v: Vec<i32> = Vec::new();
+
+只声明而不初始化时，无法推断类型，需要加类型信息 type annotation
+
+通常创建有初始值的 vector，Rust 提供 macro vec 来简化步骤。
+
+let v = vec![1,2,3];
+
+2. 更新 Vector
+
+添加新元素 pus
+
+
+  let mut v = Vec::new();
+
+  v.push(12);
+  v.push(13);
+  v.push(15);
+
+3. Vector 元素随着 Vector 一起被清除
+
+{
+  let v = vec![1,2,3]
+}
+
+当 vector 中有引用时会变得复杂
+
+4. 读取 vector 元素
+
+- indexing syntax
+
+  let third = &v[2];
+
+索引从 0 开始，使用 &vector_name[index];
+
+返回 reference
+
+- get 方法
+
+  match v.get(3) {
+    Some(four) => println!("The forth element of v : {}", four),
+    None => println!("No forth element"),
+  }
+
+返回 Option<&T>
+
+访问不存在的索引时，
+
+-1. 如果想让程序 crash，使用 &v[100];
+
+-2. 如果访问超出返回的元素是预料之内的行为，使用 v.get(100);
+
+  返回 Some(&element) 或 None
+
+vector 中 ownership 会保证引用有效。
+
+当有 immutable 引用时，无法修改 vector
+
+  let mut v4 = vec![4,5,6];
+  let v4_first = &v4[0];
+  // v4.push(7);
+  println!("First of v5: {}", v4_first);
+
+为什么对第一个元素引用，影响尾部插入数据？
+
+这和 vector 工作方式有关。尾部新加元素可能导致内存重新分配，复制旧数据到新位置。这种情况下，指向旧数据第一个元素的引用就无效了。
+
+borrowing rules 防止这种情况出现。
+
+5. 遍历 vector 数据
+
+逐个读取元素
+
+
+  let v5 = vec![100,200,300];
+  for i in &v5 {
+    println!("v5: {}", i);
+  }
+
+  let mut v5_mut = vec![100,200,300];
+  for i in &mut v5_mut {
+    *i *= 5;
+    println!("v5: {}", i);
+  }
+
+修改 mutable vector 要用 dereference 操作符 * 获取 i 中的值
+
+6. 用 Enum 保存不同类型
+
+Enum 变体可以是不同类型，而 Enum 是一种类型。Great
+
+spreadsheet 不同类型的行
+
+enum SpreadsheetCell {
+  Int(i32),
+  Float(f64),
+  Text(String),
+}
+
+如果不知道程序中的全部类型，不能使用 enum，需要用 trait object
+
+vector API: push pop
+
+pop 必须是 mutable vector
+
+8.2 Strings 存储 UTF-8 编码文字
+
+新 Rustaceans 经常在 strings 里遇到困难
+  -
+  - strings 比其他语言里的复杂
+  - UTF-8
+
+在 collections 中讨论 strings，strings 是作为 bytes 集合实现的，
+
+当 bytes 解析为 text 时提供很多功能。
+
+creating updating reading
+
+讨论和其他 collections 区别
+
+1. 什么是 String
+
+- str / &str
+
+在 core language 中只有一种 string type: string slices, str
+
+常见它的 borrowed form : &str
+
+string slices, 是一些 UTF-8 编码的 string data 的引用。
+
+String literals 存储在程序 binary，是 string slices
+
+- String
+
+String 类型是 Rust 标准库提供的。
+
+长度可变 mutable owned UTF-8 编码
+
+通常说 string 指的是这两种，都是 UTF-8 编码
+
+标准库还有 OsString OsStr CString CStr
+
+String 结尾表示 owned
+
+Str 表示 borrowed variants
+
+2. 创建 String
+
+很多 Vec<T> 可用的操作在 String 中可用
+  let mut s = String::new();
+创建 empty string
+
+从 string literal 转为 String
+
+  let data = "real content";
+  let s_data = data.to_string();
+
+  let s_data = "Word".to_string():
+
+还可以用 String::from();
+
+  let s_from = String::from("耗时");
+
+3. 更新 String
+
+添加数据可以用 push_str, +, 或 format! 宏
+
+- push_str push
+
+push_str 不获取参数的 ownership
+
+push 添加单个字符 'a' 到 String
+
+- + 或 format! 宏
+
+  let s_3_2 = String::from("of");
+  let s_3_3 = s_3 + &s_3_2;
+
++ 操作后 s_3 不再可用，这与 + 的实现有关。
+
++ 签名（使用确定类型而非泛型
+
+fn add(self, s: &str) -> String {}
+
+s_3_2 的类型是 &String 而非 &str 但 编译器会 coerce &String 为 &str
+
+调用是 编译器使用 derefcoercion 将 &s_3_2 变为 &s_3_2[...]
+
+self 没有用 & 表示它的 ownership 移入 add，self 的实参不再 valid
+
+所以看起来 + 复制两个字符串到新字符串，但实际上它获取第一个的 ownership，将第二个复制追加到第一个参数，返回结果。实际没有很多复制，这个实现比复制高效。
+
+多个字符串追加可以用 format! 宏，工作方式类似 println! 但不打印结果
+
+4. Strings 索引
+
+很多语言里可以通过索引获取字符串单个字符
+
+Rust 不支持使用索引获取单个字符
+
+- 字符串内部形式
+
+String 是对 Vec<u8> 的封装。
+
+  let s_4 = String::from("Hola");
+
+对于 每个字符占 1 byte 的字符串来说，字符串存储大小为 4 bytes
+
+而对于使用多个 bytes 保存的字符来说
+
+  let hello = String::from("Здравствуйте");
+
+byte 存储大小不是显示字符个数 12 而是 24
+
+hello 第一个字符需要两个 bytes 208 和 151
+
+&hello[0] 返回值 对应第一个 byte 的话需要返回 208
+
+但用户期待返回字符。208 本身不是 valid character
+
+为了避免返回非预期值，Rust 不编译这样的使用索引的代码
+
+- Bytes, Scalar Values, Grapheme Clusters
+
+从 Rust 角度有三种对待 strings 的方式
+
+  as bytes
+  as scalar values
+  grapheme clusters (这个最接近期待返回的 字母)
+
+对于 Hindi word नमस्ते
+
+电脑需要 18 bytes 存储
+
+按照 Unicode scalar values，即 Rust char 类型，有 6 个值
+
+用 Grapheme cluster 看是 4 个字母
+
+Rust 提供不同方式解析 raw string，可以选择需要的方式。
+
+另外不使用索引是因为，一般索引是 O(1) 操作。但在 String 中无法保证性能。
+
+Rust 必须遍历到索引位置才能决定有多少有效字符。
+
+5. 字符串 slicing
+
+字符串索引并不清楚返回的是什么，byte value，character，还是 grapheme cluster，或者 string slice。
+
+用 [] 和 range 创建 string slice
+
+  let s_4_1 = String::from("Здравствуйте");
+  println!("string slice {}", &s_4_1[0..4]);
+
+原字符串是 2 bytes 表示一个字符，如果用[0..1] 程序会 panic
+
+用 range 获取 string slices 也需要小心。
+
+6. 遍历 strings
+
+遍历字符串 Unicode scalar values，可以用 chars 方法
+
+  for c in "नमस्ते".chars() {
+    println!("=>_{} ", c);
+  }
+
+获取 bytes 使用 bytes 方法
+
+  for b in "नमस्ते".bytes() {
+    println!("=>_{} ", b);
+  }
+
+得到 grapheme cluster 更复杂，需要外部 crates。
+
+8.3 Hash Map 存储 key value
+
+HashMap<K, V> 通过 hashing function 决定如何存储 keys 和 values。
+
+不用索引而是通过任意类型的 key 获取 value
+
+其他语言里叫 hash,map,object,hash table,dictionary,associative array 等
+
+1. 创建 Hash Map
+
+HashMap 没有被自动加载到 prelude
+
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Yellow"), 50);
+println!("Display scores: {:?}", scores);
+
+keys 类型必须一致
+
+values 类型必须一致
+
+另一种创建方法是调用 vector of tuples 的 collect 方法
+
+collect 方法收集数据到数据结构中，包括 HashMap
+
+  let teams = vec![String::from("Blue"), String::from("Yello")];
+  let initial_scores = vec![30, 60];
+
+  let mut iter_scores: HashMap<_, _> =
+    teams.into_iter().zip(initial_scores.into_iter()).collect();
+
+zip 方法创建 vector of tuples
+
+2. Hash Maps 与 Ownership
+
+对于实现 Copy trait 的类型，value 复制到 hash map;
+对于 owned values 如 String，value 被移到 hash map，hash map 拥有这些值，原来的值不可用。
+
+map.insert(field_name, field_value);
+
+3. 获取 values
+
+- get 方法
+
+let team_name = String::from("Blue");
+println!("Score of Blue: {}", scores.get(&team_name));
+
+get 方法返回 Option<&V>
+
+可以用第六章的方法之一读取 &V
+
+  std::option 的方法
+    例如 unwrap_or(self, default: T) -> T
+  或 模式匹配
+
+- 遍历读取 value
+
+  for(key, value) in &scores {
+    println!("{}: {}", key, value);
+  }
+
+4. 更新 Hash Map
+
+key 同一时刻只能有一个关联值
+
+当你想改变 Hash Map 值时，要决定如何处理那个 key 已经有关联值的情况。
+
+  用新值替换旧值，完全不管旧值
+
+  或者不改变已经有的 key，只增加新的 key
+
+  或者可以合并新旧值
+
+- 覆盖旧值
+
+insert 两次，默认覆盖旧值
+
+  println!("Display scores: {:?}", scores);
+  scores.insert(String::from("Blue"), 900);
+  println!("Display scores: {:?}", scores);
+
+- 只添加不存在的 key
+
+常用逻辑是 检查 key 是否存在，如果不存在才增加 key/value
+
+Hash Map 有 entry API 检查给定 key 是否存在。
+
+entry 方法返回值为 enum Entry，代表值存在或不存在
+
+Entry 有方法 or_insert(param)
+
+  如果 key 存在，返回对应值的 mutable reference
+  如果 key  不存在，插入参数，返回对应值的 mutable reference
+
+  scores.entry(String::from("Blue")).or_insert(0);
+
+- 基于旧值更新
+
+  for lang in text.split_whitespace() {
+    let count = lang_map.entry(lang).or_insert(0);
+    *count += 1;
+  }
+
+  通过 *count 获取旧值
+
+5. Hashing Functions
+
+默认，HashMap 使用 cryptographically strong 密码学强度 hashing function 抵御 Denial of Service 攻击。拒绝服务攻击。
+
+不是最快的 hashing algorithm 但是能平衡性能和安全性。
+
+如果你觉得太慢，可以指定不同点的 hasher: BuildHasher 类型
+
+Ch9 错误处理 Error Handing
+
+Rust 帮助你在部署到生产环境前发现错误。
+
+主要分为两类。recoverable 和 unrecoverable 错误。
+
+第一类，例如 文件不存在，可以恢复之后继续执行。
+
+第二类，如访问数组越界，成为 bug。
+
+Rust 没有 exception。对于 recoverable，提供 Result<T,E>
+
+对于 unrecoverable，先调用 panic! 再处理返回的 Result<T,E>
+
+9.1 无法恢复的错误 panic!
+
+当遇到无法处理的错误时，Rust 提供 panic! 宏。
+
+panic! 执行时，打印 failure message，unwind 并清理 stack，然后 quit。
+
+默认情况，panic 发生时，程序先 unwind:
+
+  Rust 遍历 stack，清除每个函数中遇到的数据。
+
+  这个工作量可能很大。可以选择立即 abort，退出程序而不清理。占用的内存留给操作系统清理。
+
+当希望编译出的 binary 尽可能小，可以将 unwind 改外 abort
+
+在 Cargo.toml 中
+
+[profile.release]
+panic = 'abort'
+
+backtrace 可以找出我们哪部分代码导致 panic
+
+1. 使用 panic! backtrace
+
+RUST_BACKTRACE=1 cargo run
+
+backtrace 是到错误发生位置前，调用的函数列表。
+
+前提必须开启 debug
+
+在不用 --release 运行 cargo run; cargo build 时是开启 debug 的
+
+RUST_BACKTRACE=1
+
+RUST_BACKTRACE=full
+
+提到用户代码文件的那行的上一行，是你的代码调用的代码，下一行是调用你的代码的地方。
+
+9.2 Result 处理可以恢复的错误
+
+大部分错误不需要程序完全停止。
+
+对于可以处理的错误使用 Result 枚举类型
+
+enum Result<T, E> {
+  Ok(T),
+  Err(E),
+}
+
+T E 是泛型类型参数。
+
+T 表示成功情况返回的类型，
+E 表示失败时返回的类型
+
+use std::fs::File;
+
+fn main() {
+  let f = File::open("hello.txt");
+}
+
+如何知道一个函数返回 Result 类型呢？
+
+  看文档
+
+  或者通过给变量一个错误的类型
+
+    编译器会告诉返回值类型
+
+Result enum 也是默认载入到 prelude
+
+2. 匹配不同类型的错误
+
+上一个 match 不管打开失败的原因，
+
+但如果希望在文件不存在时，创建文件而非 panic，就要匹配不同的错误类型
+
+error.kind() 获取错误类型
+
+  io.ErrorKind
+
+unwrap_or_else 在 13 章学习
+
+3. Panic 简写形式 unwrap 和 expect
+
+Result 的一些 helper method
+
+unwrap
+  如果 Result 返回值 Ok 变体，返回 Ok 里的值；
+  否则调用 panic! 宏
+
+except 类似 unwrap
+  但可以选择 panic! 错误信息
+
+  let f = File::open("hello1.txt").expect("Fail to open hello1.txt");
+
+4. 错误抛出传播
+
+fn read_username_from_file() -> Result<String, io::Error> {}
+
+调用 read_username_from_file 的函数，处理 Ok(v) 或者 Err(err)
+
+由于不知道外部调用程序会如何处理，这里的错误仅仅被传递出来。
+
+- 4.1 Propagating Errors Shortcut : ? 操作符
+
+  f.read_to_string(&mut s)?;
+
+? 和 match 工作过程大致一样
+
+  不同在于出现错误时， ? 调用 from 函数将错误类型转为当前你函数指定的错误类型。
+
+  from 来自 From trait，每个错误类型都实现了 From trait
+
+  define how to convert itself to the returned error type
+
+? 可以减少很多 boilerplate 代码。
+
+甚至可以将多个 ? 连接起来使用
+
+  File::open("hello.txt")?.read_to_string(&mut s)?;
+
+more ergonomic way.
+
+读取文件到字符串是常见流程，Rust 提供简单的
+
+fs::read_to_string 函数，完成 打开文件，创建字符串，读取文件内容到字符串，并返回。
+
+fs::read_to_string("hello.txt")
+
+- 4.2 ? 可以用在返回 Result 的函数中
+
+例如 main 函数
+
+修复问题可以用
+  - 改变 main 返回类型为 Result<T,E>
+  - 使用 match 或 Result 方法来处理
+
+main 的返回值类型有限制，可以是 () 或 Result<T, E>
+
+Box<dyn Error> 是 trait object。代表 任意类型错误
+
+9.3 是否使用 panic!
+
+使用 panic! 后就无法恢复程序，用于 no way to recover 时。
+
+很少要使用 panic! 的。
+
+1. 样例，原型函数，测试
+
+在决定如何处理错误前，使用 unwrap 和 expect
+
+在测试中，如果测试出错，多数情况希望整个测试停止
+  使用 unwrap expect 去调用 panic!
+
+2. 当你知道的信息比 Compiler 多时
+
+当你肯定错误不会出现时，使用 unwrap/expect
+
+例如
+
+use std::net::IpAddr;
+
+let home: IpAddr = "127.0.0.1".parse().unwrap();
+
+3. 错误处理指南
+
+让你代码 crash，当
+
+  bad state 不常发生
+  后续代码不依赖 bad state
+  没有好方法编码这种信息
+
+例如别人传入错误参数时，panic! 并提醒用户修正参数
+
+当使用外部代码，超出你控制，返回 invalid state 且为无法修复时，用 panic!
+
+操作数据前，先验证数据是否有效。这个过程可以通过类型系统简化。
+
+例如将传入参数设为 Somme(T) 而非 Option(T)
+
+4. 创建自定义类型用于验证 validation (真实例子)
+
+使用 Rust Type system 确保有有效值
+
+在猜数字时，只验证值是 正数。
+现在要验证数字是在 1 到 100
+
+用户可能输入字母，解决方法之一是解析为数字
+
+另外可以创建新年类型，将验证方法放入类型创建方法中。
+
+Guess Type
+
+Ch10 泛型，Traits 和 Lifetimes
+
+每个编程语言都能高效处理重复代码。
+
+Rust 中一个减少代码重复的工具就是 generics
+
+写代码时，可以用泛型描述确切类型的行为，以及与其他泛型的关系，而不需要知道具体类型。
+
+类似函数可以有不知道值的形参，并在函数体内使用。函数也可以将泛型作为参数，而非确切类型。
+
+已经见过的泛型 Option<T> Vec<T> HashMap<K, V> Result<T, E>
+
+先学习如何减少代码量
+
+然后从两个处理不同类型的函数中提取泛型函数
+
+学习如何在 struct 和 enum 中使用泛型
+
+还要用 trait 来定义泛型的行为 behavior
+
+trait 结合泛型，限制泛型中的类型。只允许使用有特定行为的类型
+
+最后讨论 lifetimes，多种泛型，提供给编译器 references 引用关系。
+
+Lifetime 让我们可以用多种方式 borrow values，同时启用编译器检查引用有效。
+
+1. 提取函数，移除重复
+
+不引入泛型，减少重复代码
+
+对于重复动作，可以提取为函数
+
+  - 确认重复代码
+  - 提取重复的代码到函数体，指定输入返回值类型
+  - 调用函数
+
+同样的流程可以用于泛型
+  找到 slice of i32 或 slice of char 中最大项，该如何做
+
+10.1 通用数据类型
+
+泛型定义 function struct enum
+
+1. 函数定义
+
+fn largest<T>(list: &[T]) -> &T {
+
+}
+
+添加泛型后，编译，发现 &T 类型无法使用 < 符号
+
+这意思是，必须约束 T 的范围才行。
+
+2. 定义 struct
+
+struct Point<T> {
+  x: T,
+  y: T,
+}
+
+上边这个 Point 中元素类型必须一样
+
+可以使用多个类型
+
+struct Point<T, U> {
+  x: T,
+  y: U,
+}
+
+注意如果你需要很多泛型类型时，要考虑重构为更短的代码。
+
+3. 定义枚举
+
+类似 struct
+
+当多个 struct enum，只有类型不同时，考虑使用 generic types
+
+4. 定义方法
+
+impl<T> Point<T> {
+  fn x(&self) -> &T {
+    &self.x
+  }
+}
+
+impl 后也要有类型 表示实现的方法是针对 Point<T>
+
+针对特定类型
+
+impl Point<f32> {
+
+}
+
+方法体中的类型参数，可以不是 struct 方法参数的类型
+
+方法体中的类型参数，仅和方法有关，与关联的 struct 或 enum 无关
+
+5. generic 的性能
+
+Rust 实现泛型的方式保证没有 runtime cost。
+
+通过在编译期对代码执行 monomorphization 达到这个目的。
+
+monomorphization 就是在编译期，将用到的泛型代码转为确定类型
+
+编译期做与我们相反的事情。
+
+let integer = Some(5); 会被转为 Option_i32::Some(5);
+
+10.2 Traits: 定义共享的行为 shared behavior
+
+trait 告诉 Rust 编译器特定类型拥有的功能，并能和其他类型分享。
+（限制类型必须满足某些条件）
+
+类似 interface。
+
+1. 定义 Trait
+
+类型的行为包含类型可以有的方法。
+
+如果我们可以在多个类型里使用同样的方法，那么这些类型共享相同的行为。
+
+
+
+类型的行为包含类型可以有的方法。
+
+如果我们可以在多个类型里使用同样的方法，那么这些类型共享相同的行为。
+
+1. 定义 Trait
+
+假定做一个聚合应用，来源有 NewsArticle 和 Tweet
+
+Tweet 有 内容，以及 metadata 记录这个 tweet 是 new_tweet, retweet, 还是 reply_to_tweet
+
+我们希望对传入的源调用 summarize 方法获取 summary
+
+可以定义叫 Summary 的 trait
+
+用 trait 关键字
+
+pub traiit Summary {
+  fn summarize(&self) -> String
+}
+
+只有方法函数签名
+
+trait 多个方法，都以 semicolon 结尾 ;
+
+2. 在 type 上实现 trait
+
+在具体类型上实现 Summary trait
+
+只需要在 impl 后加上 Summary for 即可
+
+使用类似 use aggregator::Summary; 引入 Summary trait
+
+只能实现作用域内的 trait，也只能为作用域内的类型实现 trait
+
+可以为 Vec<T> 实现 Summary
+
+可以为 Tweet 实现 Display
+
+但无法为 Vec<T> 实现 Display
+
+这一限制被称为程序的 coherence 或 orphan rule。
+
+保证其他人的代码无法干扰你的代码，vice versa。
+
+3. 默认实现
+
+trait 方法可以有默认实现，（如非必需实现的方法）
+
+在 trait 方法体中添加代码即可
+
+// 使用默认方法
+impl Summary for NewsArticle {}
+
+默认方法可以调用其他在 trait 中的方法。被调用方法可以没有默认实现
+
+这样实现者只需要实现部分方法，即被调用的方法
+
+(没有默认实现的方法，必须要实现?)
+
+4. 将 Traits 作为参数
+
+定义函数，参数实现某个 trait 的类型
+
+pub fn notify(item: &impl Summary) {
+  println!("Breaking news! {}", item.summarize())
+}
+
+不需要指定确切类型
+
+- Trait Bound Syntax
+
+impl 是完整 trait bound 语法的语法糖
+
+完整写法为
+
+pub fn notify<T: Summary>(item: &T) {
+  println!("Breaking news! {}", item.summarize())
+}
+
+在一些场景中，trait bound 语法可以描述更复杂情况
+
+如 两个实现 Summary Trait 的参数可以用 impl 写法
+
+pub fn notify(item_one: &impl Summary, item_two: &impl Summary)
+
+两个实现不同 trait 的参数，也可以用 impl
+
+但如果是两个实现相同 trait 的同类型参数，就需要用 trait bound 语法
+
+pub fn notify<T: Summary>(item_one: &T, item_two: &T) {}
+
+- 指定多个 Trait 绑定的语法
+
+指定多个 trait: Display Summary
+
+用 impl 形式
+
+  pub fn notify(item: &(impl Summary + Display)) {}
+
+用 trait bound
+
+  pub fn notify<T: Summary + Display>(item: &T) {}
+
+- 用 where 让 trait 绑定更清晰
+
+用 trait bound 描述过多 trait 有一些不足，会使代码难读。
+
+为了明确 trait bound，可以采用 where 语句
+
+pub fn notify<T, U>(t: &T, u: &U) -> i32
+  where T: Display + Clone,
+        U: Clone + Debug
+{
+
+}
+
+5. 限制返回值实现某个 trait
+
+impl Trait 可以用来限制返回值
+
+fn return_summarizable() -> impl Summary {
+
+}
+
+意为必须返回实现 Summary 的类型，
+
+这在 closure 和 iterator 中很有用
+
+注意，一个函数不能返回两种实现 trait 的类型。
+
+后边会学习如何返回不同类型的值。
+
+6. 用 trait 限制修复 largest 函数
+
+先限制类型必须实现 PartialOrd
+
+std::cmp::PartialOrd 已经在 prelude 中
+
+运行后出现 move out of type [T], a non-copy slice 错误
+
+错误原因是，只有 i32 char 这种大小预先知道，分配在 stack 的数据类型
+
+在 for &item in list {} 中才能完成 copy
+
+方案1
+
+只处理实现 Copy trait 的类型
+
+方案2
+
+指定 T 实现 Clone trait。有些类型会需要分配 heap 数据。
+
+数据量大时会变慢。
+
+方案3
+
+函数返回 T 即指向 slice 的 reference。
+
+这样不需要 Clone 或 Copy trait 限制
+
+7. 用 trait 限制根据条件实现方法
+
+即只有当传入参数是实现某个 trait 的类型时，才能使用对应的方法。
+
+例如 Pari<T> 实现的 cmp_display 方法，只有 T 实现 PartialOrd 才能使用
+
+可以为 任意类型实现 trait，要求符合条件的类型满足其他 trait
+
+例如:
+
+impl<T: Display> ToString for T {
+
+}
+
+这在标准库中常见，叫 blanket implementations
+
+ToString 定义的 to_string 方法，实现了 Display trait
+
+let s = 3.to_string();
+
+Blanket implementations 出现在文档的 Implementors 小节
+
+编译器可以利用 traint bound 检查代码提供的确定类型是否满足限制。
+
+在动态语言的运行时才能得到错误，而 Rust 将这些错误提醒移到编译期。
+
+提高性能而不需要失去泛型的灵活性。
+
+还有一种泛型叫做 lifetime。
+
+与用来保证类型有特定行为不同， lifetimes 用来保证引用在需要的时候有效。
+
+impl 针对泛型时不需要 for keyword ???
+
+10.3 用 lifetimes 检查 References
+
+Rust 的每个引用都有 lifetime，在这个作用域内，reference 是有效的。
+
+大部分时候，lifetime 是隐式和可推断的，就像类型一样。
+
+但在部分时候需要注解 lifetime。
+
+1. 用 Lifetimes 阻止 Dangling Reference
+
+lifetimes 主要用途是防止出现错误引用，引导指向的不是应该指向的数据。
+
+let r; 没有初始值，但如果想在对 r 赋值前使用，会出现编译期错误。
+
+这也说明 Rust 没有 null values
+
+  let r;
+
+  {
+    let x = 5;
+    r = &x;
+  }
+
+  println!("r: {}", r);
+
+在使用 r 时，r 指向的数据已经超出自己的 scope 而被清除
+
+r 比它指向的数据 lives longer
+
+Rust 使用 borrow checker 来判断代码是否 valid
+
+2. Borrow Checker
+
+borrow checker 比较 scopes 来决定 borrows 是否有效。
+
+记录 r 的 lifetime 为 'a
+
+x 的 lifetime 为 'b
+
+显然 b 小于 a
+
+数据没有引用的 lifetime 大时，代码无效
+
+3. 函数中泛型 lifetimes
+
+写一个函数返回更长的 string slices。
+
+参数为两个 string slices，返回一个 string slices
+
+参数需要是 string slices，因为这是引用 String 转 &str S.as_str()
+
+  使用引用 函数无法 take ownership of its parameters
+
+fn longest(x: &str, y: &str) -> &str {
+  if x.len() > y.len() {
+    x
+  } else {
+    y
+  }
+}
+
+代码无法编译。因为编译器不知道返回的引用是哪个的。
+
+开发者也不知道，因为 if 部分的存在，无法知道返回哪个。
+
+因此需要添加泛型 lifetime 参数，来决定引用之间的关系，让 borrow checker 可以执行分析。
+
+4. lifetime 注解语法
+
+lifetime 注解不会给数据续命。
+
+lifetime 注解仅仅描述多个引用 lifetime 的关系而不影响它们。
+
+lifetime 以单个单引号开始，小写字母，通常很短。
+
+常用名是 a。 放在引用符号 & 后边: &'a
+
+&i32
+&'a i32
+&'a mut i32
+
+如果两个参数 liftetime 注解相同，就表示它们与这个泛型 lifetime 存在时间一样久。
+
+5. 在函数签名中使用 lifetime 注解
+
+首先要在函数名后标注 lifetime 类似泛型函数中的类型
+
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {}
+
+这首先声明一个 lifetime 'a，后续的标注说明
+
+返回值的 lifetime 至少与输入引用的 lifetime 一样。
+
+这不仅帮 borrow checker 执行分析，也让 borrow checker 阻止不满足这个限制的变量传入。
+
+函数的 lifetime 标注，只出现在函数签名，而不是在函数体。
+
+lifetime 标注可以帮助函数阻止接收 lifetime 不满足的参数
+
+开发者知道函数返回引用时，引用指向的值还有效；但编译器不知道，
+
+因此编译器拒绝这段代码通过编译。
+
+6. 用 lifetime 思考
+
+当函数确定返回某个输入的值时，不需要标注 lifetime。
+
+因为函数的其他参数与结果无关。
+
+返回值的 lifetime 需要和输入参数匹配，否则就是引用函数内部的值，
+
+会出现 dangling reference，无法通过编译。
+
+  此时的解决方案是返回 owned data 而非 reference
+
+7. Struct 定义中的 lifetime
+
+struct 可能存储引用
+
+但需要对定义内的每个引用，添加 lifetime 标注
+
+引用的数据不会在引用失效前失效。
+
+8. lifetime elision
+
+历史遗留问题。早期所有用到引用的函数签名都要加 lifetime
+
+后来 Rust 团队将一些可以预测的情况写入编译器。
+
+在这些情况下，不写 lifetime，编译器也能推断出来。
+
+或许更多的 deterministic 模式可以合并进编译器。
+
+被写入 Rust 引用分析的模式叫 lifetime elision 规则。
+
+不是开发者要遵守的规则，是编译器要考虑的。如果你的代码符合这个模式，就不需要添加 lifetime 标注。
+
+但 elision 不提供完整的推断
+
+函数或方法参数的 lifetime 被称为 input lifetimes
+
+返回值的叫 output lifetimes
+
+第一条规则针对 input lifetimes
+
+二三条针对 output lifetimes
+
+如果三条检查过后还有无法确定 lifetime 的引用，就会抛出错误。
+
+这对 fn 定义和 impl 代码块有效。
+
+第一条规则，每个参数有自己的 lifetime 参数，即多个参数的函数有多个 lifetime 参数
+
+第二条规则，如果只有一个 input lifetime 参数，那么这个参数应用与所有的 output lifetime 参数
+
+第三条规则是，如果多个参数有 &self 或 &mut self，那么 self 的 lifetime 是全部 output lifetime 参数。这让代码更简洁。
+
+例子
+
+fn first_word(s: &str) -> &str {}
+
+根据规则一，编译器将代码看作
+
+fn first_word<'a>(s: &'a str) -> &str {}
+
+根据规则二，代码被看作
+
+fn first_word<'a>(s: &'a str) -> &'a str {}
+
+现在，所有参数和返回值都有 lifetime 参数，编译器可以继续分析下去。
+
+9. 标注方法 lifetime
+
+impl 后增加 lifetime 参数
+
+impl <'a> ImportantExcerpt<'a> {
+  fn level(&self) -> i32 {
+    3
+  }
+}
+
+一个满足 elision 规则三的例子
+
+impl<'a> ImportantExcerpt<'a> {
+  fn rule3(&self, text: &str) -> &str {
+    println!("Attension please: {}", text);
+    self.part
+  }
+}
+
+10. 静态 lifetime
+
+声明变量 lifetime 和整个程序一致
+
+'static
+
+let s: &'static str = "static lifetime";
+
+字符串内容保存在程序 二进制文件中
+
+所有 string literals 的 lifetime 都是 'static
+
+需要注意，修复 lifetime 的方法是解决问题，而不是用 'static
+
+11. Plus 复习 Generic Type Parameters, Trait Bounds, Lifetimes
+
+Summary
+
+Generic type parameters 让你写出适用于多种类型的代码
+
+Traits 和 trait bound 确保类型有需要的行为
+
+lifetime 保证不出现 dangling reference
+
+后边会讨论 trait object，另一种使用 trait 的方法。
+
+Ch11 自动化测试 Automated Tests
+
+1972 年， Edsger W. Dijkstra 的论文  The Humble Programmer. 谦逊的程序员 说，程序测试是很有效地找出 bug 的方法，但缺无法充分保证 bug 不存在。
+
+程序正确性，指的是代码做我们想让它做的事情。
+
+类型系统承担了大量负担，但无法捕获全部类型的错误。
+
+因而 Rust 支持写自动化测试。
+
+比如我们有一个 add_two 的函数，给传入的任何数字加 2。
+
+类型系统能够保证输入和输出类型是数字，但无法检查结果确实增加了 2。
+
+测试是一种复杂的技能。
+
+接下来会介绍在测试中会用到的 annotations 和 macros
+
+测试默认的 behavior 和 options
+
+以及如何科学组织 unit tests 和 integration tests
+
+11.1 如何写测试
+
+测试是验证非测试代码按照预期运行的 Rust 函数
+
+测试函数体执行三个操作
+
+  - 设置需要的数据或状态
+  - 执行测试代码
+  - 断言期待的结果
+
+1. 剖析测试函数
+
+Rust 测试是用 test 属性标注的函数
+
+属性是 Rust 代码的元数据
+
+将函数转为测试函数就在函数前添加 #[test]
+
+用 cargo 生成项目时，自动创建测试模板，可以添加任意多测试函数和测试模块。
+
+先创建个项目
+
+cargo new adder --lib
+
+src/lib.rs 中 it_works 函数被标记为测试
+
+运行测试:
+
+cargo test
+
+可以看到测试过程
+
+  Compiling
+  Finished
+  Running
+
+结果显示 1 passed 0 failed 0 ignored 0 measured 0 filtered out
+
+意思没有 ignore, measure, filter out 的测试
+
+measure 是统计 benchmark tests，测试性能
+
+Doc-tests 是针对 documentation tests，保持文档和代码同步
+
+添加一个失败测试
+
+2. 测试中用到的宏
+
+- panic! 让测试失败
+
+- assert! 宏
+
+  参数是 boolean 值。如果传入为 false，assert!会调用 panic!
+
+由于 tests 是一个 inner module，要使用外部模块需要用
+
+use super::*; 引入
+
+当有 bug 时，会触发 paniced at 'assertion failed'
+
+3. 用 assert_eq! assert_ne! 测试相等性
+
+这两个宏比较两个参数的相等性，并会在在失败时显示比较的两个值
+
+而 assert! 不会显示值
+
+有些语言将断言里的两个值叫做 expected 和 actual
+
+Rust 称为 left right，即与顺序无关
+
+assert_ne! 用于无法预知结果，但能知道如果代码运行正常时，一定不会出现的结果
+
+这两个宏的实现使用 == != 打印值使用 debug formatting
+
+因此传入的参数要实现了 PartialEq 和 Debug
+
+所有基本类型和大部分标准库类型满足这个要求。
+
+对于自定义的类型或枚举，需要确保实现这两个 trait。通常最简单的办法是标注为 #[derive(PartialEq, Debug)]
+
+即使用两个 trait 的默认实现。
+
+4. 增加自定义错误信息
+
+5. 断言 panic
+
+测试也需要可以断言代码在某些情况下 panic。
+
+添加标注 叠加标注
+
+#[test]
+#[should_panic]
+
+这个标注不够精确，因为它只判断出现 panic，但不知道原因
+
+为增加准确性，可以加一个标签 expected 参数
+
+这个参数确保 失败信息 failure message 包含 expected 内容
+
+6. 在测试中使用 Result<T, E>
+
+也可以写使用 Result<T, E> 的测试。
+
+让原本 panic! 的测试，返回 Result 类型
+
+  这样在测试函数体内，原本用 assert_eq 的地方返回 Ok(())，测试失败的时候返回 Err() ，其中有 test message
+
+此时的测试函数不能用 #[should_panic] 标注
+
+11.2 控制测试如何运行
+
+cargo run 编译代码后运行二进制结果
+
+cargo test 在 test 模式编译代码，运行测试二进制
+
+可以通过指定参数改变 cargo test 默认行为
+
+一些参数传给 cargo test 一些参数传给输出的二进制测试文件
+
+cargo test --help
+
+cargo test -- --help 针对测试二进制
+
+1. 并行或连续执行测试
+
+运行多个测试时，默认用 threads 并行。
+
+需要确保测试不互相依赖，或共享状态，修改同一个环境变量
+
+让测试连续执行
+
+  cargo test -- --test-threads=1
+
+测试执行慢，但不会互相干扰
+
+2. 显示函数输出
+
+默认当测试通过时，Rust test 库捕获所有的标准输出。
+
+即在测试中用 println!() 默认不会显示
+
+测试失败时才能看到标准输出
+
+如果想总是看到 println! 输出，要用参数
+
+cargo test -- --show-output
+
+3. 根据测试名执行部分测试
+
+当想执行部分测试时
+
+- 执行一个测试
+
+cargo test test_function_name
+
+- 执行多个测试
+
+cargo test shared_part
+
+4. 除特定条件外忽略部分测试
+
+当想在常规测试时忽略一些耗时的测试
+
+对测试标注为
+
+#[test]
+#[ignore]
+fn expensive_test() {}
+
+当仅执行 ignored 测试时
+
+cargo test -- --ignored
+
+11.3 组织测试
+
+Rust 社区主要有两种测试策略
+
+  Unit tests 单元测试，小而每次集中于单个模块的测试。
+
+    可以测试私有接口
+
+  Integration tets 继承测试，完全在 library 外部进行测试
+
+    只使用公开接口，可以对多个模块进行测试
+
+1. Unit Tests
+
+Rust 项目中，每个模块的单元测试和这个模块在一个文件内
+
+测试模块用 #[cfg(test)] 标注
+
+- 测试模块和 #[cfg(test)]
+
+这个标注告诉 Rust 编译器仅当执行 cargo test 时才执行测试代码
+
+节约编译时间，节省生成的二进制文件大小
+
+集成测试不需要这个标注
+
+cfg 属性代表 configuration
+
+- 测试私有函数
+
+私有函数没有标记为 pub
+
+但是由于测试和私有函数在同一个文件，可以被引入到 测试模块 scope 中
+
+2. 集成测试
+
+集成测试独立于 library。像其他代码一样使用 library。只能调用公开 api。
+
+目的为了测试多个部分是否能一起工作
+
+- tests 文件夹
+
+cargo 知道在 tests 文件夹中寻找 集成测试代码
+
+cargo 会将每个测试文件编译为单独的 crate
+
+不用标注为 #[cfg(test)]
+
+单独执行一个集成测试
+
+cargo test --test integration_test 文件名
+
+- 集成测试子模块
+
+当集成测试文件需要共享代码时。如都要调用 setup
+
+需要将它抽提到 tests/common.rs
+
+还有一个问题是，cargo tests 时也会编译这个文件为 crate
+
+要修复这一点，需要改为 tests/common/mod.rs
+
+因为在 tests 的子目录中的文件不会被编译为独立 crate。
+
+使用 mod.rs 时在 tests/integration_test.rs 中写
+
+mod common; -> 会通过 common/mod.rs 获得 common 模块的实现
+
+- binary crates 的集成测试
+
+如果只有 src/main.rs 没有 src/lib.rs 就无法创建集成测试
+
+只有 library crates 才能暴露函数让其他 crates 使用。
+
+通常是提供一个简单的 src/main.rs 文件，调用 src/lib.rs 中的逻辑
+
+这样就可以继续进行集成测试
+
+Summary
+
+尽管 Rust 的类型系统和 ownership 帮助减少一些类型 bugs，但测试还是减少逻辑 bugs 的重要方法。
+
+Ch12 An I/O Project: 写个命令行程序
+
+复习已学内容，学习一些标准库的特性
+
+- 如何让命令行工具拥有其他命令行工具的特性
+- 读取环境变量，让用户能配置命令
+- 打印错误信息到标准错误，这样在重定向输出时还可以看到错误信息
+
+会简单介绍 closures iterators 和 trait objects
+
+12.1 读取命令行参数
+
+cargo new minigrep
+
+预期命令如下 cargo run search_string example_filename.txt
+
+接下来不使用 crates 自己实现读取命令行参数
+
+1. 读取参数值
+
+使用函数 std::env::args
+
+返回 命令行参数组成的 iterator
+
+iterator 会产生一系列值，需要用 .collect 方法转为 collection
+
+在这个过程中要提供结果的类型，Rust 无法自己推断出来结果类型，因为 collect 方法可以产生很多种  collection
+
+如果参数中有 invalid unicode 需要用 std::env::args_os 函数，这个函数返回 OsString 而非 String
+
+写代码时，引入部分为
+
+use std::env; 而不是 use std::env::args;
+
+使用时带上最后的模块名，避免多个模块的函数名冲突
+
+env::args()
+
+测试代码
+
+cargo run search_string example_filename
+
+命令行参数第一项为二进制文件，这和 C 参数列表的行为一样。方便知道调用的文件是哪个。
+
+当要输出信息或根据命令名改变行为时会用上，现在可以先忽略。
+
+2. 保存命令行测试到变量
+
+保存第二个参数的引用
+
+  let query = &args[1];
+  let filename = &args[2];
+
+12.2 读取文件
+
+String.as_str()
+
+读取文件
+
+  let contents = fs::read_to_string(filename)
+    .expect(format!("Something went wrong reading the file: {}", *filename).as_str());
+
+cargo run the poem.txt
+
+需要改进
+  - main 中逻辑太多 has multiple responsibilities
+    如果每个函数都只负责一件事，会让代码更清晰，更容易维护
+
+  - 缺少错误处理
+
+在代码量少的时候重构比大到难以清理时重构好。
+
+It’s good practice to begin refactoring early on when developing a program, because it’s much easier to refactor smaller amounts of code. We’ll do that next.
+
+12.3 重构为模块化，增加错误处理
+
+修复四个问题
+
+  - main 函数任务太多，每个任务拆分为单个函数
+
+  - 类似 query filename 这样的配置变量会越来越多，最好用 struct 将相关变量组织起来
+
+  - expect 抛出的错误信息太笼统；没有具体信息
+
+  - expect 会被使用多次，最好将错误处理代码放在一起
+
+1. 分离可执行项目的关注点
+
+Rust 社区形成一种分离关注点的指导步骤 separate concerns
+
+ - 将代码分解为 main.rs lib.rs，将程序逻辑移到 lib.rs
+ - 如果命令行参数解析逻辑足够小，可以保留在 main.rs
+ - 当解析逻辑变复杂时，也糯到 lib.rs
+
+能保留在 main.rs 的职责有:
+
+  - 调用参数解析逻辑
+  - 设置其他配置
+  - 调用 lib.rs 的 run 函数
+  - 处理 run 函数的错误
+
+- 提取参数解析逻辑
+
+将参数解析放到一个函数中，准备移出到 src/lib.rs
+
+- 用 struct 而非 tuple 组织配置项
+
+在适合用复杂类型的时候坚持用基本类型，是某种 primitive obsession
+
+struct 可以提供有名字的 field 让维护者更了解变量含义
+
+定义 struct Config {}
+
+field 为 owned String，但是 args 参数是参数值的 owner。
+
+args 只允许 parse_config borrow 这些值，因此 Config 无法违反
+
+borrow 规则来 owned String。
+
+解决方法很多，最简单的是不高效的一种，使用 clone()
+
+生成值的 full copy
+
+这确实会消耗更多时间和空间，但代码更直接，避免自己管理 Lifetime
+
+付出性能获得简单是 worthwhile trade-off。
+
+很多 Rustaceans 会避免使用 clone() 将在 13 章学习如何更高效处理这种问题。
+
+但只复制一次也可以，query 和 filename 占用都很小。
+
+初学时，不够高效的版本比过度优化更好。
+
+- 给 Config 添加构造方法
+
+parse_config 唯一作用是产生一个 Config struct 实例
+
+2. 添加错误处理
+
+当命令行参数不足 2 个时，会访问 Vec 越界导致 panic
+
+- 改进错误信息
+
+在 Config new 方法中增加参数长度判断
+
+args.len()
+
+如果 args 元素不足 3 个，就调用 panic!
+
+不过 panic! 通常用于处理程序错误，而非用户使用错误。
+
+更好的方法是使用 Result<T, E>
+
+- 使用 Result 作为 new 方法返回值而不是调用 panic!
+
+返回值中错误信息的 lifetime 用 &'static 是因为字符串字面的 lifetime 就是 static
+
+现在返回 Err 值，允许 main 函数来处理错误，当错误发生时更干净地退出进程。
+
+- 调用 Config::new 处理错误
+
+main 函数处理 Result
+
+出现错误是 exit 信号为 nonzero: process::exit(1);
+
+use std::process;
+
+Result 的 unwrap_or_else 方法。
+
+当返回值为Ok() 时，返回 Ok 中的值
+
+当返回值为 Err() 时，将 Err 中的值传入闭包中。
+
+现在就不会有调用 panic! 时出现的额外输出了。
+
+  额外输出: thread 'main' ... / note: run ...
+
+3. 从 main 提取逻辑到 lib.rs
+
+fn run() {}
+
+- run 函数返回 error
+
+用 Result 替换 expect
+
+Result 中 Err 值类型为 Box<dyn Error> Error <- std::error::Error
+
+这是 trait object，表示返回一个实现了 Error trait 的类型，而需要指定具体类型 dyn 关键字是 dynamic 的缩写
+
+- 在 main 中处理 run 的返回值错误
+
+编译后有 warning 提示没有在 main 中处理 run 可能返回的 error
+
+用 if let 结构
+
+不用 unwrap_or_else 是因为这里只需要处理错误情况，没有需要处理的返回值
+
+如果有 Err(e) 就调用 process::exit(1);
+
+4. 将代码拆分到 library crate
+
+12.4 用 TDD 开发 Library 功能
+
+代码拆分好处之一是，可以不通过调用 main.rs 就可以测试各个函数
+
+下边添加 search 功能到 minigrep，将使用 TDD 流程开发。
+
+  1. 写失败的测试，让测试按照预期的结果失败
+  2. 写代码让测试通过
+  3. 重构代码，保证测试依旧能通过
+  4. 重复步骤 1
+
+1. 写失败的测试
+
+现在不需要 println! ，先从代码中移除
+
+src/lib.rs 里添加 tests 模块
+
+测试函数将接收 query 和 text 返回包含 query 的行
+
+同时添加 search 函数，先返回空 vec! 否则测试无法编译
+
+2. 编写代码，通过测试
+
+- 用 lines 方法遍历各行
+
+contents.lines()
+
+lines() 返回 iterator，能通过 for in 结构遍历
+
+- 用 query 在每行中搜索
+
+line.contains(query)
+
+- 保存满足条件的 line
+
+用 mutable vector，push 方法
+
+- 在 run 函数中调用 search 函数
+
+下一节学习如何处理环境变量，及如何输出错误到标准错误
+
+12.5 处理环境变量
+
+给 minigrep 增加一个功能，忽略大小写
+
+通过环境变量控制是否开启这个功能
+
+1. 写 failing test
+
+实现函数 search_case_insensitive
+
+2. 开始实现函数
+
+将 query 转为小写
+
+将 contents 每行转为小写
+
+再进行 contains 测试
+
+在 Config struct 中增加 case_sensitive 记录是否开启 忽略大小写
+
+  然后在创建 config 时，根据环境变量决定是否使用 忽略大小写
+
+env::var("CASE") 返回 Result 类型
+
+这里主要关心 CASE 是 set 还是 unset。
+
+Result.is_err() 用于检查 Result 值是否为 Err 类型
+
+如果设置了环境变量，Result 返回 Ok(value)
+如果没设置，就返回 Err()
+
+设置环境变量 CASE_INSENSITIVE=1 cargo run to poem.txt
+
+12.6 输出错误信息到标准错误 stderr
+
+现在所有的输出都通过 println! 宏输出到标准输出
+
+大部分终端提供两种输出 stdout stderr
+
+1. 检查错误写到哪里
+
+cargo run > output.txt
+
+可以看到文件中包含错误信息
+
+2. 打印错误到 stderr
+
+所有输出错误的代码在 main.rs
+
+标准库提供 eprintln! 打印错误到 standard error stream
+
+Ch13 函数式语言特性: Iterators 和 Closures
+
+Rust 深受函数式编程影响
+
+函数式风格
+  将函数作为参数值使用
+  函数作为返回值使用
+  将函数赋值给变量，用于后边的执行
+
+Closures 类似函数的结构，可以保存到变量中
+
+Iterators 处理一系列元素的方法
+
+用这两个特性改进 I/O 项目
+
+这两个特性的性能
+
+closures iterators 有助于写出 idiomatic fast Rust code。
+
+13.1 闭包 Closure: 能够捕获环境的匿名函数
+
+Rust 的闭包是可以保存在变量或作为参数传递的匿名函数。可以在一个地方创建函数，然后在不同上下文环境中执行。
+
+与函数不同，闭包可以从定义处的作用域中捕获值。
+
+闭包的特性，允许复用的代码及定制化行为。
+
+1. 用闭包创建行为抽象
+
+举一个需要保存闭包，稍后执行的例子
+
+会介绍 closures 语法，type inference，和 traits
+
+假定要生成用户训练计划。后端用 Rust 写，生成计划的算法要考虑很多因素，生成过程需要 a few seconds。
+
+这个算法只在需要是调用，并且只调用一次。
+
+假设这个算法函数名为 simulated_expensive_calculation
+
+主函数中需要的输入
+
+  请求 workout 是指定的 intensity number
+  用于生成多种计划的随机数字
+
+- 重构函数调用
+
+提前计算出 expensive_result，然后问题在于有些条件下不需要这个结果，浪费了计算结果。
+
+- 用 closure 重构
+
+将 simulated_expensive_calculation 改为 closure 形式
+
+closure 语法
+
+let a_closure = |param1, param2| {
+
+};
+
+如果闭包体只有一行，可以省略 {}
+
+let 语句意味着赋值，而不是将闭包结果保存在 expensive_closure
+
+2. 闭包中的类型推断和注解
+
+在闭包中不需要像函数中一样标注参数类型，因为闭包都是短小的代码
+
+let add_one_v1 = |x: u32| -> u32 {x + 1};
+let add_one_v4 = |x| x + 1;
+
+同一个闭包无法传入不同类型的参数
+
+3. 使用泛型参数和 Fn traits 存储闭包
+
+每个闭包实例有自己独特的匿名类型。为了在 struct enum 函数参数中使用 闭包，需要使用泛型和 trait 约束
+
+闭包至少实现 Fn FnMut FnOnce 之一
+
+value: Option<u32> 因为未执行闭包前 value 为 Option::None
+
+4. Cacher 实现的限制
+
+第一个问题是 Cacher 实例假定传入的 arg 值不变
+
+第一次调用 c.value 后结果保存在 self.value 中，修改为 hash map 可以解决这个问题
+
+第二个问题是只能接受 u32 -> u32 的闭包。需要用泛型参数解决这个问题
+
+5. 闭包捕获环境
+
+函数不具备的特性
+
+闭包捕获环境有三种方式，对应三种函数参数 ownership 处理方法
+
+  - FnOnce 获取变量 ownership 并且只获取一次
+  - FnMut 可以改变环境参数 mutably borrows values
+  - Fn immutably borrows values
+
+All closures implement FnOnce because they can all be called at least once.
+
+Closures that don’t move the captured variables also implement FnMut, and closures that don’t need mutable access to the captured variables also implement Fn.
+
+强制闭包获取变量 ownership 需要用 move 关键字
+
+This technique is mostly useful when passing a closure to a new thread to move the data so it’s owned by the new thread.
+
+move 到闭包内，外部无法继续使用这个变量
+
+let equal_to_x = move |z| z == x;
+
+一般从 Fn 开始使用，必要时编译器会告知要用 FnOnce 还是 FnMut
+
+13.2 用 Iterator 处理一系列元素
+
+iterator 模式允许逐个处理数据。
+
+iterator 用于负责遍历每个元素的逻辑，判断何时序列处理完毕。
+
+Rust 的 iterator 是 lazy 的，在调用处理 iterator 数据前不会产生任何结果。
+
+let v1 = vec![1,2,3];
+let v1_iter = v1.iter(); -> 不产生任何影响
+
+iterator 可以处理包括 vectors 在内的多种类型序列
+
+1. Iterator Trait 和 next 方法
+
+iteratos 都实现名为 Iterator 的 trait。(在标准库中定义)
+
+pub trait Iterator {
+  type Item;
+
+  fn next(&mut self) -> Option<Self::Item>;
+
+  // ...
+}
+
+新语法 type Item; 定义 associated type 关联类型（19 章介绍）
+
+Item 类型是 next 方法的返回值类型
+
+Iterator 只要求实现 next 方法。
+
+Option<Sehlf::Item> 有值时返回 Some() 当迭代结束时返回 None
+
+可以直接调用 next 方法
+
+  assert_eq!(v1_iter.next(), Some(&2));
+
+调用 next() 方法会修改 iterator 内部 用于保持序列当前位置的 状态
+
+即 next() 会消耗 consume 序列
+
+但在使用 for 时不需要让 v1_iter 变为 mutable，因为 loop 获得 v1_iter 的 ownership 并使其变为 mutable
+
+next 的返回值是原序列元素的 immutable references
+
+iter 的作用对象是 immutable 引用
+
+如果想要 take ownership 的 iterator, 要使用 into_iter 而不是 iter
+
+如果要 mutable references，使用 iter_mut
+
+2. 能 consume 迭代器的方法
+
+标准库提供很多不同方法的默认实现。其中一些方法定义里调用 next。因此 Iterator trait 要求必须提供 next 方法。
+
+调用 next 的方法被称为 consuming adaptors
+
+例如 sum 方法 会 take ownership of the iterator
+
+同样因为这个特性，调用 sum 后无法再使用这个迭代器
+
+3. 产生新迭代器的方法
+
+被称作 iterator adaptor
+
+对迭代器的操作可以串联成链式结构。
+
+https://doc.rust-lang.org/rustc/command-line-arguments.html
+
+由于所有的迭代器都是 lazy 的,必须调用一个 consuming adaptor 来获取结果
+
+consuming adaptor 如 collectc;
+
+4. 捕获环境的闭包
+
+使用 filter - iterator adaptor
+
+13.3 改进 I/O 项目
+
+改进 Config::new() 和 search 函数
+
+1. 移除 clone 直接使用 env::args() 返回的 iterator
+
+同时将 ownership 交给 Config::new()
+
+2. Iterator 替代 indexing
+
+args.next();
+
+match args.next() {
+  Some(arg) => arg,
+  None => return Err("No query"),
+};
+
+第一个 args.next() 返回程序名,因此需要忽略掉
+
+3. Iterator adaptor 简化程序
+
+13.4 对比性能: Loops vs Iterators
+
+iterator 版本性能稍好.
+
+使用更高级的抽象,写出性能不亚于低级抽象的代码,这种技术叫 zero-cost abstractions. C++ 之父 Bjarne Stroustrup 提出这个概念
+
+另一个优化技术
+
+Unrolling is an optimization that removes the overhead of the loop controlling code and instead generates repetitive code for each iteration of the loop.
+
+Ch14 Cargo 和 Crates.io
+
+cargo 高级功能
+  定制编译
+  发布到 crates.io
+  用 workspaces 组织大型项目
+  从 crates.io 安装二进制文件
+  自定义 cargo 命令
+
+14.1 用 Release Profiles 定制编译
+
+release profile 预先定义的，定制化 profile 让开发者更能控制多样的编译配置
+
+两个主要 profile 
+  dev 用于 cargo build
+  release 用于 cargo build --release
+
+cargo build
+  Finished dev (dev 即是 release profile)
+
+Cargo.toml 中的 [profile.*] 可以覆盖对应的 release profile
+
+[profile.dev]
+opt-level=0
+
+[profile.release]
+opt-level=0
+
+opt-leve 值范围 0-3 0 表示优化最少，编译最快，适合开发过程
+
+更多 profile 配置: https://doc.rust-lang.org/cargo/reference/profiles.html
+
+14.2 发布 crate 到 crates.io
+
+- 提供有用的文档注释
+
+普通注释 // 
+
+文档注释 /// 
+
+  support Markdown notation
+
+/// Adds one to the number given.
+///
+/// # Examples
+///
+/// ```
+/// let arg = 5;
+/// let answer = my_crate::add_one(arg);
+///
+/// assert_eq!(6, answer);
+/// ```
+pub fn add_one(x: i32) -> i32 {
+    x + 1
+}
+
+cargo doc 调用 rustdoc 生成文档到 target/doc 
+
+cargo doc --open
+
+除了 # Examples 还常用 
+
+# Panics 
+  函数可能 panic 的场景
+
+# Errors 
+  返回 Result 时可能出现的错误
+
+# Safety
+  explaining why the function is unsafe and covering the invariants that the function expects callers to uphold.
+
+cargo test 可以测试文档中的样例
+
+另一种风格注释 //! 
+
+常用于 crate root file (src/lib.rs)
+
+作为整体的文档 inside a module to document the crate or the module as a whole.
+
+用 pub use 暴露公共 API 快捷入口
+
+use my_crate::some_module::another_module::UsefulType;
+
+use my_crate::UsefulType;
+
+pub use self::kinds::PrimaryColor
+
+外部调用 use one::PrimaryColor;
+
+- 创建 crates.io 帐号
+
+获取 api token
+  at https://crates.io/me/ 
+
+添加 token
+  cargo login YOUR_TOKEN
+
+提交前要补充 metadata 
+  name
+  description
+  license
+[package]
+name = "guessing_game" (unique name)
+license = "MIT OR Apache-2.0" (Rust community 习惯)
+
+提交到 crates.io 是永久的。
+
+提供验证邮箱 A verified email address is required to publish crates to crates.io
+
+cargo publish
+
+修改 version 可以提交新版本
+
+cargo yank --vers 1.0.1 防止新项目使用这个版本
+
+cargo yank --vers 1.0.1 --undo
+
+14.3 Cargo 工作空间
+
+https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html
+
+类似 umbrella
+
+多个关联模块集合
+  lib.rs 最多有一个
+  main.rs 可以有多个
+
+顶层 Cargo.toml
+
+[workspace]
+members = [
+  "adder",
+  "add-one"
+]
+
+对应文件结构
+
+Cargo.toml
+add-one 
+  Cargo.toml 
+  src 
+    lib.rs 
+adder 
+  Cargo.toml 
+  src 
+    main.rs 
+
+共用 dependency
+
+adder/Cargo.toml
+
+[dependencies]
+add-one = { path = "../add-one" } 内部模块
+rand = "0.8.3" 需要重复一遍 但不会重复下载
+
+add-one/Cargo.toml
+[dependencies]
+rand = "0.8.3"
+
+14.4 用 cargo install 从 crates.io 安装二进制文件
+
+cargo install ripgrep 下载到 .cargo/bin
+
+14.5 自定义命令扩展 cargo
+
+cargo --list 查看 
+
+命令为 cargo-subcommand 的可以用 cargo subcommand 形式调用
+
+Ch15 智能指针 smart pointers
+
+指针是保存内存地址的变量。最常见的指针是 reference。没有多余能力，当然也不会有额外 overhead
+
+可以像指针一样使用，又带有额外 metadata 和 capabilities 的数据结构
+
+例如 reference counting type 使得数据有多个 owner 并 track owner 数量，并在 owner 为 0 时清除数据
+
+通常用 struct 实现
+
+与一般 struct 区别在于，它们实现 Deref 和 Drop trait 
+
+Deref 让 smart pointer 可以和 reference 一样使用
+
+Drop 定制当 smart point 超出作用域后的行为
+
+smart pointer 是 Rust 常见 design pattern 
+
+最常用的有
+
+  Box<T> 在 heap 上分配内存
+
+  Rc<T>  reference counting type 
+
+  Ref<T> RefMut<T> 通过 RefCell<T> 访问 在 runtime 应用 borrowing rule 
+    mutate data even when there are immutable references to that data
+
+另外介绍 interior mutability pattern
+
+  不可变数据提供 API 修改内部数据
+
+以及循环引用
+
+15.1 Box<T> 指向堆上数据
+
+在 heap 保存数据 栈上保存指针
+
+没有性能差别(损失?)
+
+应用场景
+
+编译期不确定大小的 type
+  在 Boxes 中使用 递归类型
+
+传递大量数据 ownership 而不复制数据
+  保存在stack 上数据会被 copy 
+  使用 Box 可以提高性能,只拷贝少量数据(pointer)
+
+希望 own value 只关心该类型实现特定 trait 而不是特定 type 
+  trait object Ch 17
+
+- Box syntax
+
+Box::new(50);
+
+50 被存储在 heap 上
+
+deallocated: box (stack) data (heap) 都会被清除
+
+- 用 Boxes 实现 Recursive Types
+
+不使用 Boxes 无法做到
+
+因为在编译期 Rust 需要知道每个类型占用空间
+
+占用空间未知的一种数据类型叫做 recursive type 
+
+即一部分数据是其他同类型数据
+
+boxes have a known size 可以用于实现 recursive type
+
+例如 cons list 
+
+cons list 来自 lisp
+
+cons function -> construct function 根据参数形成新 pair 
+
+参数为 single value 和 另一个 pair 
+
+这种包含其他 pair 的 pair 形成 list 
+
+将元素 x 放在 container y 头部
+
+cons list 由两个元素组成
+  current item
+  next item
+    没有 next item 的用 Nil 表示
+
+cons list 在 Rust 中不常用，大部分时间用 Vec<T> 
+
+enum List {
+  Cons(i32, List),
+  Nil,
+}
+let list = Cons(1, Cons(2, Cons(3, Nil)));
+
+Rust 计算非 recursive type (Enum) 大小
+
+enum Message {
+  Quit,
+  Move {x: i32, y: i32},
+  Write(String),
+  ChangeColor(i32, i32, i32),
+}
+
+only one variant will be used 根据占据空间最多的变体确定空间大小
+
+引入 Box 后，不需要保存全部数据，只需要保存 heap 的指针
+
+Boxes 只提供 indirection 和 heap 内存分配，没有其他特殊能力
+
+也没有性能损失，适合只需要数据 indirection 的情况
+
+Box<T> 实现 Deref 和 Drop trait
+
+模块路径 
+
+absolute path 
+  crate_name 或 crate 开始，表示 crate root
+relative path
+  当前模块为开始
+
+super::
+  以上级模块开始
+
+15.2 用 Deref trait 像处理常规引用一样处理 Smart Pointers
+
+实现 Deref trait 可以让我们定制 dereference 操作 * 
+
+用于 reference 的代码也可以用于 smart pointer
+
+regular references 如何使用 dereference operator
+defiine 自定义类型 (smart pointer)，看看 dereference 如何工作
+为自定义类型实现 Deref trait
+Rust 的 deref coercion 特性，可以处理 references 和 smart pointer
+
+- 用 dereference 操作符获取数据
+
+普通 default ref
+
+let y = &x;
+assert_eq!(5, *y);
+
+smart pointer
+
+let y = Box::new(x);
+assert_eq!(5, *y);
+
+区别在后者指向的是 x 的 copied value
+
+- 自定义 Smart Pointer
+
+The Box<T> type is ultimately defined as a tuple struct with one element
+
+define a new function
+
+impl<T> MyBox<T> {
+  fn new(x: T) -> MyBox<T> {
+    MyBox(x)
+  }
+}
+
+- 实现 Deref trait 
+
+该 trait 需要
+
+  implement one method named deref that borrows self and returns a reference to the inner data
+
+access a tuple element directly by using a period (.) followed by the index of the value we want to access
+
+struct MyBox<T>(T);
+
+use std::ops::Deref;
+
+impl<T> Deref for MyBox<T> {
+  type Target = T;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0 // 获取值
+  }
+}
+
+- 函数和方法中 隐式 Deref Coercions
+
+Deref Coercion 只发生在实现 Deref trait 的类型中
+
+将一种类型的引用转为另一种类型
+
+例如将 &String 转为 &str 因为 String 实现 Deref 并返回 str 
+
+Deref Coercion 在类型不一致时会自动发生
+
+这样在部分调用时不需要自己写 & 和 * 
+
+便于写出同时处理 smart pointer 和 reference 的代码
+
+fn hello(name: &str) {
+  println!("Hello, {}!", name);
+}
+
+let m = MBox::new(String::from("Rust")); 到 &str
+
+hello(&m);
+
+&MBox (自定义实现 Deref) -> &String (String 实现 Deref) -> &str
+
+deref coercion 在编译期完成，不影响 runtime
+
+- 可变数据 Mutability 的 deref coercion
+
+Rust 处理三种情况
+
+From &T to &U when T: Deref<Target=U>
+  you have a &T, and T implements Deref to some type U, you can get a &U transparently.
+
+From &mut T to &mut U when T: DerefMut<Target=U>
+  类似第二种
+From &mut T to &U when T: Deref<Target=U>
+
+Rust 可以从 &mut T 转为 &U 不支持相反过程
+  
+  Because of the borrowing rules, if you have a mutable reference, that mutable reference must be the only reference to that data
+
+  Converting one mutable reference to one immutable reference will never break the borrowing rules.
+  
+  Converting an immutable reference to a mutable reference would require that the initial immutable reference is the only immutable reference to that data, but the borrowing rules don’t guarantee that. 
+
+15.3 Drop trait 完成清理
+
+Drop trait 的实现可以用来释放 file 或 network
+
+不需要手动执行，当值 out of scope 时就会调用
+
+Drop trait is included in the prelude 可以直接用
+
+手动提前释放值 std::mem::drop 
+
+15.4 引用计数 Smart Pointer
+
+支持多 ownership : Rc<T>
+
+检查引用数量，查看是否有引用存在。没有引用时，自动 cleanup
+
+when we want to allocate some data on the heap for multiple parts of our program to read and we can’t determine at compile time which part will finish using the data last
+
+每次调用 Rc::clone 引用计数增加一次
+
+immutable references
+
+15.5 RefCell<T> 和 Interior mutability 模式
+
+Interior mutability 内部使用 unsafe api 避免 borrowing rules。
+
+在 runtime 遵守 borrowing rule 外部看来还是不可变的
+
+borrowing rules
+  一个时间点，可有一个可变引用或一个（多个）不可变引用
+  引用必须有效 valid
+
+references and Box<T> 在 compile time 检查规则
+
+而 Recall<T> 在 runtime 检查规则
+
+编译期检查，目的为了提前发现错误，破坏规则会出现 compile error
+
+运行时破坏规则，程序会 panic and exit
+
+编译期检查 更早发现错误，不影响 runtime 性能 是 Rust 默认行为
+
+Rust 编译期本质上是保守的。静态分析无法解决一些特定问题。
+
+The RefCell<T> type is useful when you’re sure your code follows the borrowing rules but the compiler is unable to understand and guarantee that.
+
+Similar to Rc<T>, RefCell<T> 仅用于 single-thread 场景
+
+多 threads 会报错
+
+RefCell<T> 将 borrow check 延后在 runtime 执行，所以可以在 不可变 数据中执行可变操作
+
+值可以改变自己状态，而对外表现为不可变
+
+store the sent_messages within a RefCell<T>
+
+call borrow_mut on the RefCell<Vec<String>> in self.sent_messages 得到可变引用
+
+borrow 返回 Ref<T>
+borrow_mut 返回 RefMut<T>
+
+RefCell<T> 追踪多少个 Ref<T> RefMut<T> 存在
+
+每次调用 borrow 不可变引用计数增加 1
+
+Ref<T> out of scope 后，计数减少 1
+
+和编译期类似， RefCell<T> lets us have many immutable borrows or one mutable borrow at any point in time.
+
+而无法创建两个 mutable borrow
+
+结合 Rc<T> and RefCell<T> 可以得到
+
+an Rc<T> that holds a RefCell<T>
+
+get a value that can have multiple owners and that you can mutate
+
+by using a RefCell<T> in the Cons definition, we can modify the value stored in all the lists
+
+执行测试 cargo test
+
+执行 main.rs
+  cargo run
+
+interior mutability 是Rust中允许有 immutable references 时修改数据的设计模式
+通常不被 borrowning rule 允许
+为了修改数据，需要在数据结构中使用 unsafe 规避这一规则
+这一模式可以在我们能确保代码在运行时符合 borrowing rule 不需要在编译期满足
+
+unsafe 代码被 safe API 包裹，外部类型 type 能保持 immutable
+
+RefCell<T> 不同于 Rc<T>，RefCell<T> 表示保存数据的单个 ownership
+
+borrowing rules
+  任何时候可以有一个可变引用或多个不可变引用
+  引用必须是有效的
+
+references 和 Box<T> borrowig rules 在编译期生效
+对于 RefCell<T> 是在运行时生效，违反规则程序会 panic 并退出
+
+编译期检查 borrowing rules 会及时发现问题，同时不影响运行时效率，是最好的选择也是默认行为
+
+运行时检查 borrowing rules 可以完成默认情况下编译期不允许的 memory-safe 操作
+
+RefCell<T> 在你确定代码符合 borrowing rules 但编译器无法理解和保证符合 borrowing rules 时会用上。
+
+RefCell<T> 和 Rc<T> 类似，用于单线程场景，在多线程下使用会出现编译期错误
+
+其他提供类似模式的类型 Cell<T> 于 RefCell<T> 区别就是值被来回复制。
+Mutex<T> 提供跨线程 interior mutablility
+
+15.6 Reference Cycles can Leak Memory
+
+Rust 无法完全保证内存不泄漏，而是保证 Rust 中内存泄漏是内存安全的。
+通过 Rc<T> 和 RefCell<T> 能造成内存泄漏，如循环引用，每个 item 的引用 count 都不为零无法被 drop
+
+Rc::clone(&b) 引用加 1
+Rc<T> 在 strong_count 为 0 时才被 drop 
+
+解决方法 
+Rc<T> 换 Weak<T>
+创建 weak reference， Rc::downgrade(ref_to_Rc<T>) 返回 smart pointer to W恩爱看《T》 不会使 strong_count 增加，增加 weake_count，区别在于 weak_count 不为 0 时可以被 cleaned up
+
+Strong reference 表示如何共享 Rc<T> 的 ownership，而 Weak reference 不是
+要使用 Weak reference 指向的数据时，要用 Rc::upgrade 来确保引用数据存在，返回 
+
+Options<Rc<T>>
+  Some(Rc<T>) Some variant
+  None        None variant
+
+处理两种情况
+
+Tree Example
+
+items 同时有 children items 和 parent items
+
+问题是，如何确定 parent 类型。不能包含 Rc<T> 因为会造成 reference cycle
+
+leaf.parent -> branch 
+branch.chilren -> leaf
+
+strong_count 永远不为 0
+
+parent node  被 drop 时，children node 也被 drop 
+而 children node 被 drop，parent node 还存在
+
+parent 使用 Weak<T> : RefCell<Weak<Node>>
+
+children node 指向 parent node 但不 own parent node
+
+获取 leaf parent: leaf.parent.borrow().upgrade()
+
+Summary
+
+Box<T>
+  known size and points to data allocated on the heap
+
+Rc<T>
+  keeps track of the number of references to data on the heap
+  data can have multiiple owners
+
+RefCell<T>
+  interior mutability
+  we need  an immutable type but need to change an inner value of that type
+  enforces the borrowing rules at runtime instead of compile time.
+
+Deref / Drop trait 
+
+RefCell 不完全违反 borrowing rules
+compiler 的 borrow check 允许 interior mutability
+borrowing rules 在运行时检查
+如果违法 rules 会得到 panic! 而不是 compiler error
+
+编写自己的 implement your own smart pointers
+  https://doc.rust-lang.org/nomicon/index.html
+
+https://doc.rust-lang.org/book/ch15-06-reference-cycles.html
+
+Ch16 并发 Fearles Concurrency
+
+Ch17 Rust 面向对象特性
+
+Ch18 模式和匹配
+
+Ch19 高级特性
+
+Ch20 多线程网页服务器
+
